@@ -20,6 +20,7 @@ void main() {
     // Each test name matches against a tile in the top level of `gallery.dart`.
     // This is necessary because we can't import gallery.dart here.
     const taggedText = 'Tagged Text';
+    const linkedScrollables = 'Linked Scrollables';
 
     /// Factory for test methods against widget loading times.
     ///
@@ -52,5 +53,6 @@ void main() {
     // run of the app.  Make sure to return the app to the entry point after
     // each test.
     test(taggedText, buildWidgetLoadingTest(taggedText));
+    test(linkedScrollables, buildWidgetLoadingTest(linkedScrollables));
   });
 }
