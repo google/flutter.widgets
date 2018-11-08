@@ -26,4 +26,4 @@ echo "PASSED"
 set -e
 
 # Run the tests.
-pub run test
+flutter run test
