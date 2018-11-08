@@ -2,5 +2,7 @@ os: linux
 before_script:
   - git clone https://github.com/google/flutter.widgets.git --depth 1
   - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
+  - ls `pwd`/flutter/bin
+  - echo $PATH
   - flutter doctor
 script: ./tool/travis.sh
