@@ -2,16 +2,16 @@
 
 This package provides a way to set up a set of scrollable widgets whose
 scrolling is synchronized. The set can be stable across the lifetime of the
-containing scrren, or can change dynamically (for example, a vertically
+containing screen, or can change dynamically (for example, a vertically
 scrolling `ListView.builder()` whose items are Scrollables that scroll
 horizontally in unison).
 
 **If you add controllers dynamically, the corresponding scrollables must be
-given unique keys to avoid the scroll offset going out of sync**
+given unique keys to avoid the scroll offset going out of sync.**
 
 # Example usage
 
-The code below sets up two site-by-side `ListView`s that scroll in unison.
+The code below sets up two side-by-side `ListView`s that scroll in unison.
 
 ```dart
 class LinkedScrollables extends StatefulWidget {
