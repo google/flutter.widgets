@@ -6,3 +6,4 @@
 
 export 'src/html_widget/html_widget.dart';
 export 'src/tagged_text/tagged_text.dart';
+export 'src/linked_scroll_controller/linked_scroll_controller.dart';
