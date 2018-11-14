@@ -1,0 +1,64 @@
+// Copyright 2018 the Dart project authors.
+//
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file or at
+// https://developers.google.com/open-source/licenses/bsd
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/rendering.dart';
+
+import 'visibility_detector.dart';
+import 'visibility_detector_layer.dart';
+
+/// The [RenderObject] corresponding to the [VisibilityDetector] widget.
+///
+/// [RenderVisibilityDetector] is a bridge between [VisibilityDetector] and
+/// [VisibilityDetectorLayer].
+class RenderVisibilityDetector extends RenderProxyBox {
+  /// Constructor.  See the corresponding properties for parameter details.
+  RenderVisibilityDetector({
+    RenderBox child,
+    @required this.key,
+    @required onVisibilityChanged,
+  })  : _onVisibilityChanged = onVisibilityChanged,
+        super(child) {
+    assert(key != null);
+  }
+
+  /// The key for the corresponding [VisibilityDetector] widget.  Never null.
+  final Key key;
+
+  VisibilityChangedCallback _onVisibilityChanged;
+
+  /// See [VisibilityDetector.onVisibilityChanged].
+  VisibilityChangedCallback get onVisibilityChanged => _onVisibilityChanged;
+
+  /// Used by [VisibilityDetector.updateRenderObject].
+  set onVisibilityChanged(VisibilityChangedCallback value) {
+    _onVisibilityChanged = value;
+    markNeedsCompositingBitsUpdate();
+    markNeedsPaint();
+  }
+
+  // See [RenderObject.alwaysNeedsCompositing].
+  @override
+  bool get alwaysNeedsCompositing => onVisibilityChanged != null;
+
+  /// See [RenderObject.paint].
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    if (onVisibilityChanged == null) {
+      super.paint(context, offset);
+      return;
+    }
+
+    final layer = VisibilityDetectorLayer(
+        key: key,
+        widgetSize: semanticBounds.size,
+        paintOffset: offset,
+        onVisibilityChanged: onVisibilityChanged);
+    // We'll apply the offset in the [VisibilityDetectorLayer] instead of in the
+    // [PaintingContext].
+    context.pushLayer(layer, super.paint, Offset.zero);
+  }
+}
