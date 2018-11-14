@@ -5,3 +5,4 @@
 // https://developers.google.com/open-source/licenses/bsd
 
 export 'src/visibility_detector.dart';
+export 'src/visibility_detector_controller.dart';

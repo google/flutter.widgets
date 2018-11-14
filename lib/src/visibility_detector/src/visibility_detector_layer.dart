@@ -12,6 +12,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 
 import 'visibility_detector.dart';
+import 'visibility_detector_controller.dart';
 
 /// Returns a sequence containing the specified [Layer] and all of its
 /// ancestors.  The returned sequence is in [parent, child] order.
@@ -153,7 +154,8 @@ class VisibilityDetectorLayer extends ContainerLayer {
     if (_timer == null) {
       // We use a normal [Timer] instead of a [RestartableTimer] so that changes
       // to the update duration will be picked up automatically.
-      _timer = Timer(VisibilityDetector.updateInterval, _handleTimer);
+      _timer = Timer(
+          VisibilityDetectorController.instance.updateInterval, _handleTimer);
     } else {
       assert(_timer.isActive);
     }
@@ -169,6 +171,18 @@ class VisibilityDetectorLayer extends ContainerLayer {
     // of `addPostFrameCallback` or `scheduleFrameCallback` so that work will
     // be done without unnecessarily scheduling a new frame.
     SchedulerBinding.instance.scheduleTask(_processCallbacks, Priority.touch);
+  }
+
+  /// See [VisibilityDetector.notifyNow].
+  static void notifyNow() {
+    if (_timer == null) {
+      assert(_updated.isEmpty);
+      return;
+    }
+
+    _timer.cancel();
+    _timer = null;
+    _processCallbacks();
   }
 
   /// Executes visibility callbacks for all updated [VisibilityDetectorLayer]
