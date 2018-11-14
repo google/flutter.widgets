@@ -48,6 +48,10 @@ class RenderVisibilityDetector extends RenderProxyBox {
   @override
   void paint(PaintingContext context, Offset offset) {
     if (onVisibilityChanged == null) {
+      // No need to create a [VisibilityDetectorLayer].  However, in case one
+      // already exists, remove all cached data for it so that we won't fire
+      // visibility callbacks when the layer is removed.
+      VisibilityDetectorLayer.forget(key);
       super.paint(context, offset);
       return;
     }
