@@ -117,8 +117,8 @@ class VisibilityDetectorLayer extends ContainerLayer {
 
   /// Computes the accumulated clipping bounds, in global coordinates.
   Rect _computeClipRect() {
-    final Size screenSize = ui.window.physicalSize / ui.window.devicePixelRatio;
-    Rect clipRect = Offset.zero & screenSize;
+    assert(RendererBinding.instance?.renderView != null);
+    Rect clipRect = Offset.zero & RendererBinding.instance.renderView.size;
 
     ContainerLayer parentLayer = parent;
     while (parentLayer != null) {
@@ -183,6 +183,13 @@ class VisibilityDetectorLayer extends ContainerLayer {
     _timer.cancel();
     _timer = null;
     _processCallbacks();
+  }
+
+  /// Removes entries corresponding to the specified [Key] from our internal
+  /// caches.
+  static void forget(Key key) {
+    _updated.remove(key);
+    _lastVisibility.remove(key);
   }
 
   /// Executes visibility callbacks for all updated [VisibilityDetectorLayer]

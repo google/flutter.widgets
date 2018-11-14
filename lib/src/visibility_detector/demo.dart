@@ -69,8 +69,6 @@ class VisibilityDetectorDemoPage extends StatefulWidget {
 
 class VisibilityDetectorDemoPageState
     extends State<VisibilityDetectorDemoPage> {
-  VisibilityDetectorDemoPageState();
-
   /// Whether the pseudo-table should be shown.
   bool _tableShown = true;
 

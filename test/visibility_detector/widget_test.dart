@@ -13,6 +13,9 @@ import 'package:flutter_widgets/src/visibility_detector/demo.dart' as demo;
 /// corresponding [VisibilityDetector] widget in the demo app.
 final _positionToVisibilityInfo = <demo.RowColumn, VisibilityInfo>{};
 
+/// [Key] used to identify the [_TestPropertyChange] widget.
+final _testPropertyChangeKey = GlobalKey<_TestPropertyChangeState>();
+
 void main() {
   demo.visibilityListeners.add((demo.RowColumn rc, VisibilityInfo info) {
     _positionToVisibilityInfo[rc] = info;
@@ -22,14 +25,14 @@ void main() {
     _positionToVisibilityInfo.clear();
   });
 
-  _wrapTest('VisibilityDetector build', (tester) async {
+  _wrapTest('VisibilityDetector build', callback: (tester) async {
     expect(find.byType(ErrorWidget), findsNothing);
 
     final Finder cell = find.byKey(demo.cellKey(0, 0));
     expect(cell, findsOneWidget);
   });
 
-  _wrapTest('VisibilityDetector initially visible', (tester) async {
+  _wrapTest('VisibilityDetector initially visible', callback: (tester) async {
     final Finder cell = find.byKey(demo.cellKey(0, 0));
     final Rect expectedRect = tester.getRect(cell);
 
@@ -43,7 +46,7 @@ void main() {
   });
 
   _wrapTest('VisibilityDetector vertically scrolled partially offscreen',
-      (tester) async {
+      callback: (tester) async {
     final Finder mainList = find.byKey(demo.mainListKey);
     expect(mainList, findsOneWidget);
     final Rect viewRect = tester.getRect(mainList);
@@ -68,7 +71,7 @@ void main() {
   });
 
   _wrapTest('VisibilityDetector horizontally scrolled partially offscreen',
-      (tester) async {
+      callback: (tester) async {
     final Finder mainList = find.byKey(demo.mainListKey);
     final Rect viewRect = tester.getRect(mainList);
 
@@ -93,7 +96,8 @@ void main() {
     expect(info.visibleFraction, info.visibleBounds.width / originalRect.width);
   });
 
-  _wrapTest('VisibilityDetector scrolled fully offscreen', (tester) async {
+  _wrapTest('VisibilityDetector scrolled fully offscreen',
+      callback: (tester) async {
     final Finder mainList = find.byKey(demo.mainListKey);
     expect(mainList, findsOneWidget);
     final Rect viewRect = tester.getRect(mainList);
@@ -111,7 +115,7 @@ void main() {
   });
 
   _wrapTest('VisibilityDetector scrolled almost fully offscreen',
-      (tester) async {
+      callback: (tester) async {
     final Finder mainList = find.byKey(demo.mainListKey);
     expect(mainList, findsOneWidget);
     final Rect viewRect = tester.getRect(mainList);
@@ -132,7 +136,7 @@ void main() {
         info.visibleFraction, info.visibleBounds.height / originalRect.height);
   });
 
-  _wrapTest('VisibilityDetector hidden', (tester) async {
+  _wrapTest('VisibilityDetector hidden', callback: (tester) async {
     final Finder cell = find.byKey(demo.cellKey(0, 0));
     final Rect originalRect = tester.getRect(cell);
 
@@ -143,13 +147,42 @@ void main() {
     expect(info.visibleBounds.size, Size.zero);
     expect(info.visibleFraction, 0.0);
   });
+
+  _wrapTest(
+    'VisibilityDetector enable/disable',
+    widget: _TestPropertyChange(key: _testPropertyChangeKey),
+    callback: (tester) async {
+      _TestPropertyChangeState state = _testPropertyChangeKey.currentState;
+
+      // Validate the initial state.  The visibility callback should have fired
+      // exactly once.
+      expect(state.lastVisibleFraction, 1.0);
+      expect(state.callbackCount, 1);
+
+      // Disable the [VisibilityDetector].  This should not trigger the
+      // visibility callback.
+      await _doStateChange(tester, () {
+        state.visibilityDetectorEnabled = false;
+      });
+      expect(state.lastVisibleFraction, 1.0);
+      expect(state.callbackCount, 1);
+
+      // Re-enable the [VisibilityDetector].  This should re-trigger the
+      // visibility callback.
+      await _doStateChange(tester, () {
+        state.visibilityDetectorEnabled = true;
+      });
+      expect(state.lastVisibleFraction, 1.0);
+      expect(state.callbackCount, 2);
+    },
+  );
 }
 
 /// Initializes the widget tree that is populated with [VisibilityDetector]
 /// widgets and waits sufficiently long for their visibility callbacks to fire.
-Future<void> _initWidgetTree(WidgetTester tester) async {
+Future<void> _initWidgetTree(Widget widget, WidgetTester tester) async {
   expect(_positionToVisibilityInfo.isEmpty, true);
-  await tester.pumpWidget(demo.VisibilityDetectorDemo());
+  await tester.pumpWidget(widget);
 
   final controller = VisibilityDetectorController.instance;
   await tester.pumpAndSettle(controller.updateInterval);
@@ -172,13 +205,17 @@ Future<void> _clearWidgetTree(WidgetTester tester,
 
 /// Wrapper around [testWidgets] to automatically do our own custom test
 /// setup and teardown.
-void _wrapTest(String description, WidgetTesterCallback callback) {
+void _wrapTest(
+  String description, {
+  Widget widget,
+  @required WidgetTesterCallback callback,
+}) {
   testWidgets(description, (tester) async {
     // We can't use [setUp] and [tearDown] because we want access to the
     // [WidgetTester].  Additionally, [tearDown] is executed *after* the
     // widget tree is destroyed, which is too late for our purposes. (See
     // details below.)
-    await _initWidgetTree(tester);
+    await _initWidgetTree(widget ?? demo.VisibilityDetectorDemo(), tester);
     await callback(tester);
 
     /// When the test destroys the widget tree with [VisibilityDetector] widgets
@@ -207,4 +244,63 @@ Future<void> _doScroll(
 
   // Wait for callbacks to fire.
   await tester.pump(VisibilityDetectorController.instance.updateInterval);
+}
+
+/// Invokes a callback to mutate a [State] object and waits sufficiently long
+/// for the [VisibilityDetector] callbacks to fire.
+Future<void> _doStateChange(WidgetTester tester, VoidCallback callback) async {
+  callback();
+
+  // Wait for the state change to rebuild the widget.
+  await tester.pump();
+
+  // Wait for callbacks to fire.
+  await tester.pump(VisibilityDetectorController.instance.updateInterval);
+}
+
+/// A widget used to test that disabling a [VisibilityDetector] does not trigger
+/// its visibility callback and that re-enabling it does.
+class _TestPropertyChange extends StatefulWidget {
+  const _TestPropertyChange({Key key}) : super(key: key);
+
+  @override
+  _TestPropertyChangeState createState() => _TestPropertyChangeState();
+}
+
+class _TestPropertyChangeState extends State<_TestPropertyChange> {
+  /// Whether our [VisibilityDetector] should be enabled (i.e., whether it
+  /// should fire visibility callbacks).
+  bool _visibilityDetectorEnabled = true;
+  bool get visibilityDetectorEnabled => _visibilityDetectorEnabled;
+  set visibilityDetectorEnabled(bool value) {
+    setState(() {
+      _visibilityDetectorEnabled = value;
+    });
+  }
+
+  /// The last reported visibility of our [VisibilityDetector].
+  double _lastVisibleFraction = 0;
+  double get lastVisibleFraction => _lastVisibleFraction;
+
+  /// The number of times that our [VisibilityDetector]'s callback has been
+  /// triggered.
+  int _callbackCount = 0;
+  int get callbackCount => _callbackCount;
+
+  /// [VisibilityDetector] callback for when the visibility of the widget
+  /// changes.
+  void _handleVisibilityChanged(VisibilityInfo info) {
+    _lastVisibleFraction = info.visibleFraction;
+    _callbackCount += 1;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return VisibilityDetector(
+      key: const Key('TestPropertyChange'),
+      onVisibilityChanged:
+          visibilityDetectorEnabled ? _handleVisibilityChanged : null,
+      child: const Placeholder(),
+    );
+  }
 }
