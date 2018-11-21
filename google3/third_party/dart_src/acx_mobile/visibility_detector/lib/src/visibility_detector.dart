@@ -17,7 +17,8 @@ import 'render_visibility_detector.dart';
 /// Callbacks are not fired immediately on visibility changes.  Instead,
 /// callbacks are deferred and coalesced such that the callback for each
 /// [VisibilityDetector] will be invoked at most once per
-/// [VisibilityDetectorController.updateInterval].  Callbacks for *all*
+/// [VisibilityDetectorController.updateInterval] (unless forced by
+/// [VisibilityDetectorController.notifyNow]).  Callbacks for *all*
 /// [VisibilityDetector] widgets are fired together synchronously between
 /// frames.
 class VisibilityDetector extends SingleChildRenderObjectWidget {

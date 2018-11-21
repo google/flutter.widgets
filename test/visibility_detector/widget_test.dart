@@ -25,131 +25,183 @@ void main() {
     _positionToVisibilityInfo.clear();
   });
 
-  _wrapTest('VisibilityDetector build', callback: (tester) async {
-    expect(find.byType(ErrorWidget), findsNothing);
+  _wrapTest(
+    'VisibilityDetector properly builds',
+    callback: (tester) async {
+      expect(find.byType(ErrorWidget), findsNothing);
 
-    final Finder cell = find.byKey(demo.cellKey(0, 0));
-    expect(cell, findsOneWidget);
-  });
-
-  _wrapTest('VisibilityDetector initially visible', callback: (tester) async {
-    final Finder cell = find.byKey(demo.cellKey(0, 0));
-    final Rect expectedRect = tester.getRect(cell);
-
-    final VisibilityInfo info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
-    expect(info.size, expectedRect.size);
-    expect(info.size.width > 0, true);
-    expect(info.size.height > 0, true);
-    expect(info.size.height, demo.kRowHeight - 2 * demo.kRowPadding);
-    expect(info.visibleBounds, Offset.zero & info.size);
-    expect(info.visibleFraction, 1.0);
-  });
-
-  _wrapTest('VisibilityDetector vertically scrolled partially offscreen',
-      callback: (tester) async {
-    final Finder mainList = find.byKey(demo.mainListKey);
-    expect(mainList, findsOneWidget);
-    final Rect viewRect = tester.getRect(mainList);
-
-    final Finder cell = find.byKey(demo.cellKey(0, 0));
-    final Rect originalRect = tester.getRect(cell);
-
-    const double dy = 30;
-    await _doScroll(tester, mainList, Offset(0, dy));
-
-    final VisibilityInfo info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
-    expect(info.size, originalRect.size);
-
-    final expectedVisibleBounds = Rect.fromLTRB(
-        0,
-        dy - (originalRect.top - viewRect.top),
-        originalRect.width,
-        originalRect.height);
-    expect(info.visibleBounds, expectedVisibleBounds);
-    expect(
-        info.visibleFraction, info.visibleBounds.height / originalRect.height);
-  });
-
-  _wrapTest('VisibilityDetector horizontally scrolled partially offscreen',
-      callback: (tester) async {
-    final Finder mainList = find.byKey(demo.mainListKey);
-    final Rect viewRect = tester.getRect(mainList);
-
-    final Finder cell = find.byKey(demo.cellKey(2, 0));
-    expect(cell, findsOneWidget);
-    final Rect originalRect = tester.getRect(cell);
-
-    const double dx = 30;
-    expect(dx < originalRect.width, true);
-
-    await _doScroll(tester, cell, Offset(dx, 0));
-
-    final VisibilityInfo info = _positionToVisibilityInfo[demo.RowColumn(2, 0)];
-    expect(info.size, originalRect.size);
-
-    final expectedVisibleBounds = Rect.fromLTRB(
-        dx - (originalRect.left - viewRect.left),
-        0,
-        originalRect.width,
-        originalRect.height);
-    expect(info.visibleBounds, expectedVisibleBounds);
-    expect(info.visibleFraction, info.visibleBounds.width / originalRect.width);
-  });
-
-  _wrapTest('VisibilityDetector scrolled fully offscreen',
-      callback: (tester) async {
-    final Finder mainList = find.byKey(demo.mainListKey);
-    expect(mainList, findsOneWidget);
-    final Rect viewRect = tester.getRect(mainList);
-
-    final Finder cell = find.byKey(demo.cellKey(0, 0));
-    final Rect originalRect = tester.getRect(cell);
-
-    final double dy = originalRect.bottom - viewRect.top;
-    await _doScroll(tester, mainList, Offset(0, dy));
-
-    final VisibilityInfo info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
-    expect(info.size, originalRect.size);
-    expect(info.visibleBounds.size, Size.zero);
-    expect(info.visibleFraction, 0.0);
-  });
-
-  _wrapTest('VisibilityDetector scrolled almost fully offscreen',
-      callback: (tester) async {
-    final Finder mainList = find.byKey(demo.mainListKey);
-    expect(mainList, findsOneWidget);
-    final Rect viewRect = tester.getRect(mainList);
-
-    final Finder cell = find.byKey(demo.cellKey(0, 0));
-    final Rect originalRect = tester.getRect(cell);
-
-    final double dy = (originalRect.bottom - viewRect.top) - 1;
-    await _doScroll(tester, mainList, Offset(0, dy));
-
-    final VisibilityInfo info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
-    expect(info.size, originalRect.size);
-
-    final expectedVisibleBounds = Rect.fromLTRB(
-        0, originalRect.height - 1, originalRect.width, originalRect.height);
-    expect(info.visibleBounds, expectedVisibleBounds);
-    expect(
-        info.visibleFraction, info.visibleBounds.height / originalRect.height);
-  });
-
-  _wrapTest('VisibilityDetector hidden', callback: (tester) async {
-    final Finder cell = find.byKey(demo.cellKey(0, 0));
-    final Rect originalRect = tester.getRect(cell);
-
-    await _clearWidgetTree(tester, notifyNow: false);
-
-    final VisibilityInfo info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
-    expect(info.size, originalRect.size);
-    expect(info.visibleBounds.size, Size.zero);
-    expect(info.visibleFraction, 0.0);
-  });
+      final Finder cell = find.byKey(demo.cellKey(0, 0));
+      expect(cell, findsOneWidget);
+    },
+  );
 
   _wrapTest(
-    'VisibilityDetector enable/disable',
+    'VisibilityDetector reports initial visibility',
+    callback: (tester) async {
+      final Finder cell = find.byKey(demo.cellKey(0, 0));
+      final Rect expectedRect = tester.getRect(cell);
+
+      final VisibilityInfo info =
+          _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      expect(info.size, expectedRect.size);
+      expect(info.size.width > 0, true);
+      expect(info.size.height > 0, true);
+      expect(info.size.height, demo.kRowHeight - 2 * demo.kRowPadding);
+      expect(info.visibleBounds, Offset.zero & info.size);
+      expect(info.visibleFraction, 1.0);
+    },
+  );
+
+  _wrapTest(
+    'VisibilityDetector reports partial visibility when part of it is '
+        'vertically scrolled offscreen',
+    callback: (tester) async {
+      final Finder mainList = find.byKey(demo.mainListKey);
+      expect(mainList, findsOneWidget);
+      final Rect viewRect = tester.getRect(mainList);
+
+      final Finder cell = find.byKey(demo.cellKey(0, 0));
+      final Rect originalRect = tester.getRect(cell);
+
+      const double dy = 30;
+      await _doScroll(tester, mainList, Offset(0, dy));
+
+      final VisibilityInfo info =
+          _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      expect(info.size, originalRect.size);
+
+      final expectedVisibleBounds = Rect.fromLTRB(
+          0,
+          dy - (originalRect.top - viewRect.top),
+          originalRect.width,
+          originalRect.height);
+      expect(info.visibleBounds, expectedVisibleBounds);
+      expect(info.visibleFraction,
+          info.visibleBounds.height / originalRect.height);
+    },
+  );
+
+  _wrapTest(
+    'VisibilityDetector reports partial visibility when part of it is '
+        'horizontally scrolled offscreen',
+    callback: (tester) async {
+      final Finder mainList = find.byKey(demo.mainListKey);
+      final Rect viewRect = tester.getRect(mainList);
+
+      final Finder cell = find.byKey(demo.cellKey(2, 0));
+      expect(cell, findsOneWidget);
+      final Rect originalRect = tester.getRect(cell);
+
+      const double dx = 30;
+      expect(dx < originalRect.width, true);
+
+      await _doScroll(tester, cell, Offset(dx, 0));
+
+      final VisibilityInfo info =
+          _positionToVisibilityInfo[demo.RowColumn(2, 0)];
+      expect(info.size, originalRect.size);
+
+      final expectedVisibleBounds = Rect.fromLTRB(
+          dx - (originalRect.left - viewRect.left),
+          0,
+          originalRect.width,
+          originalRect.height);
+      expect(info.visibleBounds, expectedVisibleBounds);
+      expect(
+          info.visibleFraction, info.visibleBounds.width / originalRect.width);
+    },
+  );
+
+  _wrapTest(
+    'VisibilityDetector reports being not visible when fully scrolled '
+        'offscreen',
+    callback: (tester) async {
+      final Finder mainList = find.byKey(demo.mainListKey);
+      expect(mainList, findsOneWidget);
+      final Rect viewRect = tester.getRect(mainList);
+
+      final Finder cell = find.byKey(demo.cellKey(0, 0));
+      final Rect originalRect = tester.getRect(cell);
+
+      final double dy = originalRect.bottom - viewRect.top;
+      await _doScroll(tester, mainList, Offset(0, dy));
+
+      final VisibilityInfo info =
+          _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      expect(info.size, originalRect.size);
+      expect(info.visibleBounds.size, Size.zero);
+      expect(info.visibleFraction, 0.0);
+    },
+  );
+
+  _wrapTest(
+    'VisibilityDetector reports partial visibility when almost fully scrolled '
+        'offscreen',
+    callback: (tester) async {
+      final Finder mainList = find.byKey(demo.mainListKey);
+      expect(mainList, findsOneWidget);
+      final Rect viewRect = tester.getRect(mainList);
+
+      final Finder cell = find.byKey(demo.cellKey(0, 0));
+      final Rect originalRect = tester.getRect(cell);
+
+      final double dy = (originalRect.bottom - viewRect.top) - 1;
+      await _doScroll(tester, mainList, Offset(0, dy));
+
+      final VisibilityInfo info =
+          _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      expect(info.size, originalRect.size);
+
+      final expectedVisibleBounds = Rect.fromLTRB(
+          0, originalRect.height - 1, originalRect.width, originalRect.height);
+      expect(info.visibleBounds, expectedVisibleBounds);
+      expect(info.visibleFraction,
+          info.visibleBounds.height / originalRect.height);
+    },
+  );
+
+  _wrapTest(
+    'VisibilityDetector reports being not visible when removed from the widget '
+        'tree',
+    callback: (tester) async {
+      final Finder cell = find.byKey(demo.cellKey(0, 0));
+      final Rect originalRect = tester.getRect(cell);
+
+      await _clearWidgetTree(tester, notifyNow: false);
+
+      final VisibilityInfo info =
+          _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      expect(info.size, originalRect.size);
+      expect(info.visibleBounds.size, Size.zero);
+      expect(info.visibleFraction, 0.0);
+    },
+  );
+
+  testWidgets(
+    'VisibilityDetector callbacks fire immediately when setting '
+        'updateInterval=0',
+    (tester) async {
+      final controller = VisibilityDetectorController.instance;
+      final oldDuration = controller.updateInterval;
+      addTearDown(() {
+        controller.updateInterval = oldDuration;
+      });
+      controller.updateInterval = Duration.zero;
+
+      await tester.pumpWidget(demo.VisibilityDetectorDemo());
+      VisibilityInfo info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      expect(info.visibleFraction, 1.0);
+
+      await tester.pumpWidget(Placeholder());
+
+      info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      expect(info.visibleFraction, 0.0);
+    },
+  );
+
+  _wrapTest(
+    'VisibilityDetector fires callbacks when becoming enabled and not when '
+        'becoming disabled',
     widget: _TestPropertyChange(key: _testPropertyChangeKey),
     callback: (tester) async {
       _TestPropertyChangeState state = _testPropertyChangeKey.currentState;
@@ -185,7 +237,9 @@ Future<void> _initWidgetTree(Widget widget, WidgetTester tester) async {
   await tester.pumpWidget(widget);
 
   final controller = VisibilityDetectorController.instance;
-  await tester.pumpAndSettle(controller.updateInterval);
+  if (controller.updateInterval != Duration.zero) {
+    await tester.pumpAndSettle(controller.updateInterval);
+  }
 }
 
 /// Replaces the widget tree with a [Placeholder] widget.  If `notifyNow` is
@@ -198,7 +252,7 @@ Future<void> _clearWidgetTree(WidgetTester tester,
   final controller = VisibilityDetectorController.instance;
   if (notifyNow) {
     controller.notifyNow();
-  } else {
+  } else if (controller.updateInterval != Duration.zero) {
     await tester.pumpAndSettle(controller.updateInterval);
   }
 }
