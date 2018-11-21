@@ -14,9 +14,18 @@ class VisibilityDetectorController {
 
   /// The minimum amount of time to wait between firing batches of visibility
   /// callbacks.
+  ///
+  /// If set to [Duration.zero], callbacks instead will fire at the end of every
+  /// frame.  This is useful for automated tests.
+  ///
+  /// Changing [updateInterval] will not affect any pending callbacks.  Clients
+  /// should call [notifyNow] explicitly to flush them if desired.
   Duration updateInterval = Duration(milliseconds: 500);
 
   /// Forces firing all pending visibility callbacks immmediately.
+  ///
+  /// This might be desirable just prior to tearing down the widget tree (such
+  /// as when switching views or when exiting the application).
   void notifyNow() {
     VisibilityDetectorLayer.notifyNow();
   }

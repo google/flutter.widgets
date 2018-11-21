@@ -149,13 +149,26 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// Schedules a timer to invoke the visibility callbacks.  The timer is used
   /// to throttle and coalesce updates.
   void _scheduleUpdate() {
+    final bool isFirstUpdate = _updated.isEmpty;
     _updated[key] = this;
 
-    if (_timer == null) {
+    final updateInterval = VisibilityDetectorController.instance.updateInterval;
+    if (updateInterval == Duration.zero) {
+      // Even with [Duration.zero], we still want to defer callbacks to the end
+      // of the frame so that they're processed from a consistent state.  This
+      // also ensures that they don't mutate the widget tree while we're in the
+      // middle of a frame.
+      if (isFirstUpdate) {
+        // We're about to render a frame, so a post-frame callback is guaranteed
+        // to fire and will give us the better immediacy than `scheduleTask<T>`.
+        SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+          _processCallbacks();
+        });
+      }
+    } else if (_timer == null) {
       // We use a normal [Timer] instead of a [RestartableTimer] so that changes
       // to the update duration will be picked up automatically.
-      _timer = Timer(
-          VisibilityDetectorController.instance.updateInterval, _handleTimer);
+      _timer = Timer(updateInterval, _handleTimer);
     } else {
       assert(_timer.isActive);
     }
@@ -169,18 +182,15 @@ class VisibilityDetectorLayer extends ContainerLayer {
     // Ensure that work is done between frames so that calculations are
     // performed from a consistent state.  We use `scheduleTask<T>` here instead
     // of `addPostFrameCallback` or `scheduleFrameCallback` so that work will
-    // be done without unnecessarily scheduling a new frame.
-    SchedulerBinding.instance.scheduleTask(_processCallbacks, Priority.touch);
+    // be done even if a new frame isn't scheduled and without unnecessarily
+    // scheduling a new frame.
+    SchedulerBinding.instance
+        .scheduleTask<void>(_processCallbacks, Priority.touch);
   }
 
-  /// See [VisibilityDetector.notifyNow].
+  /// See [VisibilityDetectorController.notifyNow].
   static void notifyNow() {
-    if (_timer == null) {
-      assert(_updated.isEmpty);
-      return;
-    }
-
-    _timer.cancel();
+    _timer?.cancel();
     _timer = null;
     _processCallbacks();
   }
@@ -190,6 +200,11 @@ class VisibilityDetectorLayer extends ContainerLayer {
   static void forget(Key key) {
     _updated.remove(key);
     _lastVisibility.remove(key);
+
+    if (_updated.isEmpty) {
+      _timer?.cancel();
+      _timer = null;
+    }
   }
 
   /// Executes visibility callbacks for all updated [VisibilityDetectorLayer]
@@ -268,9 +283,9 @@ class VisibilityDetectorLayer extends ContainerLayer {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
 
-    properties.add(DiagnosticsProperty<Key>('key', key));
     properties
-        .add(DiagnosticsProperty<Rect>('widgetRect', _computeWidgetBounds()));
-    properties.add(DiagnosticsProperty<Rect>('clipRect', _computeClipRect()));
+      ..add(DiagnosticsProperty<Key>('key', key))
+      ..add(DiagnosticsProperty<Rect>('widgetRect', _computeWidgetBounds()))
+      ..add(DiagnosticsProperty<Rect>('clipRect', _computeClipRect()));
   }
 }
