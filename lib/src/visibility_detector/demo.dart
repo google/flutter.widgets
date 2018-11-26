@@ -12,20 +12,27 @@ import 'visibility_detector.dart';
 
 const String title = 'VisibilityDetector Demo';
 
-/// The height of each row of the pseudo-table of [VisibilityDetector] widgets.
-const double kRowHeight = 75;
+/// The width of each cell of our pseudo-table of [VisibilityDetector] widgets.
+const double cellWidth = 125;
+
+//// The height of each cell of our pseudo-table.
+const double cellHeight = _rowHeight - 2 * _rowPadding;
+
+/// The height of each row of the pseudo-table.  This includes [kRowPadding] on
+/// top and bottom.
+const double _rowHeight = 75;
 
 /// The external padding around each row of the pseudo-table.
-const double kRowPadding = 5;
+const double _rowPadding = 5;
 
 /// The internal padding for each cell of the pseudo-table.
-const double kCellPadding = 10;
+const double _cellPadding = 10;
 
 /// The external padding around the widgets in the visibility report section.
-const double kReportPadding = 5;
+const double _reportPadding = 5;
 
 /// The height of the visibility report.
-const double kReportHeight = 200;
+const double _reportHeight = 200;
 
 /// The [Key] to the main [ListView] widget.
 final mainListKey = Key('MainList');
@@ -89,7 +96,7 @@ class VisibilityDetectorDemoPageState
         : ListView.builder(
             key: mainListKey,
             scrollDirection: Axis.vertical,
-            itemExtent: kRowHeight,
+            itemExtent: _rowHeight,
             itemBuilder: (BuildContext context, int rowIndex) {
               return DemoPageRow(rowIndex: rowIndex);
             },
@@ -107,8 +114,8 @@ class VisibilityDetectorDemoPageState
           _tableShown ? Expanded(child: table) : Spacer(),
           VisibilityReport(title: 'Visibility'),
         ],
-      ), // Column
-    ); // Scaffold
+      ),
+    );
   }
 }
 
@@ -122,11 +129,11 @@ class DemoPageRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.all(kRowPadding),
+      padding: const EdgeInsets.all(_rowPadding),
       itemBuilder: (BuildContext context, int columnIndex) {
         return DemoPageCell(rowIndex: rowIndex, columnIndex: columnIndex);
-      }, // itemBuilder
-    ); // ListView.builder
+      },
+    );
   }
 }
 
@@ -161,12 +168,16 @@ class DemoPageCell extends StatelessWidget {
       key: cellKey(rowIndex, columnIndex),
       onVisibilityChanged: _handleVisibilityChanged,
       child: Container(
+        width: cellWidth,
         decoration: BoxDecoration(color: _backgroundColor),
-        padding: const EdgeInsets.all(kCellPadding),
+        padding: const EdgeInsets.all(_cellPadding),
         alignment: Alignment.center,
-        child: Text(_cellName, style: Theme.of(context).textTheme.display1),
-      ), // Container
-    ); // VisibilityDetector
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(_cellName, style: Theme.of(context).textTheme.display1),
+        ),
+      ),
+    );
   }
 }
 
@@ -184,17 +195,17 @@ class VisibilityReport extends StatelessWidget {
         Theme.of(context).textTheme.title.copyWith(color: Colors.white);
 
     final heading = Container(
-      padding: const EdgeInsets.all(kReportPadding),
+      padding: const EdgeInsets.all(_reportPadding),
       alignment: Alignment.centerLeft,
       decoration: const BoxDecoration(color: Colors.black),
       child: Text(title, style: headingTextStyle),
     );
 
     final grid = Container(
-      padding: const EdgeInsets.all(kReportPadding),
+      padding: const EdgeInsets.all(_reportPadding),
       decoration: BoxDecoration(color: Colors.grey[300]),
       child: const SizedBox(
-        height: kReportHeight,
+        height: _reportHeight,
         child: const VisibilityReportGrid(),
       ),
     );
