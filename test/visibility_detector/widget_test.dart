@@ -43,10 +43,10 @@ void main() {
 
       final VisibilityInfo info =
           _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      expect(info, isNotNull);
       expect(info.size, expectedRect.size);
-      expect(info.size.width > 0, true);
-      expect(info.size.height > 0, true);
-      expect(info.size.height, demo.kRowHeight - 2 * demo.kRowPadding);
+      expect(info.size.width, demo.cellWidth);
+      expect(info.size.height, demo.cellHeight);
       expect(info.visibleBounds, Offset.zero & info.size);
       expect(info.visibleFraction, 1.0);
     },
@@ -68,6 +68,7 @@ void main() {
 
       final VisibilityInfo info =
           _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      expect(info, isNotNull);
       expect(info.size, originalRect.size);
 
       final expectedVisibleBounds = Rect.fromLTRB(
@@ -99,6 +100,7 @@ void main() {
 
       final VisibilityInfo info =
           _positionToVisibilityInfo[demo.RowColumn(2, 0)];
+      expect(info, isNotNull);
       expect(info.size, originalRect.size);
 
       final expectedVisibleBounds = Rect.fromLTRB(
@@ -128,6 +130,7 @@ void main() {
 
       final VisibilityInfo info =
           _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      expect(info, isNotNull);
       expect(info.size, originalRect.size);
       expect(info.visibleBounds.size, Size.zero);
       expect(info.visibleFraction, 0.0);
@@ -150,6 +153,7 @@ void main() {
 
       final VisibilityInfo info =
           _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      expect(info, isNotNull);
       expect(info.size, originalRect.size);
 
       final expectedVisibleBounds = Rect.fromLTRB(
@@ -171,6 +175,7 @@ void main() {
 
       final VisibilityInfo info =
           _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      expect(info, isNotNull);
       expect(info.size, originalRect.size);
       expect(info.visibleBounds.size, Size.zero);
       expect(info.visibleFraction, 0.0);
@@ -189,13 +194,10 @@ void main() {
       controller.updateInterval = Duration.zero;
 
       await tester.pumpWidget(demo.VisibilityDetectorDemo());
-      VisibilityInfo info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
-      expect(info.visibleFraction, 1.0);
+      _expectVisibility(demo.RowColumn(0, 0), 1, epsilon: 0);
 
       await tester.pumpWidget(Placeholder());
-
-      info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
-      expect(info.visibleFraction, 0.0);
+      _expectVisibility(demo.RowColumn(0, 0), 0, epsilon: 0);
     },
   );
 
@@ -226,6 +228,37 @@ void main() {
       });
       expect(state.lastVisibleFraction, 1.0);
       expect(state.callbackCount, 2);
+    },
+  );
+
+  _wrapTest(
+    'VisibilityDetector reports visibility changes after a simulated screen '
+        'rotation',
+    callback: (tester) async {
+      final Size oldViewSize = tester.binding.renderView?.size;
+      expect(oldViewSize, isNotNull);
+
+      final newViewSize = Size(oldViewSize.height, oldViewSize.width);
+
+      _expectVisibility(demo.RowColumn(0, 6), 0.360);
+
+      // This item was never visible, so we have no data for it.
+      expect(_positionToVisibilityInfo[demo.RowColumn(5, 0)], isNull);
+
+      // Simulate a rotation.
+      await _setViewSize(tester, newViewSize);
+      await tester.pump(VisibilityDetectorController.instance.updateInterval);
+
+      _expectVisibility(demo.RowColumn(0, 6), 0, epsilon: 0);
+      _expectVisibility(demo.RowColumn(5, 0), 1, epsilon: 0);
+
+      // Simulate a rotation back to the original size.
+      await _setViewSize(tester, oldViewSize);
+      await tester.pump(VisibilityDetectorController.instance.updateInterval);
+
+      // Re-verify the original visibilities.
+      _expectVisibility(demo.RowColumn(0, 6), 0.360);
+      _expectVisibility(demo.RowColumn(5, 0), 0, epsilon: 0);
     },
   );
 }
@@ -310,6 +343,31 @@ Future<void> _doStateChange(WidgetTester tester, VoidCallback callback) async {
 
   // Wait for callbacks to fire.
   await tester.pump(VisibilityDetectorController.instance.updateInterval);
+}
+
+/// Sets the view size.  Used to simulate a screen rotation.
+Future<void> _setViewSize(WidgetTester tester, Size newSize) async {
+  // The typical way to simulate a screen rotation is to wrap the widget tree
+  // in a [SizedBox] and change its dimensions.  However, empirical testing
+  // indicates that that approach does extra work that an actual screen rotation
+  // doesn't do.  For example, an actual screen rotation might trigger
+  // [VisibilityDetectorLayer.attach] without triggering
+  // [VisibilityDetectorLayer.addToScene], whereas the [SizedBox] approach
+  // triggers both.
+  await tester.binding.setSurfaceSize(newSize);
+  tester.binding.scheduleFrame();
+
+  // Wait for the new frame.
+  await tester.pump();
+}
+
+/// Verifies that the specified cell of the demo app reported the expected
+/// visibility.
+void _expectVisibility(demo.RowColumn rc, double expectedFraction,
+    {double epsilon = 0.001}) {
+  final VisibilityInfo info = _positionToVisibilityInfo[rc];
+  expect(info, isNotNull);
+  expect(info.visibleFraction, closeTo(expectedFraction, epsilon));
 }
 
 /// A widget used to test that disabling a [VisibilityDetector] does not trigger
