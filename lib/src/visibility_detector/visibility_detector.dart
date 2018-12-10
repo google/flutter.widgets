@@ -4,7 +4,5 @@
 // license that can be found in the LICENSE file or at
 // https://developers.google.com/open-source/licenses/bsd
 
-export 'src/html_widget/html_widget.dart';
-export 'src/tagged_text/tagged_text.dart';
-export 'src/linked_scroll_controller/linked_scroll_controller.dart';
-export 'src/visibility_detector/visibility_detector.dart';
+export 'src/visibility_detector.dart';
+export 'src/visibility_detector_controller.dart';
