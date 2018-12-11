@@ -18,7 +18,7 @@ const double cellWidth = 125;
 //// The height of each cell of our pseudo-table.
 const double cellHeight = _rowHeight - 2 * _rowPadding;
 
-/// The height of each row of the pseudo-table.  This includes [kRowPadding] on
+/// The height of each row of the pseudo-table.  This includes [_rowPadding] on
 /// top and bottom.
 const double _rowHeight = 75;
 
@@ -35,7 +35,7 @@ const double _reportPadding = 5;
 const double _reportHeight = 200;
 
 /// The [Key] to the main [ListView] widget.
-final mainListKey = Key('MainList');
+const mainListKey = Key('MainList');
 
 /// Returns the [Key] to the [VisibilityDetector] widget in each cell of the
 /// pseudo-table.
@@ -48,7 +48,7 @@ final visibilityListeners =
     <void Function(RowColumn rc, VisibilityInfo info)>[];
 
 void main() {
-  return runApp(VisibilityDetectorDemo());
+  return runApp(const VisibilityDetectorDemo());
 }
 
 /// The root widget for the demo app.
@@ -111,8 +111,8 @@ class VisibilityDetectorDemoPageState
       ),
       body: Column(
         children: <Widget>[
-          _tableShown ? Expanded(child: table) : Spacer(),
-          VisibilityReport(title: 'Visibility'),
+          _tableShown ? Expanded(child: table) : const Spacer(),
+          const VisibilityReport(title: 'Visibility'),
         ],
       ),
     );
@@ -121,7 +121,7 @@ class VisibilityDetectorDemoPageState
 
 /// An individual row for the pseudo-table of [VisibilityDetector] widgets.
 class DemoPageRow extends StatelessWidget {
-  DemoPageRow({Key key, this.rowIndex}) : super(key: key);
+  const DemoPageRow({Key key, this.rowIndex}) : super(key: key);
 
   final int rowIndex;
 
@@ -206,7 +206,7 @@ class VisibilityReport extends StatelessWidget {
       decoration: BoxDecoration(color: Colors.grey[300]),
       child: const SizedBox(
         height: _reportHeight,
-        child: const VisibilityReportGrid(),
+        child: VisibilityReportGrid(),
       ),
     );
 
@@ -233,7 +233,7 @@ class VisibilityReportGridState extends State<VisibilityReportGrid> {
   /// See [State.initState].  Adds a callback to [visibilityListeners] to update
   /// the visibility report with the widget's visibility.
   @override
-  initState() {
+  void initState() {
     super.initState();
 
     visibilityListeners.add(_update);
@@ -241,7 +241,7 @@ class VisibilityReportGridState extends State<VisibilityReportGrid> {
   }
 
   @override
-  dispose() {
+  void dispose() {
     visibilityListeners.remove(_update);
 
     super.dispose();
@@ -283,9 +283,7 @@ class VisibilityReportGridState extends State<VisibilityReportGrid> {
 
   @override
   Widget build(BuildContext context) {
-    if (_reportItems == null) {
-      _reportItems = _generateReportItems();
-    }
+    _reportItems ??= _generateReportItems();
 
     return GridView.count(
       crossAxisCount: 3,
@@ -303,6 +301,7 @@ class RowColumn extends Comparable<RowColumn> {
   final int row;
   final int column;
 
+  @override
   bool operator ==(dynamic other) {
     if (other is RowColumn) {
       return row == other.row && column == other.column;
@@ -310,6 +309,7 @@ class RowColumn extends Comparable<RowColumn> {
     return false;
   }
 
+  @override
   int get hashCode => hashValues(row, column);
 
   /// See [Comparable.compareTo].  Sorts [RowColumn] objects in row-major order.
@@ -340,7 +340,7 @@ class RowColumn extends Comparable<RowColumn> {
 /// [Iterable] in `iterables` in sequence.
 ///
 /// For example, `collate([[1, 4, 7], [2, 5, 8, 9], [3, 6]])` would return a
-/// a sequence [1, 2, 3, 4, 5, 6, 7, 8, 9].
+/// sequence `1, 2, 3, 4, 5, 6, 7, 8, 9`.
 Iterable<T> collate<T>(Iterable<Iterable<T>> iterables) sync* {
   final iterators = iterables.map((e) => e.iterator).toList(growable: false);
   while (true) {
