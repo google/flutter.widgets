@@ -25,7 +25,7 @@ String greeting(String name) => Intl.message(
 
 new TaggedText(
   content: greeting('Bob'),
-  textSpanBuilderByTagName: {
+  tagToTextSpanBuilder: {
     'name': (text) => new TextSpan(
         text: text,
         const TextStyle(fontWeight: FontWeight.bold),
@@ -48,7 +48,7 @@ For example:
 ```dart
 new TaggedText(
   content: '<campaign-name>Search campaign 1</campaign-name> has 400 clicks.',
-  textSpanBuilderByTagName: {
+  tagToTextSpanBuilder: {
     'campaign-name': (text) => new TextSpan(
         text: text,
         style: const TextStyle(decoration: TextDecoration.underline),
