@@ -201,6 +201,22 @@ void main() {
     },
   );
 
+  testWidgets(
+    'Pending callback is cancelled, when forget is called.',
+    (tester) async {
+      final key = UniqueKey();
+      final controller = VisibilityDetectorController.instance;
+
+      await tester.pumpWidget(VisibilityDetector(
+        key: key,
+        child: Placeholder(),
+        onVisibilityChanged: (_) {},
+      ));
+      await tester.pumpWidget(Placeholder());
+      controller.forget(key);
+    },
+  );
+
   _wrapTest(
     'VisibilityDetector fires callbacks when becoming enabled and not when '
         'becoming disabled',

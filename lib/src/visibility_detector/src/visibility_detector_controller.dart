@@ -4,6 +4,8 @@
 // license that can be found in the LICENSE file or at
 // https://developers.google.com/open-source/licenses/bsd
 
+import 'package:flutter/foundation.dart';
+
 import 'visibility_detector_layer.dart';
 
 /// A [VisibilityDetectorController] is a singleton object that can perform
@@ -28,5 +30,16 @@ class VisibilityDetectorController {
   /// as when switching views or when exiting the application).
   void notifyNow() {
     VisibilityDetectorLayer.notifyNow();
+  }
+
+  /// Forgets any pending visibility callbacks for the `VisibilityDetector` with
+  /// the given [key].
+  ///
+  /// Note if widget gets attached/detached the callback will be rescheduled.
+  ///
+  /// This method can be used to cancel timers, after the detector has been
+  /// detached to avoid pending timers.
+  void forget(Key key) {
+    VisibilityDetectorLayer.forget(key);
   }
 }
