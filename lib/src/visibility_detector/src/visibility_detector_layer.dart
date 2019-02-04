@@ -30,7 +30,7 @@ Iterable<Layer> _getLayerChain(Layer start) {
 Matrix4 _accumulateTransforms(Iterable<Layer> layerChain) {
   assert(layerChain != null);
 
-  Matrix4 transform = Matrix4.identity();
+  final Matrix4 transform = Matrix4.identity();
   if (layerChain.isNotEmpty) {
     Layer parent = layerChain.first;
     for (Layer child in layerChain.skip(1)) {

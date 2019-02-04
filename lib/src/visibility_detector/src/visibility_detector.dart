@@ -79,6 +79,9 @@ class VisibilityInfo {
     assert(key != null);
   }
 
+  /// Constructs a [VisibilityInfo] from widget bounds and a corresponding
+  /// clipping rectangle.  The two [Rect]s are expected to be in the same
+  /// coordinate system.
   factory VisibilityInfo.fromRects({
     @required Key key,
     @required Rect widgetBounds,
@@ -106,7 +109,7 @@ class VisibilityInfo {
   /// Never null.
   final Rect visibleBounds;
 
-  /// A fraction in the range [0, 1] that represents what proportion of the
+  /// A fraction in the range \[0, 1\] that represents what proportion of the
   /// widget is visible (assuming rectangular bounding boxes).  0 means not
   /// visible; 1 means fully visible.
   double get visibleFraction {
@@ -160,7 +163,7 @@ double _area(Size size) {
 
 /// Returns whether two floating-point values are approximately equal.
 bool _floatNear(double f1, double f2) {
-  double absDiff = (f1 - f2).abs();
+  final double absDiff = (f1 - f2).abs();
   return absDiff <= _kDefaultTolerance ||
       (absDiff / max(f1.abs(), f2.abs()) <= _kDefaultTolerance);
 }

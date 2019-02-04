@@ -64,7 +64,7 @@ void main() {
       final Rect originalRect = tester.getRect(cell);
 
       const double dy = 30;
-      await _doScroll(tester, mainList, Offset(0, dy));
+      await _doScroll(tester, mainList, const Offset(0, dy));
 
       final VisibilityInfo info =
           _positionToVisibilityInfo[demo.RowColumn(0, 0)];
@@ -96,7 +96,7 @@ void main() {
       const double dx = 30;
       expect(dx < originalRect.width, true);
 
-      await _doScroll(tester, cell, Offset(dx, 0));
+      await _doScroll(tester, cell, const Offset(dx, 0));
 
       final VisibilityInfo info =
           _positionToVisibilityInfo[demo.RowColumn(2, 0)];
@@ -193,10 +193,10 @@ void main() {
       });
       controller.updateInterval = Duration.zero;
 
-      await tester.pumpWidget(demo.VisibilityDetectorDemo());
+      await tester.pumpWidget(const demo.VisibilityDetectorDemo());
       _expectVisibility(demo.RowColumn(0, 0), 1, epsilon: 0);
 
-      await tester.pumpWidget(Placeholder());
+      await tester.pumpWidget(const Placeholder());
       _expectVisibility(demo.RowColumn(0, 0), 0, epsilon: 0);
     },
   );
@@ -206,7 +206,8 @@ void main() {
         'becoming disabled',
     widget: _TestPropertyChange(key: _testPropertyChangeKey),
     callback: (tester) async {
-      _TestPropertyChangeState state = _testPropertyChangeKey.currentState;
+      final _TestPropertyChangeState state =
+          _testPropertyChangeKey.currentState;
 
       // Validate the initial state.  The visibility callback should have fired
       // exactly once.
@@ -280,7 +281,7 @@ Future<void> _initWidgetTree(Widget widget, WidgetTester tester) async {
 /// sufficiently long for them to fire as normal.
 Future<void> _clearWidgetTree(WidgetTester tester,
     {bool notifyNow = true}) async {
-  await tester.pumpWidget(Placeholder());
+  await tester.pumpWidget(const Placeholder());
 
   final controller = VisibilityDetectorController.instance;
   if (notifyNow) {
@@ -302,7 +303,8 @@ void _wrapTest(
     // [WidgetTester].  Additionally, [tearDown] is executed *after* the
     // widget tree is destroyed, which is too late for our purposes. (See
     // details below.)
-    await _initWidgetTree(widget ?? demo.VisibilityDetectorDemo(), tester);
+    await _initWidgetTree(
+        widget ?? const demo.VisibilityDetectorDemo(), tester);
     await callback(tester);
 
     /// When the test destroys the widget tree with [VisibilityDetector] widgets
