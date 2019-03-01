@@ -64,7 +64,7 @@ void main() {
       final Rect originalRect = tester.getRect(cell);
 
       const double dy = 30;
-      await _doScroll(tester, mainList, const Offset(0, dy));
+      await _doScroll(tester, mainList, const Offset(0, dy + kDragSlopDefault));
 
       final VisibilityInfo info =
           _positionToVisibilityInfo[demo.RowColumn(0, 0)];
@@ -96,7 +96,7 @@ void main() {
       const double dx = 30;
       expect(dx < originalRect.width, true);
 
-      await _doScroll(tester, cell, const Offset(dx, 0));
+      await _doScroll(tester, cell, const Offset(dx + kDragSlopDefault, 0));
 
       final VisibilityInfo info =
           _positionToVisibilityInfo[demo.RowColumn(2, 0)];
@@ -126,7 +126,7 @@ void main() {
       final Rect originalRect = tester.getRect(cell);
 
       final double dy = originalRect.bottom - viewRect.top;
-      await _doScroll(tester, mainList, Offset(0, dy));
+      await _doScroll(tester, mainList, Offset(0, dy + kDragSlopDefault));
 
       final VisibilityInfo info =
           _positionToVisibilityInfo[demo.RowColumn(0, 0)];
@@ -149,7 +149,7 @@ void main() {
       final Rect originalRect = tester.getRect(cell);
 
       final double dy = (originalRect.bottom - viewRect.top) - 1;
-      await _doScroll(tester, mainList, Offset(0, dy));
+      await _doScroll(tester, mainList, Offset(0, dy + kDragSlopDefault));
 
       final VisibilityInfo info =
           _positionToVisibilityInfo[demo.RowColumn(0, 0)];
