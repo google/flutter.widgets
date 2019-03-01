@@ -22,7 +22,7 @@ class VisibilityDetectorController {
   ///
   /// Changing [updateInterval] will not affect any pending callbacks.  Clients
   /// should call [notifyNow] explicitly to flush them if desired.
-  Duration updateInterval = Duration(milliseconds: 500);
+  Duration updateInterval = const Duration(milliseconds: 500);
 
   /// Forces firing all pending visibility callbacks immmediately.
   ///
