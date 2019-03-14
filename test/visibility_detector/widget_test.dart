@@ -21,9 +21,7 @@ void main() {
     _positionToVisibilityInfo[rc] = info;
   });
 
-  tearDown(() {
-    _positionToVisibilityInfo.clear();
-  });
+  tearDown(_positionToVisibilityInfo.clear);
 
   _wrapTest(
     'VisibilityDetector properly builds',
@@ -202,17 +200,17 @@ void main() {
   );
 
   testWidgets(
-    'Pending callback is cancelled, when forget is called.',
+    'Pending callback is cancelled when forget is called',
     (tester) async {
       final key = UniqueKey();
       final controller = VisibilityDetectorController.instance;
 
       await tester.pumpWidget(VisibilityDetector(
         key: key,
-        child: Placeholder(),
+        child: const Placeholder(),
         onVisibilityChanged: (_) {},
       ));
-      await tester.pumpWidget(Placeholder());
+      await tester.pumpWidget(const Placeholder());
       controller.forget(key);
     },
   );
@@ -336,13 +334,15 @@ void _wrapTest(
   });
 }
 
-/// Scrolls the specified widget in the specified direction and waits
-/// sufficiently long for the [VisibilityDetector] callbacks to fire.
-///
-/// Note that the scroll direction is the opposite of the direction to drag.
+/// Scrolls the specified widget by the specified offset and waits sufficiently
+/// long for the [VisibilityDetector] callbacks to fire.
 Future<void> _doScroll(
     WidgetTester tester, Finder finder, Offset scrollOffset) async {
-  await tester.drag(finder, -scrollOffset);
+  // The scroll direction is the opposite of the direction to drag.  We also
+  // must drag by [kDragSlopDefault] first to start the drag.
+  final dragOffset = -Offset.fromDirection(
+      scrollOffset.direction, scrollOffset.distance + kDragSlopDefault);
+  await tester.drag(finder, dragOffset);
 
   // Wait for the drag to complete.
   await tester.pumpAndSettle();
