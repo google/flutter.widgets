@@ -24,6 +24,6 @@ var source = '''
   </div>
 ''';
 
-var widget = new HtmlView(content: source, onTapLink: _callSomeFunction);
+var widget = HtmlView(content: source, onTapLink: _callSomeFunction);
 
 ```
