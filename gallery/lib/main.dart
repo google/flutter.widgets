@@ -8,5 +8,5 @@ import 'package:flutter/material.dart';
 import 'package:gallery/gallery.dart';
 
 void main() {
-  runApp(new Gallery());
+  runApp(Gallery());
 }

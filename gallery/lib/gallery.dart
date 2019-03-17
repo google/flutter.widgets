@@ -20,13 +20,13 @@ import 'package:flutter_widgets/src/visibility_detector/demo.dart'
 class Gallery extends StatefulWidget {
   final List<_GalleryPage> pages = <_GalleryPage>[]
     ..addAll(_GalleryPage.fromMap(html_latency.nameToTestData))
-    ..add(new _GalleryPage(
+    ..add(_GalleryPage(
       title: 'Tagged Text',
-      pageBuilder: (context) => new TaggedTextPage(),
+      pageBuilder: (context) => TaggedTextPage(),
     ))
-    ..add(new _GalleryPage(
+    ..add(_GalleryPage(
       title: 'Linked Scrollables',
-      pageBuilder: (context) => new LinkedScrollablesPage(),
+      pageBuilder: (context) => LinkedScrollablesPage(),
     ))
     ..add(_GalleryPage(
       title: 'Visibility Detector',
@@ -35,30 +35,30 @@ class Gallery extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return new _GalleryState();
+    return _GalleryState();
   }
 }
 
 class _GalleryState extends State<Gallery> {
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
+    return MaterialApp(
       title: 'Flutter Widgets by Google',
-      home: new Scaffold(
-        appBar: new AppBar(title: new Text('Flutter Widgets by Google')),
-        body: new Builder(builder: (context) => _buildWidgetList(context)),
+      home: Scaffold(
+        appBar: AppBar(title: Text('Flutter Widgets by Google')),
+        body: Builder(builder: (context) => _buildWidgetList(context)),
       ),
     );
   }
 
   Widget _buildWidgetList(BuildContext context) {
-    return new ListView.builder(
+    return ListView.builder(
       itemBuilder: (context, i) {
-        return new ListTile(
-          title: new Text(widget.pages[i].title),
+        return ListTile(
+          title: Text(widget.pages[i].title),
           onTap: () {
-            Navigator.of(context).push(new MaterialPageRoute<Null>(
-                builder: widget.pages[i].pageBuilder));
+            Navigator.of(context).push(
+                MaterialPageRoute<Null>(builder: widget.pages[i].pageBuilder));
           },
         );
       },
@@ -88,7 +88,7 @@ class _GalleryPage {
 
   static Iterable<_GalleryPage> fromMap(
       Map<String, WidgetBuilder> nameToTestData) {
-    return nameToTestData.keys.map((key) =>
-        new _GalleryPage(title: key, pageBuilder: nameToTestData[key]));
+    return nameToTestData.keys.map(
+        (key) => _GalleryPage(title: key, pageBuilder: nameToTestData[key]));
   }
 }
