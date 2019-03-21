@@ -9,15 +9,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter_widgets/src/tagged_text/tagged_text.dart';
 
-const TextStyle greetingStyle = const TextStyle(fontWeight: FontWeight.w100);
-const TextStyle nameStyle = const TextStyle(fontWeight: FontWeight.w200);
-const TextStyle defaultStyle = const TextStyle(fontWeight: FontWeight.w500);
+const TextStyle greetingStyle = TextStyle(fontWeight: FontWeight.w100);
+const TextStyle nameStyle = TextStyle(fontWeight: FontWeight.w200);
+const TextStyle defaultStyle = TextStyle(fontWeight: FontWeight.w500);
 
 void main() {
   group('$TaggedText', () {
     testWidgets('without tags', (tester) async {
       final content = 'Hello, Bob';
-      final widget = new TaggedText(
+      final widget = TaggedText(
         content: content,
         tagToTextSpanBuilder: {},
       );
@@ -26,15 +26,15 @@ void main() {
 
       final richText = findRichTextWidget(tester);
       expect(richText.text.text, isNull);
-      expect(richText.text.children, [new TextSpan(text: content)]);
+      expect(richText.text.children, [TextSpan(text: content)]);
     });
 
     testWidgets('with tags', (tester) async {
-      final widget = new TaggedText(
+      final widget = TaggedText(
         content: '<greeting>Hello</greeting>, my name is <name>George</name>!',
         tagToTextSpanBuilder: {
-          'greeting': (text) => new TextSpan(text: text, style: greetingStyle),
-          'name': (text) => new TextSpan(text: text, style: nameStyle),
+          'greeting': (text) => TextSpan(text: text, style: greetingStyle),
+          'name': (text) => TextSpan(text: text, style: nameStyle),
         },
       );
 
@@ -43,19 +43,19 @@ void main() {
       final richText = findRichTextWidget(tester);
       expect(richText.text.text, isNull);
       expect(richText.text.children, [
-        new TextSpan(text: 'Hello', style: greetingStyle),
-        new TextSpan(text: ', my name is '),
-        new TextSpan(text: 'George', style: nameStyle),
-        new TextSpan(text: '!'),
+        TextSpan(text: 'Hello', style: greetingStyle),
+        TextSpan(text: ', my name is '),
+        TextSpan(text: 'George', style: nameStyle),
+        TextSpan(text: '!'),
       ]);
     });
 
     testWidgets('content tags are case insensitive', (tester) async {
-      final widget = new TaggedText(
+      final widget = TaggedText(
         content: '<GREEting>Hello</GREEting>, my name is <nAme>George</nAme>!',
         tagToTextSpanBuilder: {
-          'greeting': (text) => new TextSpan(text: text, style: greetingStyle),
-          'name': (text) => new TextSpan(text: text, style: nameStyle),
+          'greeting': (text) => TextSpan(text: text, style: greetingStyle),
+          'name': (text) => TextSpan(text: text, style: nameStyle),
         },
       );
 
@@ -64,19 +64,19 @@ void main() {
       final richText = findRichTextWidget(tester);
       expect(richText.text.text, isNull);
       expect(richText.text.children, [
-        new TextSpan(text: 'Hello', style: greetingStyle),
-        new TextSpan(text: ', my name is '),
-        new TextSpan(text: 'George', style: nameStyle),
-        new TextSpan(text: '!'),
+        TextSpan(text: 'Hello', style: greetingStyle),
+        TextSpan(text: ', my name is '),
+        TextSpan(text: 'George', style: nameStyle),
+        TextSpan(text: '!'),
       ]);
     });
 
     testWidgets('asserts tags are not nested', (tester) async {
-      final widget = new TaggedText(
+      final widget = TaggedText(
         content: '<greeting>Hello, my name is <name>George</name></greeting>!',
         tagToTextSpanBuilder: {
-          'greeting': (text) => new TextSpan(text: text, style: greetingStyle),
-          'name': (text) => new TextSpan(text: text, style: nameStyle),
+          'greeting': (text) => TextSpan(text: text, style: greetingStyle),
+          'name': (text) => TextSpan(text: text, style: nameStyle),
         },
       );
 
@@ -86,11 +86,11 @@ void main() {
     });
 
     testWidgets('asserts all tags in content are found', (tester) async {
-      final widget = new TaggedText(
+      final widget = TaggedText(
         content:
             '<salutation>Hello</salutation>, my name is <name>George</name>!',
         tagToTextSpanBuilder: {
-          'name': (text) => new TextSpan(text: text, style: nameStyle),
+          'name': (text) => TextSpan(text: text, style: nameStyle),
         },
       );
 
@@ -100,17 +100,17 @@ void main() {
     });
 
     testWidgets('rebuilds when content changes', (tester) async {
-      final widget = new TaggedText(
+      final widget = TaggedText(
         content: 'Hello, Bob',
         tagToTextSpanBuilder: {
-          'name': (text) => new TextSpan(text: text, style: nameStyle),
+          'name': (text) => TextSpan(text: text, style: nameStyle),
         },
       );
       await tester.pumpWidget(wrap(widget));
-      final newWidget = new TaggedText(
+      final newWidget = TaggedText(
         content: 'Hello, <name>Bob</name>',
         tagToTextSpanBuilder: {
-          'name': (text) => new TextSpan(text: text, style: nameStyle),
+          'name': (text) => TextSpan(text: text, style: nameStyle),
         },
       );
 
@@ -119,24 +119,24 @@ void main() {
       final richText = findRichTextWidget(tester);
       expect(richText.text.text, isNull);
       expect(richText.text.children, [
-        new TextSpan(text: 'Hello, '),
-        new TextSpan(text: 'Bob', style: nameStyle),
+        TextSpan(text: 'Hello, '),
+        TextSpan(text: 'Bob', style: nameStyle),
       ]);
     });
 
     testWidgets('rebuilds when tagToTextSpanBuilder changes', (tester) async {
-      final widget = new TaggedText(
+      final widget = TaggedText(
         content: 'Hello, <name>Bob</name>',
         tagToTextSpanBuilder: {
-          'name': (text) => new TextSpan(text: text, style: nameStyle),
+          'name': (text) => TextSpan(text: text, style: nameStyle),
         },
       );
       await tester.pumpWidget(wrap(widget));
       final updatedStyle = const TextStyle(decoration: TextDecoration.overline);
-      final newWidget = new TaggedText(
+      final newWidget = TaggedText(
         content: 'Hello, <name>Bob</name>',
         tagToTextSpanBuilder: {
-          'name': (text) => new TextSpan(text: text, style: updatedStyle),
+          'name': (text) => TextSpan(text: text, style: updatedStyle),
         },
       );
 
@@ -145,16 +145,16 @@ void main() {
       final richText = findRichTextWidget(tester);
       expect(richText.text.text, isNull);
       expect(richText.text.children, [
-        new TextSpan(text: 'Hello, '),
-        new TextSpan(text: 'Bob', style: updatedStyle),
+        TextSpan(text: 'Hello, '),
+        TextSpan(text: 'Bob', style: updatedStyle),
       ]);
     });
 
     testWidgets('does not rebuild when tagToTextSpanBuilder stays the same',
         (tester) async {
       // Set up.
-      final mockTextSpanBuilder = new MockTextSpanBuilder();
-      final nameSpan = new TextSpan(text: 'Bob', style: nameStyle);
+      final mockTextSpanBuilder = MockTextSpanBuilder();
+      final nameSpan = TextSpan(text: 'Bob', style: nameStyle);
       when(mockTextSpanBuilder.call(any)).thenReturn(nameSpan);
 
       final content = 'Hello, <name>Bob</name>';
@@ -163,7 +163,7 @@ void main() {
         // supports mocking and tearoffs.
         'name': (x) => mockTextSpanBuilder(x),
       };
-      final widget = new TaggedText(
+      final widget = TaggedText(
         content: content,
         tagToTextSpanBuilder: tagToTextSpanBuilder,
       );
@@ -171,9 +171,9 @@ void main() {
 
       // Clone map to make sure that equality is checked by the contents of the
       // map.
-      final newWidget = new TaggedText(
+      final newWidget = TaggedText(
         content: content,
-        tagToTextSpanBuilder: new Map.from(tagToTextSpanBuilder),
+        tagToTextSpanBuilder: Map.from(tagToTextSpanBuilder),
       );
 
       // Act.
@@ -183,7 +183,7 @@ void main() {
       final richText = findRichTextWidget(tester);
       expect(richText.text.text, isNull);
       expect(richText.text.children, [
-        new TextSpan(text: 'Hello, '),
+        TextSpan(text: 'Hello, '),
         nameSpan,
       ]);
       verify(mockTextSpanBuilder.call(any)).called(1);
@@ -191,10 +191,10 @@ void main() {
 
     testWidgets('requires tag names to be lower case', (tester) async {
       expect(
-          () => new TaggedText(
+          () => TaggedText(
                 content: 'Hello, <name>Bob</name>',
                 tagToTextSpanBuilder: {
-                  'nAme': (text) => new TextSpan(text: text, style: nameStyle),
+                  'nAme': (text) => TextSpan(text: text, style: nameStyle),
                 },
               ),
           throwsA(anything));
@@ -205,18 +205,18 @@ void main() {
         TaggedText(
           content: 'Hello, <link>Bob</link>',
           tagToTextSpanBuilder: {
-            'link': (text) => new TextSpan(text: text, style: nameStyle),
+            'link': (text) => TextSpan(text: text, style: nameStyle),
           },
         );
       }, throwsA(anything));
     });
 
     testWidgets('ignores non-elements', (tester) async {
-      final widget = new TaggedText(
+      final widget = TaggedText(
         content: 'Hello, <!-- comment is not an element and is ignored -->'
             '<name>Bob</name>',
         tagToTextSpanBuilder: {
-          'name': (text) => new TextSpan(text: text, style: nameStyle),
+          'name': (text) => TextSpan(text: text, style: nameStyle),
         },
       );
 
@@ -225,16 +225,16 @@ void main() {
       final richText = findRichTextWidget(tester);
       expect(richText.text.text, isNull);
       expect(richText.text.children, [
-        new TextSpan(text: 'Hello, '),
-        new TextSpan(text: 'Bob', style: nameStyle),
+        TextSpan(text: 'Hello, '),
+        TextSpan(text: 'Bob', style: nameStyle),
       ]);
     });
 
     testWidgets('renders correct input styles', (tester) async {
-      final widget = new TaggedText(
+      final widget = TaggedText(
         content: '<greeting>Hello</greeting>',
         tagToTextSpanBuilder: {
-          'greeting': (text) => new TextSpan(text: text, style: greetingStyle),
+          'greeting': (text) => TextSpan(text: text, style: greetingStyle),
         },
         style: defaultStyle,
         textAlign: TextAlign.center,
@@ -260,10 +260,10 @@ void main() {
     testWidgets(
         'uses 1.0 text scale factor when not specified and '
         'MediaQuery unavailable', (tester) async {
-      final widget = new TaggedText(
+      final widget = TaggedText(
         content: '<greeting>Hello</greeting>',
         tagToTextSpanBuilder: {
-          'greeting': (text) => new TextSpan(text: text, style: greetingStyle),
+          'greeting': (text) => TextSpan(text: text, style: greetingStyle),
         },
         // Text scale factor not specified!
       );
@@ -276,10 +276,10 @@ void main() {
 
     testWidgets('uses MediaQuery text scale factor when available',
         (tester) async {
-      final widget = new TaggedText(
+      final widget = TaggedText(
         content: '<greeting>Hello</greeting>',
         tagToTextSpanBuilder: {
-          'greeting': (text) => new TextSpan(text: text, style: greetingStyle),
+          'greeting': (text) => TextSpan(text: text, style: greetingStyle),
         },
         // Text scale factor not specified!
       );
@@ -303,7 +303,7 @@ RichText findRichTextWidget(WidgetTester tester) {
 }
 
 Widget wrap(Widget widget) {
-  return new Directionality(
+  return Directionality(
     textDirection: TextDirection.ltr,
     child: widget,
   );

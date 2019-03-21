@@ -11,7 +11,7 @@ import 'package:html/parser.dart';
 import 'package:meta/meta.dart';
 
 /// Builds a [TextSpan] with the provided [text].
-typedef TextSpan TextSpanBuilder(String text);
+typedef TextSpanBuilder = TextSpan Function(String text);
 
 /// Displays the provided [content] in a [RichText] after parsing and replacing
 /// HTML tags using [tagToTextSpanBuilder].
@@ -251,7 +251,7 @@ class TaggedText extends StatefulWidget {
         super(key: key);
 
   @override
-  State<StatefulWidget> createState() => new _TaggedTextState();
+  State<StatefulWidget> createState() => _TaggedTextState();
 }
 
 /// [State] for [TaggedText].
@@ -282,11 +282,11 @@ class _TaggedTextState extends State<TaggedText> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_didParse) return new Container();
+    if (!_didParse) return Container();
     assert(_textSpans != null);
 
-    return new RichText(
-        text: new TextSpan(children: _textSpans, style: widget.style),
+    return RichText(
+        text: TextSpan(children: _textSpans, style: widget.style),
         textAlign: widget.textAlign,
         textDirection: widget.textDirection,
         softWrap: widget.softWrap,
@@ -317,7 +317,7 @@ class _TaggedTextState extends State<TaggedText> {
     _textSpans = _document.nodes
         .map((node) {
           if (node is dom.Text) {
-            return new TextSpan(text: node.text);
+            return TextSpan(text: node.text);
           }
 
           if (node is! dom.Element) return null;
@@ -331,7 +331,7 @@ class _TaggedTextState extends State<TaggedText> {
               widget.tagToTextSpanBuilder[element.localName];
 
           assert(textSpanBuilder != null);
-          if (textSpanBuilder == null) return new TextSpan(text: element.text);
+          if (textSpanBuilder == null) return TextSpan(text: element.text);
 
           return textSpanBuilder(element.text);
         })

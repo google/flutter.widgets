@@ -10,7 +10,7 @@ import 'package:html/dom.dart' as dom;
 import 'package:flutter_widgets/src/html_widget/html_widget.dart';
 
 Future<Null> _pumpWithDirectionality(WidgetTester tester, Widget widget) async {
-  await tester.pumpWidget(new Directionality(
+  await tester.pumpWidget(Directionality(
     textDirection: TextDirection.ltr,
     child: widget,
   ));
@@ -21,8 +21,8 @@ void main() {
     testWidgets('HtmlText can be build from a Text Node',
         (WidgetTester tester) async {
       var phrase = 'this is a test';
-      var tag = new dom.Text(phrase);
-      var widget = new HtmlText(tag);
+      var tag = dom.Text(phrase);
+      var widget = HtmlText(tag);
 
       await _pumpWithDirectionality(tester, widget);
 
@@ -31,8 +31,8 @@ void main() {
 
     testWidgets('HtmlBold can be built from a <b> tag.',
         (WidgetTester tester) async {
-      var tag = new dom.Element.tag('b');
-      var widget = new HtmlBold(tag);
+      var tag = dom.Element.tag('b');
+      var widget = HtmlBold(tag);
 
       await _pumpWithDirectionality(tester, widget);
 
@@ -42,8 +42,8 @@ void main() {
 
     testWidgets('HtmlUnderline can be built from a <u> tag',
         (WidgetTester tester) async {
-      var tag = new dom.Element.tag('u');
-      var widget = new HtmlUnderline(tag);
+      var tag = dom.Element.tag('u');
+      var widget = HtmlUnderline(tag);
 
       await _pumpWithDirectionality(tester, widget);
 
@@ -53,8 +53,8 @@ void main() {
 
     testWidgets('HtmlBreak can be built from a <br/> tag',
         (WidgetTester tester) async {
-      var tag = new dom.Element.html('<br/>');
-      var widget = new HtmlUnderline(tag);
+      var tag = dom.Element.html('<br/>');
+      var widget = HtmlUnderline(tag);
 
       await _pumpWithDirectionality(tester, widget);
 
@@ -64,14 +64,14 @@ void main() {
 
     testWidgets('HtmlTable can be built from a <table> tag',
         (WidgetTester tester) async {
-      var document = new dom.Document.html('''
+      var document = dom.Document.html('''
            <table>
              <tr><td>1</td></tr>
              <tr><td>2</td></tr>
            </table>
           ''');
       var table = document.body.firstChild;
-      var widget = new HtmlTable(table);
+      var widget = HtmlTable(table);
 
       await _pumpWithDirectionality(tester, widget);
 

@@ -11,17 +11,17 @@ import 'package:flutter_widgets/flutter_widgets.dart';
 class TaggedTextPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(title: new Text('Semantic tagged text')),
-      body: new Center(
-        child: new TaggedText(
+    return Scaffold(
+      appBar: AppBar(title: Text('Semantic tagged text')),
+      body: Center(
+        child: TaggedText(
           content:
               '<greeting>Hello</greeting>, my name is <name>Buster</name>!',
           tagToTextSpanBuilder: {
-            'greeting': (text) => new TextSpan(
+            'greeting': (text) => TextSpan(
                 text: text,
                 style: const TextStyle(fontWeight: FontWeight.bold)),
-            'name': (text) => new TextSpan(
+            'name': (text) => TextSpan(
                 text: text,
                 style: const TextStyle(decoration: TextDecoration.underline)),
           },

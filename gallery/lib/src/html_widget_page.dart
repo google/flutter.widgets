@@ -14,21 +14,21 @@ import 'package:flutter_widgets/flutter_widgets.dart';
 /// text and tap it to start each test.
 final Map<String, WidgetBuilder> nameToTestData = <String, WidgetBuilder>{
   'HtmlView with ~100 chars': (context) {
-    return new Scaffold(
-      appBar: new AppBar(title: new Text('HtmlView with ~100 chars')),
-      body: new Container(
+    return Scaffold(
+      appBar: AppBar(title: Text('HtmlView with ~100 chars')),
+      body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: new HtmlView(content: _oneHundredChars),
+        child: HtmlView(content: _oneHundredChars),
       ),
     );
   },
   'HtmlView with ~10,000 chars': (context) {
-    return new Scaffold(
-      appBar: new AppBar(title: new Text('HtmlView with ~10,000 chars')),
-      body: new SingleChildScrollView(
-        child: new Container(
+    return Scaffold(
+      appBar: AppBar(title: Text('HtmlView with ~10,000 chars')),
+      body: SingleChildScrollView(
+        child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: new HtmlView(content: _tenThousandChars),
+          child: HtmlView(content: _tenThousandChars),
         ),
       ),
     );
@@ -40,12 +40,12 @@ final Map<String, WidgetBuilder> nameToTestData = <String, WidgetBuilder>{
           '$_oneHundredThousandChars$_tenThousandChars<br/>';
     }
 
-    return new Scaffold(
-      appBar: new AppBar(title: new Text('HtmlView with ~100,000 chars')),
-      body: new SingleChildScrollView(
-        child: new Container(
+    return Scaffold(
+      appBar: AppBar(title: Text('HtmlView with ~100,000 chars')),
+      body: SingleChildScrollView(
+        child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: new HtmlView(content: _oneHundredThousandChars),
+          child: HtmlView(content: _oneHundredThousandChars),
         ),
       ),
     );

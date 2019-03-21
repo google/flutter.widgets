@@ -52,7 +52,7 @@ void main() {
 
   _wrapTest(
     'VisibilityDetector reports partial visibility when part of it is '
-        'vertically scrolled offscreen',
+    'vertically scrolled offscreen',
     callback: (tester) async {
       final Finder mainList = find.byKey(demo.mainListKey);
       expect(mainList, findsOneWidget);
@@ -82,7 +82,7 @@ void main() {
 
   _wrapTest(
     'VisibilityDetector reports partial visibility when part of it is '
-        'horizontally scrolled offscreen',
+    'horizontally scrolled offscreen',
     callback: (tester) async {
       final Finder mainList = find.byKey(demo.mainListKey);
       final Rect viewRect = tester.getRect(mainList);
@@ -114,7 +114,7 @@ void main() {
 
   _wrapTest(
     'VisibilityDetector reports being not visible when fully scrolled '
-        'offscreen',
+    'offscreen',
     callback: (tester) async {
       final Finder mainList = find.byKey(demo.mainListKey);
       expect(mainList, findsOneWidget);
@@ -137,7 +137,7 @@ void main() {
 
   _wrapTest(
     'VisibilityDetector reports partial visibility when almost fully scrolled '
-        'offscreen',
+    'offscreen',
     callback: (tester) async {
       final Finder mainList = find.byKey(demo.mainListKey);
       expect(mainList, findsOneWidget);
@@ -164,7 +164,7 @@ void main() {
 
   _wrapTest(
     'VisibilityDetector reports being not visible when removed from the widget '
-        'tree',
+    'tree',
     callback: (tester) async {
       final Finder cell = find.byKey(demo.cellKey(0, 0));
       final Rect originalRect = tester.getRect(cell);
@@ -182,7 +182,7 @@ void main() {
 
   testWidgets(
     'VisibilityDetector callbacks fire immediately when setting '
-        'updateInterval=0',
+    'updateInterval=0',
     (tester) async {
       final controller = VisibilityDetectorController.instance;
       final oldDuration = controller.updateInterval;
@@ -217,7 +217,7 @@ void main() {
 
   _wrapTest(
     'VisibilityDetector fires callbacks when becoming enabled and not when '
-        'becoming disabled',
+    'becoming disabled',
     widget: _TestPropertyChange(key: _testPropertyChangeKey),
     callback: (tester) async {
       final _TestPropertyChangeState state =
@@ -248,7 +248,7 @@ void main() {
 
   _wrapTest(
     'VisibilityDetector reports visibility changes after a simulated screen '
-        'rotation',
+    'rotation',
     callback: (tester) async {
       final Size oldViewSize = tester.binding.renderView?.size;
       expect(oldViewSize, isNotNull);
