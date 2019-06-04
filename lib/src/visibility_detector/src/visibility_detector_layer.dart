@@ -274,7 +274,7 @@ class VisibilityDetectorLayer extends ContainerLayer {
       [Offset layerOffset = Offset.zero]) {
     _layerOffset = layerOffset;
     _scheduleUpdate();
-    return super.addToScene(builder, paintOffset + layerOffset);
+    return super.addToScene(builder, layerOffset);
   }
 
   /// See [AbstractNode.attach].
