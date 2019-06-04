@@ -90,6 +90,11 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// entries for non-visible ones are actively removed.  See [_fireCallback].
   static final _lastVisibility = <Key, VisibilityInfo>{};
 
+  /// Keeps track of the last known bounds of a [VisibilityDetector], in global
+  /// coordinates.
+  static Map<Key, Rect> get widgetBounds => _lastBounds;
+  static final _lastBounds = <Key, Rect>{};
+
   /// The key for the corresponding [VisibilityDetector] widget.
   ///
   /// Never null.
@@ -206,6 +211,7 @@ class VisibilityDetectorLayer extends ContainerLayer {
   static void forget(Key key) {
     _updated.remove(key);
     _lastVisibility.remove(key);
+    _lastBounds.remove(key);
 
     if (_updated.isEmpty) {
       _timer?.cancel();
@@ -223,9 +229,12 @@ class VisibilityDetectorLayer extends ContainerLayer {
         continue;
       }
 
+      final widgetBounds = layer._computeWidgetBounds();
+      _lastBounds[layer.key] = widgetBounds;
+
       final info = VisibilityInfo.fromRects(
           key: layer.key,
-          widgetBounds: layer._computeWidgetBounds(),
+          widgetBounds: widgetBounds,
           clipRect: layer._computeClipRect());
       layer._fireCallback(info);
     }
@@ -251,8 +260,9 @@ class VisibilityDetectorLayer extends ContainerLayer {
     if (visible) {
       _lastVisibility[key] = info;
     } else {
-      // Only keep visible items in the map so that it doesn't grow unbounded.
+      // Only keep visible items in the maps so that they don't grow unbounded.
       _lastVisibility.remove(key);
+      _lastBounds.remove(key);
     }
 
     onVisibilityChanged(info);
