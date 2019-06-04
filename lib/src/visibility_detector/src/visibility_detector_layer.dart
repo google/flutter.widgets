@@ -33,7 +33,7 @@ Matrix4 _accumulateTransforms(Iterable<Layer> layerChain) {
   final Matrix4 transform = Matrix4.identity();
   if (layerChain.isNotEmpty) {
     Layer parent = layerChain.first;
-    for (Layer child in layerChain.skip(1)) {
+    for (final Layer child in layerChain.skip(1)) {
       (parent as ContainerLayer).applyTransform(child, transform);
       parent = child;
     }
@@ -65,36 +65,39 @@ class VisibilityDetectorLayer extends ContainerLayer {
       @required this.widgetSize,
       @required this.paintOffset,
       @required this.onVisibilityChanged})
-      : _layerOffset = Offset.zero {
-    assert(key != null);
-    assert(paintOffset != null);
-    assert(widgetSize != null);
-    assert(onVisibilityChanged != null);
-  }
+      : assert(key != null),
+        assert(paintOffset != null),
+        assert(widgetSize != null),
+        assert(onVisibilityChanged != null),
+        _layerOffset = Offset.zero;
 
   /// Timer used by [_scheduleUpdate].
   static Timer _timer;
 
   /// Keeps track of [VisibilityDetectorLayer] objects that have been recently
-  /// updated and that might need to report visibility changes.  Additionally
-  /// maps [VisibilityDetector] keys to the most recently added
+  /// updated and that might need to report visibility changes.
+  ///
+  /// Additionally maps [VisibilityDetector] keys to the most recently added
   /// [VisibilityDetectorLayer] that corresponds to it; this mapping is
   /// necessary in case a layout change causes a new layer to be instantiated
   /// for an existing key.
-  static final Map<Key, VisibilityDetectorLayer> _updated =
-      <Key, VisibilityDetectorLayer>{};
+  static final _updated = <Key, VisibilityDetectorLayer>{};
 
   /// Keeps track of the last known visibility state of a [VisibilityDetector].
+  ///
   /// This is used to suppress extraneous callbacks when visibility hasn't
   /// changed.  Stores entries only for visible [VisibilityDetector] objects;
   /// entries for non-visible ones are actively removed.  See [_fireCallback].
-  static final Map<Key, VisibilityInfo> _lastVisibility =
-      <Key, VisibilityInfo>{};
+  static final _lastVisibility = <Key, VisibilityInfo>{};
 
-  /// The key for the corresponding [VisibilityDetector] widget.  Never null.
+  /// The key for the corresponding [VisibilityDetector] widget.
+  ///
+  /// Never null.
   final Key key;
 
-  /// The size of the corresponding [VisibilityDetector] widget.  Never null.
+  /// The size of the corresponding [VisibilityDetector] widget.
+  ///
+  /// Never null.
   final Size widgetSize;
 
   /// Last known layer offset supplied to [addToScene].  Never null.
@@ -104,8 +107,11 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// null.
   final Offset paintOffset;
 
-  /// See [VisibilityDetector.onVisibilityChanged].  Do not invoke this
-  /// directly; call [_fireCallback] instead.  Never null.
+  /// See [VisibilityDetector.onVisibilityChanged].
+  ///
+  /// Do not invoke this directly; call [_fireCallback] instead.
+  ///
+  /// Never null.
   final VisibilityChangedCallback onVisibilityChanged;
 
   /// Computes the bounds for the corresponding [VisibilityDetector] widget, in
@@ -210,7 +216,7 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// Executes visibility callbacks for all updated [VisibilityDetectorLayer]
   /// instances.
   static void _processCallbacks() {
-    for (VisibilityDetectorLayer layer in _updated.values) {
+    for (final VisibilityDetectorLayer layer in _updated.values) {
       if (!layer.attached) {
         layer._fireCallback(VisibilityInfo(
             key: layer.key, size: _lastVisibility[layer.key]?.size));

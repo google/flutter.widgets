@@ -28,7 +28,7 @@ void main() {
     callback: (tester) async {
       expect(find.byType(ErrorWidget), findsNothing);
 
-      final Finder cell = find.byKey(demo.cellKey(0, 0));
+      final cell = find.byKey(demo.cellKey(0, 0));
       expect(cell, findsOneWidget);
     },
   );
@@ -36,11 +36,10 @@ void main() {
   _wrapTest(
     'VisibilityDetector reports initial visibility',
     callback: (tester) async {
-      final Finder cell = find.byKey(demo.cellKey(0, 0));
-      final Rect expectedRect = tester.getRect(cell);
+      final cell = find.byKey(demo.cellKey(0, 0));
+      final expectedRect = tester.getRect(cell);
 
-      final VisibilityInfo info =
-          _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      final info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
       expect(info.size, expectedRect.size);
       expect(info.size.width, demo.cellWidth);
@@ -54,18 +53,17 @@ void main() {
     'VisibilityDetector reports partial visibility when part of it is '
     'vertically scrolled offscreen',
     callback: (tester) async {
-      final Finder mainList = find.byKey(demo.mainListKey);
+      final mainList = find.byKey(demo.mainListKey);
       expect(mainList, findsOneWidget);
-      final Rect viewRect = tester.getRect(mainList);
+      final viewRect = tester.getRect(mainList);
 
-      final Finder cell = find.byKey(demo.cellKey(0, 0));
-      final Rect originalRect = tester.getRect(cell);
+      final cell = find.byKey(demo.cellKey(0, 0));
+      final originalRect = tester.getRect(cell);
 
-      const double dy = 30;
+      const dy = 30.0;
       await _doScroll(tester, mainList, const Offset(0, dy));
 
-      final VisibilityInfo info =
-          _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      final info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
       expect(info.size, originalRect.size);
 
@@ -84,20 +82,19 @@ void main() {
     'VisibilityDetector reports partial visibility when part of it is '
     'horizontally scrolled offscreen',
     callback: (tester) async {
-      final Finder mainList = find.byKey(demo.mainListKey);
-      final Rect viewRect = tester.getRect(mainList);
+      final mainList = find.byKey(demo.mainListKey);
+      final viewRect = tester.getRect(mainList);
 
-      final Finder cell = find.byKey(demo.cellKey(2, 0));
+      final cell = find.byKey(demo.cellKey(2, 0));
       expect(cell, findsOneWidget);
-      final Rect originalRect = tester.getRect(cell);
+      final originalRect = tester.getRect(cell);
 
-      const double dx = 30;
+      const dx = 30.0;
       expect(dx < originalRect.width, true);
 
       await _doScroll(tester, cell, const Offset(dx, 0));
 
-      final VisibilityInfo info =
-          _positionToVisibilityInfo[demo.RowColumn(2, 0)];
+      final info = _positionToVisibilityInfo[demo.RowColumn(2, 0)];
       expect(info, isNotNull);
       expect(info.size, originalRect.size);
 
@@ -116,18 +113,17 @@ void main() {
     'VisibilityDetector reports being not visible when fully scrolled '
     'offscreen',
     callback: (tester) async {
-      final Finder mainList = find.byKey(demo.mainListKey);
+      final mainList = find.byKey(demo.mainListKey);
       expect(mainList, findsOneWidget);
-      final Rect viewRect = tester.getRect(mainList);
+      final viewRect = tester.getRect(mainList);
 
-      final Finder cell = find.byKey(demo.cellKey(0, 0));
-      final Rect originalRect = tester.getRect(cell);
+      final cell = find.byKey(demo.cellKey(0, 0));
+      final originalRect = tester.getRect(cell);
 
-      final double dy = originalRect.bottom - viewRect.top;
+      final dy = originalRect.bottom - viewRect.top;
       await _doScroll(tester, mainList, Offset(0, dy));
 
-      final VisibilityInfo info =
-          _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      final info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
       expect(info.size, originalRect.size);
       expect(info.visibleBounds.size, Size.zero);
@@ -139,18 +135,17 @@ void main() {
     'VisibilityDetector reports partial visibility when almost fully scrolled '
     'offscreen',
     callback: (tester) async {
-      final Finder mainList = find.byKey(demo.mainListKey);
+      final mainList = find.byKey(demo.mainListKey);
       expect(mainList, findsOneWidget);
-      final Rect viewRect = tester.getRect(mainList);
+      final viewRect = tester.getRect(mainList);
 
-      final Finder cell = find.byKey(demo.cellKey(0, 0));
-      final Rect originalRect = tester.getRect(cell);
+      final cell = find.byKey(demo.cellKey(0, 0));
+      final originalRect = tester.getRect(cell);
 
-      final double dy = (originalRect.bottom - viewRect.top) - 1;
+      final dy = (originalRect.bottom - viewRect.top) - 1;
       await _doScroll(tester, mainList, Offset(0, dy));
 
-      final VisibilityInfo info =
-          _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      final info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
       expect(info.size, originalRect.size);
 
@@ -166,13 +161,12 @@ void main() {
     'VisibilityDetector reports being not visible when removed from the widget '
     'tree',
     callback: (tester) async {
-      final Finder cell = find.byKey(demo.cellKey(0, 0));
-      final Rect originalRect = tester.getRect(cell);
+      final cell = find.byKey(demo.cellKey(0, 0));
+      final originalRect = tester.getRect(cell);
 
       await _clearWidgetTree(tester, notifyNow: false);
 
-      final VisibilityInfo info =
-          _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      final info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
       expect(info.size, originalRect.size);
       expect(info.visibleBounds.size, Size.zero);
@@ -220,8 +214,7 @@ void main() {
     'becoming disabled',
     widget: _TestPropertyChange(key: _testPropertyChangeKey),
     callback: (tester) async {
-      final _TestPropertyChangeState state =
-          _testPropertyChangeKey.currentState;
+      final state = _testPropertyChangeKey.currentState;
 
       // Validate the initial state.  The visibility callback should have fired
       // exactly once.
@@ -250,7 +243,7 @@ void main() {
     'VisibilityDetector reports visibility changes after a simulated screen '
     'rotation',
     callback: (tester) async {
-      final Size oldViewSize = tester.binding.renderView?.size;
+      final oldViewSize = tester.binding.renderView?.size;
       expect(oldViewSize, isNotNull);
 
       final newViewSize = Size(oldViewSize.height, oldViewSize.width);
@@ -258,7 +251,7 @@ void main() {
       _expectVisibility(demo.RowColumn(0, 6), 0.360);
 
       // This item was never visible, so we have no data for it.
-      expect(_positionToVisibilityInfo[demo.RowColumn(5, 0)], isNull);
+      expect(_positionToVisibilityInfo[demo.RowColumn(5, 0)], null);
 
       // Simulate a rotation.
       await _setViewSize(tester, newViewSize);
@@ -383,7 +376,7 @@ Future<void> _setViewSize(WidgetTester tester, Size newSize) async {
 /// visibility.
 void _expectVisibility(demo.RowColumn rc, double expectedFraction,
     {double epsilon = 0.001}) {
-  final VisibilityInfo info = _positionToVisibilityInfo[rc];
+  final info = _positionToVisibilityInfo[rc];
   expect(info, isNotNull);
   expect(info.visibleFraction, closeTo(expectedFraction, epsilon));
 }

@@ -39,7 +39,7 @@ const mainListKey = Key('MainList');
 
 /// Returns the [Key] to the [VisibilityDetector] widget in each cell of the
 /// pseudo-table.
-Key cellKey(int row, int col) => Key('Cell-${row}-${col}');
+Key cellKey(int row, int col) => Key('Cell-$row-$col');
 
 /// A callback to be invoked by the [VisibilityDetector.onVisibilityChanged]
 /// callback.  We use the extra level of indirection to allow widget tests to
@@ -47,9 +47,7 @@ Key cellKey(int row, int col) => Key('Cell-${row}-${col}');
 final visibilityListeners =
     <void Function(RowColumn rc, VisibilityInfo info)>[];
 
-void main() {
-  return runApp(const VisibilityDetectorDemo());
-}
+void main() => runApp(const VisibilityDetectorDemo());
 
 /// The root widget for the demo app.
 class VisibilityDetectorDemo extends StatelessWidget {
@@ -79,7 +77,8 @@ class VisibilityDetectorDemoPageState
   /// Whether the pseudo-table should be shown.
   bool _tableShown = true;
 
-  /// Toggles the visibility of the pseudo-table of [VisibilityDetector] widgets.
+  /// Toggles the visibility of the pseudo-table of [VisibilityDetector]
+  /// widgets.
   void _toggleTable() {
     setState(() {
       _tableShown = !_tableShown;
@@ -140,7 +139,7 @@ class DemoPageRow extends StatelessWidget {
 /// An individual cell for the pseudo-table of [VisibilityDetector] widgets.
 class DemoPageCell extends StatelessWidget {
   DemoPageCell({Key key, this.rowIndex, this.columnIndex})
-      : _cellName = 'Item ${rowIndex}-${columnIndex}',
+      : _cellName = 'Item $rowIndex-$columnIndex',
         _backgroundColor = ((rowIndex + columnIndex) % 2 == 0)
             ? Colors.pink[200]
             : Colors.yellow[200],
@@ -268,7 +267,7 @@ class VisibilityReportGridState extends State<VisibilityReportGrid> {
 
     for (final MapEntry<RowColumn, double> i in entries) {
       final String visiblePercentage = (i.value * 100).toStringAsFixed(1);
-      items.add(Text('${i.key}: ${visiblePercentage}%'));
+      items.add(Text('${i.key}: $visiblePercentage%'));
     }
 
     // It's easier to read cells down than across, so sort by columns instead of
@@ -278,7 +277,7 @@ class VisibilityReportGridState extends State<VisibilityReportGrid> {
     final head = items.getRange(0, midIndex);
     final mid = items.getRange(midIndex, tailIndex);
     final tail = items.getRange(tailIndex, items.length);
-    return collate([head, mid, tail]).toList();
+    return collate([head, mid, tail]).toList(growable: false);
   }
 
   @override
@@ -332,7 +331,7 @@ class RowColumn extends Comparable<RowColumn> {
 
   @override
   String toString() {
-    return '[${row}, ${column}]';
+    return '[$row, $column]';
   }
 }
 
@@ -343,6 +342,8 @@ class RowColumn extends Comparable<RowColumn> {
 /// sequence `1, 2, 3, 4, 5, 6, 7, 8, 9`.
 Iterable<T> collate<T>(Iterable<Iterable<T>> iterables) sync* {
   final iterators = iterables.map((e) => e.iterator).toList(growable: false);
+
+  // ignore: literal_only_boolean_expressions, https://github.com/dart-lang/linter/issues/453
   while (true) {
     int numEmpty = 0;
     for (final i in iterators) {

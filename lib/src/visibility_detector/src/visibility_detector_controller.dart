@@ -32,13 +32,13 @@ class VisibilityDetectorController {
     VisibilityDetectorLayer.notifyNow();
   }
 
-  /// Forgets any pending visibility callbacks for the `VisibilityDetector` with
+  /// Forgets any pending visibility callbacks for the [VisibilityDetector] with
   /// the given [key].
   ///
-  /// Note if widget gets attached/detached the callback will be rescheduled.
+  /// If the widget gets attached/detached, the callback will be rescheduled.
   ///
-  /// This method can be used to cancel timers, after the detector has been
-  /// detached to avoid pending timers.
+  /// This method can be used to cancel timers after the [VisibilityDetector]
+  /// has been detached to avoid pending timers in tests.
   void forget(Key key) {
     VisibilityDetectorLayer.forget(key);
   }
