@@ -1,6 +1,4 @@
 analyzer:
-  language:
-    enableSuperMixins: true
   errors:
     # treat missing required parameters as a warning (not a hint)
     missing_required_param: warning
@@ -39,7 +37,6 @@ linter:
     - await_only_futures
     - camel_case_types
     - constant_identifier_names
-    - control_flow_in_finally
     - empty_catches
     - empty_constructor_bodies
     - implementation_imports
@@ -53,9 +50,8 @@ linter:
     - package_prefixed_library_names
     - prefer_is_not_empty
     - slash_for_doc_comments
-    - sort_constructors_first
+    # TODO - sort_constructors_first
     - sort_unnamed_constructors_first
-    - super_goes_last
     - type_annotate_public_apis
     - type_init_formals
     # TODO - unawaited_futures (https://github.com/dart-lang/linter/issues/419)

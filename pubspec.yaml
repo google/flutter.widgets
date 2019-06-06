@@ -1,5 +1,5 @@
 name: flutter_widgets
-version: 0.1.3
+version: 0.1.4
 description: >
   Flutter widgets that are developed by Google but not by the core
   Flutter team.
@@ -7,7 +7,7 @@ author: Dart Team <misc@dartlang.org>
 homepage: https://github.com/google/flutter.widgets
 
 environment:
-  sdk: ">=2.0.0 <3.0.0"
+  sdk: ">=2.3.0 <3.0.0"
 
 dependencies:
   collection: ^1.14.5
