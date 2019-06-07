@@ -23,10 +23,10 @@ String greeting(String name) => Intl.message(
       desc: '...',
     );
 
-new TaggedText(
+TaggedText(
   content: greeting('Bob'),
   tagToTextSpanBuilder: {
-    'name': (text) => new TextSpan(
+    'name': (text) => TextSpan(
         text: text,
         const TextStyle(fontWeight: FontWeight.bold),
   },
@@ -46,13 +46,13 @@ link to screens in your string.
 For example:
 
 ```dart
-new TaggedText(
+TaggedText(
   content: '<campaign-name>Search campaign 1</campaign-name> has 400 clicks.',
   tagToTextSpanBuilder: {
-    'campaign-name': (text) => new TextSpan(
+    'campaign-name': (text) => TextSpan(
         text: text,
         style: const TextStyle(decoration: TextDecoration.underline),
-        recognizer: new TapGestureRecognizer()..onTap = () {
+        recognizer: TapGestureRecognizer()..onTap = () {
           // Go to campaign screen...
         })
   },

@@ -16,7 +16,7 @@ import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart' as dom;
 
 /// Called with the [href] of an anchor tag.
-typedef void LinkCallback(String href);
+typedef LinkCallback = void Function(String href);
 
 /// A Widget for displaying HTML in flutter.
 class HtmlView extends StatefulWidget {
@@ -29,7 +29,7 @@ class HtmlView extends StatefulWidget {
   HtmlView({@required this.content, this.onTapLink});
 
   @override
-  State<StatefulWidget> createState() => new _HtmlViewState();
+  State<StatefulWidget> createState() => _HtmlViewState();
 
   /// Finds the parent [HtmlView] for the current context.
   static _HtmlViewState of(BuildContext context) {
@@ -84,9 +84,9 @@ class _HtmlViewState extends State<HtmlView> {
   Widget build(BuildContext context) {
     /// If parsing fails, fallback to the plaintext
     if (_didFailToParse) {
-      return new Text(widget.content);
+      return Text(widget.content);
     }
-    return new HtmlBlockViewBuilder(_document.nodes);
+    return HtmlBlockViewBuilder(_document.nodes);
   }
 }
 
@@ -103,13 +103,13 @@ class HtmlBlockViewBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (nodes.isEmpty) {
-      return new Container(height: 0.0, width: 0.0);
+      return Container(height: 0.0, width: 0.0);
     }
     if (nodes.length == 1) {
-      return new HtmlViewBuilder(node: nodes.single);
+      return HtmlViewBuilder(node: nodes.single);
     }
-    return new Column(
-      children: nodes.map((node) => new HtmlViewBuilder(node: node)).toList(),
+    return Column(
+      children: nodes.map((node) => HtmlViewBuilder(node: node)).toList(),
     );
   }
 }
@@ -123,27 +123,27 @@ class HtmlViewBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (node is dom.Text) {
-      return new HtmlText(node);
+      return HtmlText(node);
     }
     if (node is dom.Element) {
       var name = (node as dom.Element).localName;
       switch (name) {
         case 'div':
-          return new HtmlBlockViewBuilder(node.nodes);
+          return HtmlBlockViewBuilder(node.nodes);
         case 'br':
-          return new HtmlBreak(node);
+          return HtmlBreak(node);
         case 'table':
-          return new HtmlTable(node);
+          return HtmlTable(node);
         case 'b':
-          return new HtmlBold(node);
+          return HtmlBold(node);
         case 'u':
-          return new HtmlUnderline(node);
+          return HtmlUnderline(node);
         case 'a':
-          return new HtmlLink(node);
+          return HtmlLink(node);
         case 'font':
-          return new HtmlFontTag(node);
+          return HtmlFontTag(node);
         case 'hr':
-          return new HtmlHr(node);
+          return HtmlHr(node);
         default:
 
           /// Any other tags cannot be built by this widget, and will cause the
@@ -151,7 +151,7 @@ class HtmlViewBuilder extends StatelessWidget {
           HtmlView.of(context).failToBuild();
       }
     }
-    return new Container();
+    return Container();
   }
 }
 
@@ -162,7 +162,7 @@ class HtmlText extends StatelessWidget {
   HtmlText(this.text);
 
   @override
-  Widget build(BuildContext context) => new Text(text.data);
+  Widget build(BuildContext context) => Text(text.data);
 }
 
 /// Builds a link from a template <a href="">Some Text</a> tag.
@@ -178,10 +178,10 @@ class HtmlLink extends StatelessWidget {
 
     var href = element.attributes['href'];
 
-    return new FlatButton(
-        child: new Text(
+    return FlatButton(
+        child: Text(
           element.text ?? 'Link',
-          style: new TextStyle(color: Colors.blue[300]),
+          style: TextStyle(color: Colors.blue[300]),
         ),
         onPressed: () => HtmlView.of(context).onTapLink(href));
   }
@@ -210,7 +210,7 @@ class HtmlTable extends StatelessWidget {
       children = const [];
     }
 
-    return new Table(
+    return Table(
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
       children: children,
     );
@@ -220,13 +220,13 @@ class HtmlTable extends StatelessWidget {
   TableRow _buildRow(dom.Element row) {
     assert(row.localName == 'tr', 'Expected <tr>, instead found $row');
 
-    return new TableRow(children: row.children.map(_buildCell).toList());
+    return TableRow(children: row.children.map(_buildCell).toList());
   }
 
   /// Builds a table cell from a <td> tag.
   TableCell _buildCell(dom.Element cell) {
     assert(cell.localName == 'td', 'Expected <td>, instead found $cell');
-    return new TableCell(child: new HtmlBlockViewBuilder(cell.nodes));
+    return TableCell(child: HtmlBlockViewBuilder(cell.nodes));
   }
 }
 
@@ -238,10 +238,10 @@ class HtmlDiv extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new Column(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children:
-          element.nodes.map((node) => new HtmlViewBuilder(node: node)).toList(),
+          element.nodes.map((node) => HtmlViewBuilder(node: node)).toList(),
     );
   }
 }
@@ -254,11 +254,11 @@ class HtmlUnderline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new DefaultTextStyle(
+    return DefaultTextStyle(
       style: DefaultTextStyle.of(context)
           .style
           .copyWith(decoration: TextDecoration.underline),
-      child: new HtmlBlockViewBuilder(element.nodes),
+      child: HtmlBlockViewBuilder(element.nodes),
     );
   }
 }
@@ -271,7 +271,7 @@ class HtmlHr extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new Divider();
+    return Divider();
   }
 }
 
@@ -283,11 +283,11 @@ class HtmlBold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new DefaultTextStyle(
+    return DefaultTextStyle(
       style: DefaultTextStyle.of(context)
           .style
           .copyWith(fontWeight: FontWeight.bold),
-      child: new HtmlBlockViewBuilder(element.nodes),
+      child: HtmlBlockViewBuilder(element.nodes),
     );
   }
 }
@@ -301,7 +301,7 @@ class HtmlBreak extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     assert(element.localName == 'br');
-    return new Container(height: 8.0);
+    return Container(height: 8.0);
   }
 }
 
@@ -322,14 +322,13 @@ class HtmlFontTag extends StatelessWidget {
     Color color;
     try {
       var raw = int.parse(element.attributes['color'], radix: 16);
-      color =
-          new Color.fromRGBO(raw >> 32, (raw >> 16) & 0xFF, raw & 0xFF, 1.0);
+      color = Color.fromRGBO(raw >> 32, (raw >> 16) & 0xFF, raw & 0xFF, 1.0);
     } on FormatException catch (_) {
       color = Colors.black;
     }
-    return new DefaultTextStyle(
-      style: new TextStyle(color: color),
-      child: new HtmlBlockViewBuilder(element.nodes),
+    return DefaultTextStyle(
+      style: TextStyle(color: color),
+      child: HtmlBlockViewBuilder(element.nodes),
     );
   }
 }

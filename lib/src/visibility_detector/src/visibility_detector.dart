@@ -30,14 +30,13 @@ class VisibilityDetector extends SingleChildRenderObjectWidget {
   /// `child` must not be null.
   ///
   /// `onVisibilityChanged` may be null to disable this [VisibilityDetector].
-  VisibilityDetector({
+  const VisibilityDetector({
     @required Key key,
     @required Widget child,
     @required this.onVisibilityChanged,
-  }) : super(key: key, child: child) {
-    assert(key != null);
-    assert(child != null);
-  }
+  })  : assert(key != null),
+        assert(child != null),
+        super(key: key, child: child);
 
   /// The callback to invoke when this widget's visibility changes.
   final VisibilityChangedCallback onVisibilityChanged;
@@ -73,15 +72,16 @@ class VisibilityInfo {
   /// If `size` or `visibleBounds` are omitted or null, the [VisibilityInfo]
   /// will be initialized to [Offset.zero] or [Rect.zero] respectively.  This
   /// will indicate that the corresponding widget is competely hidden.
-  VisibilityInfo({@required this.key, Size size, Rect visibleBounds})
-      : size = size ?? Size.zero,
-        visibleBounds = visibleBounds ?? Rect.zero {
-    assert(key != null);
-  }
+  const VisibilityInfo({@required this.key, Size size, Rect visibleBounds})
+      : assert(key != null),
+        size = size ?? Size.zero,
+        visibleBounds = visibleBounds ?? Rect.zero;
 
   /// Constructs a [VisibilityInfo] from widget bounds and a corresponding
-  /// clipping rectangle.  The two [Rect]s are expected to be in the same
-  /// coordinate system.
+  /// clipping rectangle.
+  ///
+  /// [widgetBounds] and [clipRect] are expected to be in the same coordinate
+  /// system.
   factory VisibilityInfo.fromRects({
     @required Key key,
     @required Rect widgetBounds,
@@ -99,19 +99,27 @@ class VisibilityInfo {
         key: key, size: widgetBounds.size, visibleBounds: visibleBounds);
   }
 
-  /// The key for the corresponding [VisibilityDetector] widget.  Never null.
+  /// The key for the corresponding [VisibilityDetector] widget.
+  ///
+  /// Never null.
   final Key key;
 
   /// The size of the widget.  Never null.
   final Size size;
 
   /// The visible portion of the widget, in the widget's local coordinates.
+  ///
   /// Never null.
+  ///
+  /// The bounds are reported using the widget's local coordinates to avoid
+  /// expectations for the [VisibilityChangedCallback] to fire if the widget's
+  /// position changes but retains the same visibility.
   final Rect visibleBounds;
 
   /// A fraction in the range \[0, 1\] that represents what proportion of the
-  /// widget is visible (assuming rectangular bounding boxes).  0 means not
-  /// visible; 1 means fully visible.
+  /// widget is visible (assuming rectangular bounding boxes).
+  ///
+  /// 0 means not visible; 1 means fully visible.
   double get visibleFraction {
     final double visibleArea = _area(visibleBounds.size);
     final double maxVisibleArea = _area(size);

@@ -20,10 +20,9 @@ class RenderVisibilityDetector extends RenderProxyBox {
     RenderBox child,
     @required this.key,
     @required VisibilityChangedCallback onVisibilityChanged,
-  })  : _onVisibilityChanged = onVisibilityChanged,
-        super(child) {
-    assert(key != null);
-  }
+  })  : assert(key != null),
+        _onVisibilityChanged = onVisibilityChanged,
+        super(child);
 
   /// The key for the corresponding [VisibilityDetector] widget.  Never null.
   final Key key;
@@ -61,8 +60,6 @@ class RenderVisibilityDetector extends RenderProxyBox {
         widgetSize: semanticBounds.size,
         paintOffset: offset,
         onVisibilityChanged: onVisibilityChanged);
-    // We'll apply the offset in the [VisibilityDetectorLayer] instead of in the
-    // [PaintingContext].
-    context.pushLayer(layer, super.paint, Offset.zero);
+    context.pushLayer(layer, super.paint, offset);
   }
 }

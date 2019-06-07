@@ -4,6 +4,7 @@
 // license that can be found in the LICENSE file or at
 // https://developers.google.com/open-source/licenses/bsd
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_widgets/src/visibility_detector/visibility_detector.dart';
@@ -16,9 +17,14 @@ final _positionToVisibilityInfo = <demo.RowColumn, VisibilityInfo>{};
 /// [Key] used to identify the [_TestPropertyChange] widget.
 final _testPropertyChangeKey = GlobalKey<_TestPropertyChangeState>();
 
+/// [Key] used to identify the [_TestOffset] widget or its [VisibilityDetector].
+final _testOffsetKey = UniqueKey();
+
 void main() {
-  demo.visibilityListeners.add((demo.RowColumn rc, VisibilityInfo info) {
-    _positionToVisibilityInfo[rc] = info;
+  setUpAll(() {
+    demo.visibilityListeners.add((demo.RowColumn rc, VisibilityInfo info) {
+      _positionToVisibilityInfo[rc] = info;
+    });
   });
 
   tearDown(_positionToVisibilityInfo.clear);
@@ -28,7 +34,7 @@ void main() {
     callback: (tester) async {
       expect(find.byType(ErrorWidget), findsNothing);
 
-      final Finder cell = find.byKey(demo.cellKey(0, 0));
+      final cell = find.byKey(demo.cellKey(0, 0));
       expect(cell, findsOneWidget);
     },
   );
@@ -36,36 +42,40 @@ void main() {
   _wrapTest(
     'VisibilityDetector reports initial visibility',
     callback: (tester) async {
-      final Finder cell = find.byKey(demo.cellKey(0, 0));
-      final Rect expectedRect = tester.getRect(cell);
+      final cellKey = demo.cellKey(0, 0);
+      final cell = find.byKey(cellKey);
+      final expectedRect = tester.getRect(cell);
 
-      final VisibilityInfo info =
-          _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      final info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
       expect(info.size, expectedRect.size);
       expect(info.size.width, demo.cellWidth);
       expect(info.size.height, demo.cellHeight);
       expect(info.visibleBounds, Offset.zero & info.size);
       expect(info.visibleFraction, 1.0);
+
+      final bounds =
+          VisibilityDetectorController.instance.widgetBoundsFor(cellKey);
+      expect(bounds, expectedRect);
     },
   );
 
   _wrapTest(
     'VisibilityDetector reports partial visibility when part of it is '
-        'vertically scrolled offscreen',
+    'vertically scrolled offscreen',
     callback: (tester) async {
-      final Finder mainList = find.byKey(demo.mainListKey);
+      final mainList = find.byKey(demo.mainListKey);
       expect(mainList, findsOneWidget);
-      final Rect viewRect = tester.getRect(mainList);
+      final viewRect = tester.getRect(mainList);
 
-      final Finder cell = find.byKey(demo.cellKey(0, 0));
-      final Rect originalRect = tester.getRect(cell);
+      final cellKey = demo.cellKey(0, 0);
+      final cell = find.byKey(cellKey);
+      final originalRect = tester.getRect(cell);
 
-      const double dy = 30;
+      const dy = 30.0;
       await _doScroll(tester, mainList, const Offset(0, dy));
 
-      final VisibilityInfo info =
-          _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      final info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
       expect(info.size, originalRect.size);
 
@@ -77,27 +87,31 @@ void main() {
       expect(info.visibleBounds, expectedVisibleBounds);
       expect(info.visibleFraction,
           info.visibleBounds.height / originalRect.height);
+
+      final bounds =
+          VisibilityDetectorController.instance.widgetBoundsFor(cellKey);
+      expect(bounds, originalRect.shift(const Offset(0, -dy)));
     },
   );
 
   _wrapTest(
     'VisibilityDetector reports partial visibility when part of it is '
-        'horizontally scrolled offscreen',
+    'horizontally scrolled offscreen',
     callback: (tester) async {
-      final Finder mainList = find.byKey(demo.mainListKey);
-      final Rect viewRect = tester.getRect(mainList);
+      final mainList = find.byKey(demo.mainListKey);
+      final viewRect = tester.getRect(mainList);
 
-      final Finder cell = find.byKey(demo.cellKey(2, 0));
+      final cellKey = demo.cellKey(2, 0);
+      final cell = find.byKey(cellKey);
       expect(cell, findsOneWidget);
-      final Rect originalRect = tester.getRect(cell);
+      final originalRect = tester.getRect(cell);
 
-      const double dx = 30;
+      const dx = 30.0;
       expect(dx < originalRect.width, true);
 
       await _doScroll(tester, cell, const Offset(dx, 0));
 
-      final VisibilityInfo info =
-          _positionToVisibilityInfo[demo.RowColumn(2, 0)];
+      final info = _positionToVisibilityInfo[demo.RowColumn(2, 0)];
       expect(info, isNotNull);
       expect(info.size, originalRect.size);
 
@@ -109,48 +123,56 @@ void main() {
       expect(info.visibleBounds, expectedVisibleBounds);
       expect(
           info.visibleFraction, info.visibleBounds.width / originalRect.width);
+
+      final bounds =
+          VisibilityDetectorController.instance.widgetBoundsFor(cellKey);
+      expect(bounds, originalRect.shift(const Offset(-dx, 0)));
     },
   );
 
   _wrapTest(
     'VisibilityDetector reports being not visible when fully scrolled '
-        'offscreen',
+    'offscreen',
     callback: (tester) async {
-      final Finder mainList = find.byKey(demo.mainListKey);
+      final mainList = find.byKey(demo.mainListKey);
       expect(mainList, findsOneWidget);
-      final Rect viewRect = tester.getRect(mainList);
+      final viewRect = tester.getRect(mainList);
 
-      final Finder cell = find.byKey(demo.cellKey(0, 0));
-      final Rect originalRect = tester.getRect(cell);
+      final cellKey = demo.cellKey(0, 0);
+      final cell = find.byKey(cellKey);
+      final originalRect = tester.getRect(cell);
 
-      final double dy = originalRect.bottom - viewRect.top;
+      final dy = originalRect.bottom - viewRect.top;
       await _doScroll(tester, mainList, Offset(0, dy));
 
-      final VisibilityInfo info =
-          _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      final info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
       expect(info.size, originalRect.size);
       expect(info.visibleBounds.size, Size.zero);
       expect(info.visibleFraction, 0.0);
+
+      final bounds =
+          VisibilityDetectorController.instance.widgetBoundsFor(cellKey);
+      expect(bounds, null);
     },
   );
 
   _wrapTest(
     'VisibilityDetector reports partial visibility when almost fully scrolled '
-        'offscreen',
+    'offscreen',
     callback: (tester) async {
-      final Finder mainList = find.byKey(demo.mainListKey);
+      final mainList = find.byKey(demo.mainListKey);
       expect(mainList, findsOneWidget);
-      final Rect viewRect = tester.getRect(mainList);
+      final viewRect = tester.getRect(mainList);
 
-      final Finder cell = find.byKey(demo.cellKey(0, 0));
-      final Rect originalRect = tester.getRect(cell);
+      final cellKey = demo.cellKey(0, 0);
+      final cell = find.byKey(cellKey);
+      final originalRect = tester.getRect(cell);
 
-      final double dy = (originalRect.bottom - viewRect.top) - 1;
+      final dy = (originalRect.bottom - viewRect.top) - 1;
       await _doScroll(tester, mainList, Offset(0, dy));
 
-      final VisibilityInfo info =
-          _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      final info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
       expect(info.size, originalRect.size);
 
@@ -159,30 +181,38 @@ void main() {
       expect(info.visibleBounds, expectedVisibleBounds);
       expect(info.visibleFraction,
           info.visibleBounds.height / originalRect.height);
+
+      final bounds =
+          VisibilityDetectorController.instance.widgetBoundsFor(cellKey);
+      expect(bounds, originalRect.shift(Offset(0, -dy)));
     },
   );
 
   _wrapTest(
     'VisibilityDetector reports being not visible when removed from the widget '
-        'tree',
+    'tree',
     callback: (tester) async {
-      final Finder cell = find.byKey(demo.cellKey(0, 0));
-      final Rect originalRect = tester.getRect(cell);
+      final cellKey = demo.cellKey(0, 0);
+      final cell = find.byKey(cellKey);
+      final originalRect = tester.getRect(cell);
 
       await _clearWidgetTree(tester, notifyNow: false);
 
-      final VisibilityInfo info =
-          _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      final info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
       expect(info.size, originalRect.size);
       expect(info.visibleBounds.size, Size.zero);
       expect(info.visibleFraction, 0.0);
+
+      final bounds =
+          VisibilityDetectorController.instance.widgetBoundsFor(cellKey);
+      expect(bounds, null);
     },
   );
 
   testWidgets(
     'VisibilityDetector callbacks fire immediately when setting '
-        'updateInterval=0',
+    'updateInterval=0',
     (tester) async {
       final controller = VisibilityDetectorController.instance;
       final oldDuration = controller.updateInterval;
@@ -217,11 +247,10 @@ void main() {
 
   _wrapTest(
     'VisibilityDetector fires callbacks when becoming enabled and not when '
-        'becoming disabled',
+    'becoming disabled',
     widget: _TestPropertyChange(key: _testPropertyChangeKey),
     callback: (tester) async {
-      final _TestPropertyChangeState state =
-          _testPropertyChangeKey.currentState;
+      final state = _testPropertyChangeKey.currentState;
 
       // Validate the initial state.  The visibility callback should have fired
       // exactly once.
@@ -248,9 +277,9 @@ void main() {
 
   _wrapTest(
     'VisibilityDetector reports visibility changes after a simulated screen '
-        'rotation',
+    'rotation',
     callback: (tester) async {
-      final Size oldViewSize = tester.binding.renderView?.size;
+      final oldViewSize = tester.binding.renderView?.size;
       expect(oldViewSize, isNotNull);
 
       final newViewSize = Size(oldViewSize.height, oldViewSize.width);
@@ -258,7 +287,7 @@ void main() {
       _expectVisibility(demo.RowColumn(0, 6), 0.360);
 
       // This item was never visible, so we have no data for it.
-      expect(_positionToVisibilityInfo[demo.RowColumn(5, 0)], isNull);
+      expect(_positionToVisibilityInfo[demo.RowColumn(5, 0)], null);
 
       // Simulate a rotation.
       await _setViewSize(tester, newViewSize);
@@ -274,6 +303,30 @@ void main() {
       // Re-verify the original visibilities.
       _expectVisibility(demo.RowColumn(0, 6), 0.360);
       _expectVisibility(demo.RowColumn(5, 0), 0, epsilon: 0);
+    },
+  );
+
+  _wrapTest(
+    'VisibilityDetector computes widget bounds in global coordinates',
+    widget: _TestOffset(key: _testOffsetKey),
+    callback: (tester) async {
+      final viewSize = tester.binding.renderView?.size;
+      expect(viewSize, isNotNull);
+
+      final bounds =
+          VisibilityDetectorController.instance.widgetBoundsFor(_testOffsetKey);
+      expect(
+        bounds,
+        tester.getRect(find.byType(VisibilityDetector)),
+      );
+      expect(
+        bounds,
+        Rect.fromCenter(
+          center: Offset(viewSize.width / 2, viewSize.height / 2),
+          width: _TestOffset.detectorWidth,
+          height: _TestOffset.detectorHeight,
+        ),
+      );
     },
   );
 }
@@ -383,7 +436,7 @@ Future<void> _setViewSize(WidgetTester tester, Size newSize) async {
 /// visibility.
 void _expectVisibility(demo.RowColumn rc, double expectedFraction,
     {double epsilon = 0.001}) {
-  final VisibilityInfo info = _positionToVisibilityInfo[rc];
+  final info = _positionToVisibilityInfo[rc];
   expect(info, isNotNull);
   expect(info.visibleFraction, closeTo(expectedFraction, epsilon));
 }
@@ -431,6 +484,34 @@ class _TestPropertyChangeState extends State<_TestPropertyChange> {
       onVisibilityChanged:
           visibilityDetectorEnabled ? _handleVisibilityChanged : null,
       child: const Placeholder(),
+    );
+  }
+}
+
+/// A widget to exercise calling [RenderVisibilityDetector.paint] with a
+/// non-zero [Offset].
+class _TestOffset extends StatelessWidget {
+  const _TestOffset({Key key}) : super(key: key);
+
+  static const detectorWidth = 200.0;
+  static const detectorHeight = 100.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: VisibilityDetector(
+            key: key,
+            onVisibilityChanged: (visibilityInfo) {},
+            child: const SizedBox(
+              width: detectorWidth,
+              height: detectorHeight,
+              child: Placeholder(),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

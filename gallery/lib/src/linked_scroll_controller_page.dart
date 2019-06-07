@@ -36,7 +36,7 @@ class _LinkedScrollablesPageState extends State<LinkedScrollablesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: new AppBar(title: new Text('Linked Scrollables')),
+      appBar: AppBar(title: Text('Linked Scrollables')),
       body: Row(
         children: [
           Expanded(
