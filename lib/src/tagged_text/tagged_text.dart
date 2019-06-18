@@ -98,7 +98,7 @@ class TaggedText extends StatefulWidget {
       : assert(
             tagToTextSpanBuilder.keys.every((key) => key == key.toLowerCase())),
         assert(() {
-          final htmlTags = Set.of([
+          final htmlTags = {
             'a',
             'abbr',
             'acronym',
@@ -243,8 +243,8 @@ class TaggedText extends StatefulWidget {
             'var',
             'video',
             'wbr',
-            'xmp',
-          ]);
+            'xmp'
+          };
           htmlTags.retainAll(tagToTextSpanBuilder.keys);
           return htmlTags.isEmpty;
         }(), 'Tags that are actual HTML tags are not allowed'),
