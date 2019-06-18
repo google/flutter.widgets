@@ -132,8 +132,7 @@ class _LinkedScrollPosition extends ScrollPositionWithSingleContext {
 
   final _LinkedScrollController owner;
 
-  final Set<_LinkedScrollActivity> _peerActivities =
-      Set<_LinkedScrollActivity>();
+  final Set<_LinkedScrollActivity> _peerActivities = <_LinkedScrollActivity>{};
 
   // We override hold to propagate it to all peer controllers.
   @override
@@ -243,7 +242,7 @@ class _LinkedScrollActivity extends ScrollActivity {
   @override
   _LinkedScrollPosition get delegate => super.delegate;
 
-  final Set<_LinkedScrollPosition> drivers = Set<_LinkedScrollPosition>();
+  final Set<_LinkedScrollPosition> drivers = <_LinkedScrollPosition>{};
 
   void link(_LinkedScrollPosition driver) {
     drivers.add(driver);
