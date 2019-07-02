@@ -3,7 +3,10 @@ version: 0.1.4
 description: >
   Flutter widgets that are developed by Google but not by the core
   Flutter team.
-author: Dart Team <misc@dartlang.org>
+authors:
+  - djshuckerow@google.com
+  - anthony.bullard@gmail.com
+  - jamesdlin@google.com
 homepage: https://github.com/google/flutter.widgets
 
 environment:
