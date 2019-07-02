@@ -1,3 +1,7 @@
+# 0.1.4+1
+
+* Clarified authors in pubspec.yaml
+
 # 0.1.4
 
 * `VisibilityDetector`:
