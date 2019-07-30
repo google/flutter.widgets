@@ -22,10 +22,10 @@ void main() {
       final actualSelectionHandles = await _setUpSelectionHandles(
         tester,
         (textField) => VisibilityDetector(
-              key: visibilityDetectorKey,
-              onVisibilityChanged: (visibilityInfo) {},
-              child: textField,
-            ),
+          key: visibilityDetectorKey,
+          onVisibilityChanged: (visibilityInfo) {},
+          child: textField,
+        ),
       );
 
       expect(actualSelectionHandles, expectedSelectionHandles);
