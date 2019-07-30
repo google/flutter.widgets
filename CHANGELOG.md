@@ -1,6 +1,10 @@
-# 0.1.4+1
+# 0.1.5
 
-* Clarified authors in pubspec.yaml
+* Clarified authors in pubspec.yaml.
+
+* Fixed lint violations of prefer_collection_literals.
+
+* Adjust the minimum versions of dependencies.
 
 # 0.1.4
 
@@ -11,7 +15,7 @@
     `VisibilityDetector`.
 
   * Added `VisibilityDetectorController.widgetBoundsFor`.
-  
+
 # 0.1.3
 
 * Compatibility fixes for Flutter 1.3.0.
