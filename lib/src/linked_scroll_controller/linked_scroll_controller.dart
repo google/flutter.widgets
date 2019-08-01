@@ -94,7 +94,7 @@ class _LinkedScrollController extends ScrollController {
     assert(canLinkWithPeers);
     return _allPeersWithClients
         .map((peer) => peer.link(driver))
-        .expand((e) => (e));
+        .expand((e) => e);
   }
 
   Iterable<_LinkedScrollActivity> link(_LinkedScrollPosition driver) {
