@@ -270,11 +270,10 @@ class VisibilityDetectorLayer extends ContainerLayer {
 
   /// See [Layer.addToScene].
   @override
-  ui.EngineLayer addToScene(ui.SceneBuilder builder,
-      [Offset layerOffset = Offset.zero]) {
+  void addToScene(ui.SceneBuilder builder, [Offset layerOffset = Offset.zero]) {
     _layerOffset = layerOffset;
     _scheduleUpdate();
-    return super.addToScene(builder, layerOffset);
+    super.addToScene(builder, layerOffset);
   }
 
   /// See [AbstractNode.attach].
