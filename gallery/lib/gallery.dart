@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:gallery/src/linked_scroll_controller_page.dart';
+import 'package:gallery/src/scrollable_positioned_list_page.dart';
 import 'package:gallery/src/tagged_text_page.dart';
 import 'package:gallery/src/html_widget_page.dart' as html_latency;
 import 'package:flutter_widgets/src/visibility_detector/demo.dart'
@@ -31,6 +32,10 @@ class Gallery extends StatefulWidget {
     ..add(_GalleryPage(
       title: 'Visibility Detector',
       pageBuilder: (context) => VisibilityDetectorDemoPage(),
+    ))
+    ..add(_GalleryPage(
+      title: 'Scrollable Positioned List',
+      pageBuilder: (context) => ScrollablePositionedListPage(),
     ));
 
   @override
