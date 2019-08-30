@@ -1,3 +1,9 @@
+# 0.1.6-dev.1
+
+* Added `ScrollablePositionedList`.
+* Fixed an incompatibility in `VisibilityDetector` with Flutter 1.9.1
+  ([issue #20](https://github.com/google/flutter.widgets/issues/20)).
+
 # 0.1.5
 
 * Clarified authors in pubspec.yaml.
