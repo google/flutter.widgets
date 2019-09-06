@@ -19,7 +19,7 @@ dependencies:
   flutter:
     sdk: flutter
   html: ^0.14.0
-  intl: ^0.15.2
+  intl: ^0.16.0
   meta: ^1.1.1
   quiver: ^2.0.0+1
 
