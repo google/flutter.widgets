@@ -1,3 +1,7 @@
+# 0.1.6-dev.2
+
+* Removed dependency on package:intl.
+
 # 0.1.6-dev.1
 
 * Added `ScrollablePositionedList`.

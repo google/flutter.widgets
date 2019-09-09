@@ -1,13 +1,13 @@
 name: flutter_widgets
-version: 0.1.6-dev.1
+version: 0.1.6-dev.2
 description: >
   Flutter widgets that are developed by Google but not by the core
   Flutter team.
 authors:
-  - djshuckerow@google.com
-  - anthony.bullard@gmail.com
-  - jamesdlin@google.com
-  - robinsontom@google.com
+  - Dave Shuckerhow <djshuckerow@google.com>
+  - Anthony Bullard <anthony.bullard@gmail.com>
+  - James Lin <jamesdlin@google.com>
+  - Tom Robinson <robinsontom@google.com>
 homepage: https://github.com/google/flutter.widgets
 
 environment:
@@ -19,7 +19,6 @@ dependencies:
   flutter:
     sdk: flutter
   html: ^0.14.0
-  intl: ^0.16.0
   meta: ^1.1.1
   quiver: ^2.0.0+1
 
