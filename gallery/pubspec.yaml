@@ -8,7 +8,6 @@ environment:
 dependencies:
   flutter_widgets:
     path: ../
-  intl: ^0.16.0
   meta: ^1.1.1
 
 dev_dependencies:
