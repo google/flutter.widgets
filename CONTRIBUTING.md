@@ -38,6 +38,12 @@ Please peruse Flutter's
 working on anything non-trivial. These guidelines are intended to
 keep the code consistent and avoid common pitfalls.
 
+You must complete the
+[Contributor License Agreement](https://cla.developers.google.com/clas).
+You can do this online, and it only takes a minute.
+If you've never submitted code before, you must add your (or your
+organization's) name and contact info to the [AUTHORS](AUTHORS) file.
+
 To start working on a patch:
 
  * `git fetch upstream`
@@ -56,12 +62,9 @@ Please make sure all your checkins have detailed commit messages explaining the 
 
 Once you've gotten an LGTM from a project maintainer and once your PR has received
 the green light from all our automated testing (Travis, Appveyor, etc), one of the
-project maintainers will merge the changes using a tool to sync with our internal
-flutter widgets repo. The PR will automatically be closed when the changes are
-merged externally.
+project maintainers will merge the changes to our internal repo. This might cause
+test failures that need to be debugged internally so we might make further suggestions
+to you.
 
-You must complete the
-[Contributor License Agreement](https://cla.developers.google.com/clas).
-You can do this online, and it only takes a minute.
-If you've never submitted code before, you must add your (or your
-organization's) name and contact info to the [AUTHORS](AUTHORS) file.
+Once the internal change is submitted to the private repo, we will run our sync scripts
+to bring this repo up to date. At that point, your PR will be closed.
