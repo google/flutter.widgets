@@ -1,12 +1,9 @@
-# 0.1.6-dev.2
-
-* Removed dependency on package:intl.
-
-# 0.1.6-dev.1
+# 0.1.6
 
 * Added `ScrollablePositionedList`.
 * Fixed an incompatibility in `VisibilityDetector` with Flutter 1.9.1
   ([issue #20](https://github.com/google/flutter.widgets/issues/20)).
+* Removed dependency on package:intl.
 
 # 0.1.5
 
