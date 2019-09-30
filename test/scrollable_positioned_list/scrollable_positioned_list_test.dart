@@ -8,11 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:flutter_widgets/src/scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:flutter_widgets/src/scrollable_positioned_list/src/scroll_view.dart';
 
 const screenHeight = 400.0;
 const screenWidth = 400.0;
 const itemHeight = screenHeight / 10.0;
-const itemCount = 500;
+const defaultItemCount = 500;
 const scrollDuration = Duration(seconds: 1);
 const scrollDurationTolerance = Duration(milliseconds: 1);
 const tolerance = 1e-3;
@@ -24,6 +25,7 @@ void main() {
     ItemPositionsListener itemPositionsListener,
     int initialIndex = 0,
     double initialAlignment = 0.0,
+    int itemCount,
     ScrollPhysics physics,
     bool addSemanticIndexes = true,
     int semanticChildCount,
@@ -38,7 +40,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: ScrollablePositionedList.builder(
-          itemCount: itemCount,
+          itemCount: itemCount ?? defaultItemCount,
           itemScrollController: itemScrollController,
           itemBuilder: (context, index) => SizedBox(
             height: itemHeight,
@@ -92,7 +94,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: ScrollablePositionedList.builder(
-          itemCount: itemCount,
+          itemCount: defaultItemCount,
           itemBuilder: (context, index) => SizedBox(
             height: itemHeight,
             child: Text('Item $index'),
@@ -1089,7 +1091,7 @@ void main() {
     );
 
     final CustomScrollView customScrollView =
-        tester.widget(find.byType(CustomScrollView));
+        tester.widget(find.byType(UnboundedCustomScrollView));
     expect(customScrollView.semanticChildCount, 30);
 
     unawaited(
@@ -1097,7 +1099,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final CustomScrollView customScrollView2 =
-        tester.widget(find.byType(CustomScrollView));
+        tester.widget(find.byType(UnboundedCustomScrollView));
     expect(customScrollView2.semanticChildCount, 30);
   });
 
@@ -1109,16 +1111,16 @@ void main() {
     );
 
     final CustomScrollView customScrollView =
-        tester.widget(find.byType(CustomScrollView));
-    expect(customScrollView.semanticChildCount, itemCount);
+        tester.widget(find.byType(UnboundedCustomScrollView));
+    expect(customScrollView.semanticChildCount, defaultItemCount);
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
     await tester.pumpAndSettle();
 
     final CustomScrollView customScrollView2 =
-        tester.widget(find.byType(CustomScrollView));
-    expect(customScrollView2.semanticChildCount, itemCount);
+        tester.widget(find.byType(UnboundedCustomScrollView));
+    expect(customScrollView2.semanticChildCount, defaultItemCount);
   });
 
   testWidgets('padding test 1', (WidgetTester tester) async {
@@ -1201,5 +1203,91 @@ void main() {
             of: find.byType(ScrollablePositionedList),
             matching: find.byType(AutomaticKeepAlive)),
         findsNothing);
+  });
+
+  testWidgets('Jump to end of list', (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUp(tester, itemScrollController: itemScrollController);
+
+    itemScrollController.jumpTo(index: defaultItemCount);
+    await tester.pumpAndSettle();
+
+    expect(tester.getBottomLeft(find.text('Item $defaultItemCount')).dy,
+        screenHeight);
+  });
+
+  testWidgets('Scroll to end of list', (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUp(tester, itemScrollController: itemScrollController);
+
+    unawaited(itemScrollController.scrollTo(
+        index: defaultItemCount, duration: scrollDuration));
+    await tester.pumpAndSettle();
+
+    expect(tester.getBottomLeft(find.text('Item $defaultItemCount')).dy,
+        screenHeight);
+  });
+
+  testWidgets('Scroll to end of list, jump to beginning, jump to end',
+      (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUp(tester, itemScrollController: itemScrollController);
+
+    unawaited(itemScrollController.scrollTo(
+        index: defaultItemCount, duration: scrollDuration));
+    await tester.pumpAndSettle();
+    itemScrollController.jumpTo(index: 0);
+    await tester.pumpAndSettle();
+    itemScrollController.jumpTo(index: defaultItemCount);
+    await tester.pumpAndSettle();
+
+    expect(tester.getBottomLeft(find.text('Item $defaultItemCount')).dy,
+        screenHeight);
+  });
+
+  testWidgets('Jump to end of list, scroll to beginning, scroll to end',
+      (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUp(tester, itemScrollController: itemScrollController);
+
+    itemScrollController.jumpTo(index: defaultItemCount);
+    await tester.pumpAndSettle();
+
+    unawaited(
+        itemScrollController.scrollTo(index: 0, duration: scrollDuration));
+    await tester.pumpAndSettle();
+    unawaited(itemScrollController.scrollTo(
+        index: defaultItemCount, duration: scrollDuration));
+    await tester.pumpAndSettle();
+
+    expect(tester.getBottomLeft(find.text('Item $defaultItemCount')).dy,
+        screenHeight);
+  });
+
+  testWidgets(
+      'Jump to end of list, jump to beginning with alignment not at top',
+      (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUp(tester, itemScrollController: itemScrollController);
+
+    itemScrollController.jumpTo(index: defaultItemCount);
+    await tester.pumpAndSettle();
+
+    itemScrollController.jumpTo(index: 0, alignment: 0.3);
+    await tester.pumpAndSettle();
+
+    expect(tester.getTopLeft(find.text('Item 0')).dy, 0);
+  });
+
+  testWidgets("Short list, can't scroll past end", (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUp(tester,
+        itemScrollController: itemScrollController, itemCount: 3);
+
+    await tester.drag(
+        find.byType(ScrollablePositionedList), const Offset(0, -10));
+    await tester.pumpAndSettle();
+
+    expect(tester.getTopLeft(find.text('Item 0')).dy, 0);
   });
 }
