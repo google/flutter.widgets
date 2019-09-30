@@ -6,7 +6,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_widgets/flutter_widgets.dart';
 
-const numberOfItems = 10000;
+const numberOfItems = 5001;
 const minItemHeight = 20.0;
 const maxItemHeight = 150.0;
 const scrollDuration = Duration(seconds: 2);
@@ -164,6 +164,7 @@ class _ScrollablePositionedListPageState
           scrollButton(10),
           scrollButton(100),
           scrollButton(1000),
+          scrollButton(5000),
         ],
       );
 
@@ -175,6 +176,7 @@ class _ScrollablePositionedListPageState
           jumpButton(10),
           jumpButton(100),
           jumpButton(1000),
+          jumpButton(5000),
         ],
       );
 
