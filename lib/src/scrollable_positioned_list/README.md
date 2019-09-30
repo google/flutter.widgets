@@ -46,7 +46,7 @@ One can monitor what items are visible on screen with:
 itemPositionListener.positions.addListener((positions) => ...);
 ```
 
-A full example can be found it the flutter.widgets Gallery sample application.
+A full example can be found in the example folder.
 
 --------------------------------------------------------------------------------
 
