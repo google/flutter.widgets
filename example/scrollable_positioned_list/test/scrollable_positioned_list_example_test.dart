@@ -11,7 +11,7 @@ import 'package:flutter_widgets/flutter_widgets.dart';
 void main() {
   setUp(() {
     WidgetsBinding.instance.renderView.configuration = TestViewConfiguration(
-        size: const Size(500, 600), window: RendererBinding.instance.window);
+        size: const Size(800, 900), window: RendererBinding.instance.window);
   });
 
   testWidgets('Start at 0', (WidgetTester tester) async {
@@ -22,7 +22,6 @@ void main() {
             tester.getTopLeft(find.byType(ScrollablePositionedList)).dy,
         0);
     expect(find.text('First Item: 0'), findsOneWidget);
-    expect(find.text('Last Item: 4'), findsOneWidget);
   });
 
   testWidgets('Scroll Up a little', (WidgetTester tester) async {
