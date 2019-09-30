@@ -11,7 +11,17 @@ const minItemHeight = 20.0;
 const maxItemHeight = 150.0;
 const scrollDuration = Duration(seconds: 2);
 
-/// Gallery page for [ScrollablePositionedList].
+/// Example widget that uses [ScrollablePositionedList].
+///
+/// Shows a [ScrollablePositionedList] along with the following controls:
+///   - Buttons to jump or scroll to certain items in the list.
+///   - Slider to control the alignment of the items being scrolled or jumped
+///   to.
+///   - A checkbox to reverse the list.
+///
+/// If the device this example is being used on is in portrait mode, the list
+/// will be vertically scrollable, and if the device is in landscape mode, the
+/// list will be horizontally scrollable.
 class ScrollablePositionedListPage extends StatefulWidget {
   const ScrollablePositionedListPage({Key key}) : super(key: key);
 
@@ -22,12 +32,17 @@ class ScrollablePositionedListPage extends StatefulWidget {
 
 class _ScrollablePositionedListPageState
     extends State<ScrollablePositionedListPage> {
+  /// Controller to scroll or jump to a particular item.
   final ItemScrollController itemScrollController = ItemScrollController();
+
+  /// Listener that reports the position of items when the list is scrolled.
   final ItemPositionsListener itemPositionsListener =
       ItemPositionsListener.create();
-  List<double> heights;
-  List<Color> colors;
+  List<double> itemHeights;
+  List<Color> itemColors;
   bool reversed = false;
+
+  /// The alignment to be used next time the user scrolls or jumps to an item.
   double alignment = 0;
 
   @override
@@ -35,12 +50,12 @@ class _ScrollablePositionedListPageState
     super.initState();
     final Random heightGenerator = Random(328902348);
     final Random colorGenerator = Random(42490823);
-    heights = List<double>.generate(
+    itemHeights = List<double>.generate(
         numberOfItems,
         (int _) =>
             heightGenerator.nextDouble() * (maxItemHeight - minItemHeight) +
             minItemHeight);
-    colors = List<Color>.generate(
+    itemColors = List<Color>.generate(
         numberOfItems,
         (int _) =>
             Color(colorGenerator.nextInt(pow(2, 32) - 1)).withOpacity(1));
@@ -105,6 +120,9 @@ class _ScrollablePositionedListPageState
           int min;
           int max;
           if (positions.isNotEmpty) {
+            // Determine the first visible item by finding the item with the
+            // smallest trailing edge that is greater than 0.  i.e. the first
+            // item whose trailing edge in visible in the viewport.
             min = positions
                 .where((ItemPosition position) => position.itemTrailingEdge > 0)
                 .reduce((ItemPosition min, ItemPosition position) =>
@@ -112,6 +130,9 @@ class _ScrollablePositionedListPageState
                         ? position
                         : min)
                 .index;
+            // Determine the last visible item by finding the item with the
+            // greatest leading edge that is less than 1.  i.e. the last
+            // item whose leading edge in visible in the viewport.
             max = positions
                 .where((ItemPosition position) => position.itemLeadingEdge < 1)
                 .reduce((ItemPosition max, ItemPosition position) =>
@@ -182,12 +203,13 @@ class _ScrollablePositionedListPageState
   void jumpTo(int index) =>
       itemScrollController.jumpTo(index: index, alignment: alignment);
 
+  /// Generate item number [i].
   Widget item(int i, Orientation orientation) {
     return SizedBox(
-      height: orientation == Orientation.portrait ? heights[i] : null,
-      width: orientation == Orientation.landscape ? heights[i] : null,
+      height: orientation == Orientation.portrait ? itemHeights[i] : null,
+      width: orientation == Orientation.landscape ? itemHeights[i] : null,
       child: Container(
-        color: colors[i],
+        color: itemColors[i],
         child: Center(
           child: Text('Item $i'),
         ),
