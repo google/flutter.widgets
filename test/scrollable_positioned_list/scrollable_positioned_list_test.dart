@@ -895,7 +895,7 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets('Scroll to 100 jump to 1000 half way',
+  testWidgets('Scroll to 100 jump to 250 half way',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     await setUp(tester, itemScrollController: itemScrollController);
@@ -906,23 +906,23 @@ void main() {
     await tester.pump();
     await tester.pump(scrollDuration ~/ 2);
 
-    itemScrollController.jumpTo(index: 1000);
+    itemScrollController.jumpTo(index: 250);
     await tester.pump();
 
-    expect(tester.getTopLeft(find.text('Item 1000')).dy, 0);
+    expect(tester.getTopLeft(find.text('Item 250')).dy, 0);
 
     expect(find.text('Item 100'), findsNothing);
 
     await tester.pumpAndSettle();
   });
 
-  testWidgets('Scroll to 1000, scroll to 100, jump to 0 half way',
+  testWidgets('Scroll to 250, scroll to 100, jump to 0 half way',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     await setUp(tester, itemScrollController: itemScrollController);
 
     unawaited(
-        itemScrollController.scrollTo(index: 1000, duration: scrollDuration));
+        itemScrollController.scrollTo(index: 250, duration: scrollDuration));
     await tester.pumpAndSettle();
 
     unawaited(
@@ -940,7 +940,7 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets('Scroll to 100 scroll to 1000 half way',
+  testWidgets('Scroll to 100 scroll to 250 half way',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     await setUp(tester, itemScrollController: itemScrollController);
@@ -952,20 +952,20 @@ void main() {
     await tester.pump(scrollDuration ~/ 2);
 
     unawaited(
-        itemScrollController.scrollTo(index: 1000, duration: scrollDuration));
+        itemScrollController.scrollTo(index: 250, duration: scrollDuration));
 
     await tester.pumpAndSettle();
-    expect(tester.getTopLeft(find.text('Item 1000')).dy, 0);
+    expect(tester.getTopLeft(find.text('Item 250')).dy, 0);
     expect(find.text('Item 100'), findsNothing);
   });
 
-  testWidgets('Scroll to 1000, scroll to 100, scroll to 0 half way',
+  testWidgets('Scroll to 250, scroll to 100, scroll to 0 half way',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     await setUp(tester, itemScrollController: itemScrollController);
 
     unawaited(
-        itemScrollController.scrollTo(index: 1000, duration: scrollDuration));
+        itemScrollController.scrollTo(index: 250, duration: scrollDuration));
     await tester.pumpAndSettle();
 
     unawaited(
