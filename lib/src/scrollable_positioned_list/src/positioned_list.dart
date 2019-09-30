@@ -10,6 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'element_registry.dart';
 import 'item_positions_listener.dart';
 import 'item_positions_notifier.dart';
+import 'scroll_view.dart';
 
 /// A list of widgets similar to [ListView], except scroll control
 /// and position reporting is based on index rather than pixel offset.
@@ -156,7 +157,7 @@ class _PositionedListState extends State<PositionedList> {
   @override
   Widget build(BuildContext context) => RegistryWidget(
         elementNotifier: registeredElements,
-        child: CustomScrollView(
+        child: UnboundedCustomScrollView(
           anchor: widget.alignment,
           center: _centerKey,
           controller: scrollController,
