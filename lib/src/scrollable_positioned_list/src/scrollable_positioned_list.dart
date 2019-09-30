@@ -168,10 +168,10 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   final frontOpacity =
       ProxyAnimation(const AlwaysStoppedAnimation<double>(1.0));
 
-  int bottomTarget = 0;
-  double bottomAlignment = 0;
+  int backTarget = 0;
+  double backAlignment = 0;
   int frontTarget;
-  double backAlignment;
+  double frontAlignment;
   Function cancelScrollCallback;
   Function endScrollCallback;
   _ListDisplay listDisplay = _ListDisplay.front;
@@ -181,7 +181,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   void initState() {
     super.initState();
     frontTarget = widget.initialScrollIndex;
-    backAlignment = widget.initialAlignment;
+    frontAlignment = widget.initialAlignment;
     widget.itemScrollController?._attach(this);
     frontItemPositionNotifier.itemPositions.addListener(_updatePositions);
     backItemPositionNotifier.itemPositions.addListener(_updatePositions);
@@ -210,13 +210,13 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                   builder: (context, constraints) => PositionedList(
                     itemBuilder: widget.itemBuilder,
                     itemCount: widget.itemCount,
-                    positionedIndex: bottomTarget,
+                    positionedIndex: backTarget,
                     controller: backScrollController,
                     itemPositionNotifier: backItemPositionNotifier,
                     scrollDirection: widget.scrollDirection,
                     reverse: widget.reverse,
                     cacheExtent: constraints.maxHeight * _screenScrollCount,
-                    alignment: bottomAlignment,
+                    alignment: backAlignment,
                     physics: widget.physics,
                     addSemanticIndexes: widget.addSemanticIndexes,
                     semanticChildCount: widget.semanticChildCount,
@@ -246,7 +246,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                         scrollDirection: widget.scrollDirection,
                         reverse: widget.reverse,
                         cacheExtent: constraints.maxHeight * _screenScrollCount,
-                        alignment: backAlignment,
+                        alignment: frontAlignment,
                         physics: widget.physics,
                         addSemanticIndexes: widget.addSemanticIndexes,
                         semanticChildCount: widget.semanticChildCount,
@@ -268,13 +268,13 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       frontScrollController.jumpTo(0);
       setState(() {
         frontTarget = index;
-        backAlignment = alignment;
+        frontAlignment = alignment;
       });
     } else {
       backScrollController.jumpTo(0);
       setState(() {
-        bottomTarget = index;
-        bottomAlignment = alignment;
+        backTarget = index;
+        backAlignment = alignment;
       });
     }
   }
@@ -305,7 +305,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       double alignment,
       @required Duration duration,
       Curve curve = Curves.linear}) async {
-    final lastTarget = _showFrontList ? frontTarget : bottomTarget;
+    final lastTarget = _showFrontList ? frontTarget : backTarget;
     final direction = index > lastTarget ? 1 : -1;
     final startingListDisplay = listDisplay;
     final startingScrollController =
@@ -356,7 +356,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       };
       setState(() {
         if (_showFrontList) {
-          bottomTarget = index;
+          backTarget = index;
         } else {
           frontTarget = index;
         }
