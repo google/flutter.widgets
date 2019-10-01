@@ -25,8 +25,9 @@ void main() {
       await tester.pumpWidget(wrap(widget));
 
       final richText = findRichTextWidget(tester);
-      expect(richText.text.text, isNull);
-      expect(richText.text.children, [TextSpan(text: content)]);
+      final textSpan = getTextSpan(richText);
+      expect(textSpan.text, isNull);
+      expect(textSpan.children, [TextSpan(text: content)]);
     });
 
     testWidgets('with tags', (tester) async {
@@ -41,8 +42,9 @@ void main() {
       await tester.pumpWidget(wrap(widget));
 
       final richText = findRichTextWidget(tester);
-      expect(richText.text.text, isNull);
-      expect(richText.text.children, [
+      final textSpan = getTextSpan(richText);
+      expect(textSpan.text, isNull);
+      expect(textSpan.children, [
         TextSpan(text: 'Hello', style: greetingStyle),
         TextSpan(text: ', my name is '),
         TextSpan(text: 'George', style: nameStyle),
@@ -62,8 +64,9 @@ void main() {
       await tester.pumpWidget(wrap(widget));
 
       final richText = findRichTextWidget(tester);
-      expect(richText.text.text, isNull);
-      expect(richText.text.children, [
+      final textSpan = getTextSpan(richText);
+      expect(textSpan.text, isNull);
+      expect(textSpan.children, [
         TextSpan(text: 'Hello', style: greetingStyle),
         TextSpan(text: ', my name is '),
         TextSpan(text: 'George', style: nameStyle),
@@ -117,8 +120,9 @@ void main() {
       await tester.pumpWidget(wrap(newWidget));
 
       final richText = findRichTextWidget(tester);
-      expect(richText.text.text, isNull);
-      expect(richText.text.children, [
+      final textSpan = getTextSpan(richText);
+      expect(textSpan.text, isNull);
+      expect(textSpan.children, [
         TextSpan(text: 'Hello, '),
         TextSpan(text: 'Bob', style: nameStyle),
       ]);
@@ -143,8 +147,9 @@ void main() {
       await tester.pumpWidget(wrap(newWidget));
 
       final richText = findRichTextWidget(tester);
-      expect(richText.text.text, isNull);
-      expect(richText.text.children, [
+      final textSpan = getTextSpan(richText);
+      expect(textSpan.text, isNull);
+      expect(textSpan.children, [
         TextSpan(text: 'Hello, '),
         TextSpan(text: 'Bob', style: updatedStyle),
       ]);
@@ -181,8 +186,9 @@ void main() {
 
       // Assert.
       final richText = findRichTextWidget(tester);
-      expect(richText.text.text, isNull);
-      expect(richText.text.children, [
+      final textSpan = getTextSpan(richText);
+      expect(textSpan.text, isNull);
+      expect(textSpan.children, [
         TextSpan(text: 'Hello, '),
         nameSpan,
       ]);
@@ -223,8 +229,9 @@ void main() {
       await tester.pumpWidget(wrap(widget));
 
       final richText = findRichTextWidget(tester);
-      expect(richText.text.text, isNull);
-      expect(richText.text.children, [
+      final textSpan = getTextSpan(richText);
+      expect(textSpan.text, isNull);
+      expect(textSpan.children, [
         TextSpan(text: 'Hello, '),
         TextSpan(text: 'Bob', style: nameStyle),
       ]);
@@ -300,6 +307,11 @@ RichText findRichTextWidget(WidgetTester tester) {
   final richTextFinder = find.byType(RichText);
   expect(richTextFinder, findsOneWidget);
   return tester.widget(richTextFinder) as RichText;
+}
+
+TextSpan getTextSpan(RichText richText) {
+  expect(richText.text, isA<TextSpan>());
+  return richText.text as TextSpan;
 }
 
 Widget wrap(Widget widget) {
