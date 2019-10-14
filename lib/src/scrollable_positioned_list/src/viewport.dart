@@ -18,7 +18,7 @@ class UnboundedViewport extends Viewport {
     Key key,
     AxisDirection axisDirection = AxisDirection.down,
     AxisDirection crossAxisDirection,
-    double anchor = 0.0,
+    this.anchor = 0.0,
     @required ViewportOffset offset,
     Key center,
     double cacheExtent,
@@ -27,11 +27,12 @@ class UnboundedViewport extends Viewport {
             key: key,
             axisDirection: axisDirection,
             crossAxisDirection: crossAxisDirection,
-            anchor: anchor,
             offset: offset,
             center: center,
             cacheExtent: cacheExtent,
             slivers: slivers);
+
+  final double anchor;
 
   @override
   RenderViewport createRenderObject(BuildContext context) {
@@ -64,21 +65,34 @@ class UnboundedRenderViewport extends RenderViewport {
     List<RenderSliver> children,
     RenderSliver center,
     double cacheExtent,
-  }) : super(
+  })  : _anchor = anchor,
+        super(
             axisDirection: axisDirection,
             crossAxisDirection: crossAxisDirection,
             offset: offset,
-            anchor: anchor,
             center: center,
             cacheExtent: cacheExtent,
             children: children);
 
   static const int _maxLayoutCycles = 10;
 
+  double _anchor;
+
   // Out-of-band data computed during layout.
   double _minScrollExtent;
   double _maxScrollExtent;
   bool _hasVisualOverflow = false;
+
+  @override
+  double get anchor => _anchor;
+
+  @override
+  set anchor(double value) {
+    assert(value != null);
+    if (value == _anchor) return;
+    _anchor = value;
+    markNeedsLayout();
+  }
 
   @override
   void performLayout() {

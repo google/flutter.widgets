@@ -16,7 +16,7 @@ class UnboundedCustomScrollView extends CustomScrollView {
     ScrollPhysics physics,
     bool shrinkWrap = false,
     Key center,
-    double anchor = 0.0,
+    this.anchor = 0.0,
     double cacheExtent,
     List<Widget> slivers = const <Widget>[],
     int semanticChildCount,
@@ -30,12 +30,13 @@ class UnboundedCustomScrollView extends CustomScrollView {
           physics: physics,
           shrinkWrap: shrinkWrap,
           center: center,
-          anchor: anchor,
           cacheExtent: cacheExtent,
           semanticChildCount: semanticChildCount,
           dragStartBehavior: dragStartBehavior,
           slivers: slivers,
         );
+
+  final double anchor;
 
   /// Build the viewport.
   @protected
