@@ -157,6 +157,40 @@ void main() {
         1);
   });
 
+  testWidgets('List positioned with 20 at halfway',
+      (WidgetTester tester) async {
+    await setUp(tester, topItem: 20, anchor: 0.5);
+    await tester.pump();
+
+    expect(
+        itemPositionNotifier.itemPositions.value
+            .firstWhere((position) => position.index == 20)
+            .itemLeadingEdge,
+        0.5);
+    expect(
+        itemPositionNotifier.itemPositions.value
+            .firstWhere((position) => position.index == 20)
+            .itemTrailingEdge,
+        0.5 + itemHeight / screenHeight);
+  });
+
+  testWidgets('List positioned with 20 half off top of screen',
+      (WidgetTester tester) async {
+    await setUp(tester, topItem: 20, anchor: -(itemHeight / screenHeight) / 2);
+    await tester.pump();
+
+    expect(
+        itemPositionNotifier.itemPositions.value
+            .firstWhere((position) => position.index == 20)
+            .itemLeadingEdge,
+        -(itemHeight / screenHeight) / 2);
+    expect(
+        itemPositionNotifier.itemPositions.value
+            .firstWhere((position) => position.index == 20)
+            .itemTrailingEdge,
+        (itemHeight / screenHeight) / 2);
+  });
+
   testWidgets('List positioned with 5 at top then scroll up 2',
       (WidgetTester tester) async {
     await setUp(tester, topItem: 5);

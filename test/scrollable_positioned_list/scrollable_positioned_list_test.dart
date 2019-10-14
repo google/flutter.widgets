@@ -155,7 +155,83 @@ void main() {
         0.5);
   });
 
-  testWidgets('List positioned with 9 at middle scroll to 14 at bottom',
+  testWidgets('List positioned with 9 half way off top',
+      (WidgetTester tester) async {
+    final itemPositionsListener = ItemPositionsListener.create();
+    await setUp(tester,
+        itemPositionsListener: itemPositionsListener,
+        initialIndex: 9,
+        initialAlignment: -(itemHeight / screenHeight) / 2);
+
+    expect(tester.getTopLeft(find.text('Item 9')).dy, -itemHeight / 2);
+
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 9)
+            .itemLeadingEdge,
+        -(itemHeight / screenHeight) / 2);
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 9)
+            .itemTrailingEdge,
+        (itemHeight / screenHeight) / 2);
+  });
+
+  testWidgets('Scroll to 9 half way off top', (WidgetTester tester) async {
+    final itemPositionsListener = ItemPositionsListener.create();
+    final itemScrollController = ItemScrollController();
+    await setUp(tester,
+        itemPositionsListener: itemPositionsListener,
+        itemScrollController: itemScrollController);
+
+    unawaited(itemScrollController.scrollTo(
+        index: 9,
+        duration: scrollDuration,
+        alignment: -(itemHeight / screenHeight) / 2));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(scrollDuration + scrollDurationTolerance);
+
+    expect(tester.getTopLeft(find.text('Item 9')).dy, -itemHeight / 2);
+
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 9)
+            .itemLeadingEdge,
+        -(itemHeight / screenHeight) / 2);
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 9)
+            .itemTrailingEdge,
+        (itemHeight / screenHeight) / 2);
+  });
+
+  testWidgets('Jump to 9 half way off top', (WidgetTester tester) async {
+    final itemPositionsListener = ItemPositionsListener.create();
+    final itemScrollController = ItemScrollController();
+    await setUp(tester,
+        itemPositionsListener: itemPositionsListener,
+        itemScrollController: itemScrollController);
+
+    itemScrollController.jumpTo(
+        index: 9, alignment: -(itemHeight / screenHeight) / 2);
+    await tester.pump();
+
+    expect(tester.getTopLeft(find.text('Item 9')).dy, -itemHeight / 2);
+
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 9)
+            .itemLeadingEdge,
+        -(itemHeight / screenHeight) / 2);
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 9)
+            .itemTrailingEdge,
+        (itemHeight / screenHeight) / 2);
+  });
+
+  testWidgets('List positioned with 9 at middle scroll to 15 at bottom',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
