@@ -62,29 +62,26 @@ class _ScrollablePositionedListPageState
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text('Scrollable Positioned List')),
-        body: Material(
-          child: OrientationBuilder(
-            builder: (context, orientation) => Column(
-              children: <Widget>[
-                Expanded(
-                  child: list(orientation),
-                ),
-                positionsView,
-                Row(
-                  children: <Widget>[
-                    Column(
-                      children: <Widget>[
-                        scrollControlButtons,
-                        jumpControlButtons,
-                        alignmentControl,
-                      ],
-                    ),
-                  ],
-                )
-              ],
-            ),
+  Widget build(BuildContext context) => Material(
+        child: OrientationBuilder(
+          builder: (context, orientation) => Column(
+            children: <Widget>[
+              Expanded(
+                child: list(orientation),
+              ),
+              positionsView,
+              Row(
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      scrollControlButtons,
+                      jumpControlButtons,
+                      alignmentControl,
+                    ],
+                  ),
+                ],
+              )
+            ],
           ),
         ),
       );
