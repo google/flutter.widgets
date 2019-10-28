@@ -1,13 +1,21 @@
 # 0.1.7
 
-* Properly bounds ScrollablePositionedList to fix
-  ([issue #23](https://github.com/google/flutter.widgets/issues/23)).
+* Added the `FeatureDiscovery` widget.
 
-* Allow ScrollablePositionedList alignment outside [0..1] to fix
-  ([issue #31](https://github.com/google/flutter.widgets/issues/31)).
-  
-* Move ScrollablePositionedList example into example subdirectory.
-  
+* Added the `MaterialResponsiveUiData` class.
+
+* Removed the Gallery app.
+
+* `ScrollablePositionedList`:
+
+  * Properly bound `ScrollablePositionedList` to fix
+    [issue #23](https://github.com/google/flutter.widgets/issues/23).
+
+  * Allow `ScrollablePositionedList` alignment outside `[0..1]` to fix
+    [issue #31](https://github.com/google/flutter.widgets/issues/31).
+
+  * Moved `ScrollablePositionedList` example into `example` subdirectory.
+
 # 0.1.6
 
 * Added `ScrollablePositionedList`.
