@@ -18,12 +18,13 @@ class UnboundedViewport extends Viewport {
     Key key,
     AxisDirection axisDirection = AxisDirection.down,
     AxisDirection crossAxisDirection,
-    this.anchor = 0.0,
+    double anchor = 0.0,
     @required ViewportOffset offset,
     Key center,
     double cacheExtent,
     List<Widget> slivers = const <Widget>[],
-  }) : super(
+  })  : _anchor = anchor,
+        super(
             key: key,
             axisDirection: axisDirection,
             crossAxisDirection: crossAxisDirection,
@@ -32,7 +33,12 @@ class UnboundedViewport extends Viewport {
             cacheExtent: cacheExtent,
             slivers: slivers);
 
-  final double anchor;
+  // [Viewport] enforces constraints on [Viewport.anchor], so we need our own
+  // version.
+  final double _anchor;
+
+  @override
+  double get anchor => _anchor;
 
   @override
   RenderViewport createRenderObject(BuildContext context) {

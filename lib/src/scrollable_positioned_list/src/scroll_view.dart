@@ -16,12 +16,13 @@ class UnboundedCustomScrollView extends CustomScrollView {
     ScrollPhysics physics,
     bool shrinkWrap = false,
     Key center,
-    this.anchor = 0.0,
+    double anchor = 0.0,
     double cacheExtent,
     List<Widget> slivers = const <Widget>[],
     int semanticChildCount,
     DragStartBehavior dragStartBehavior = DragStartBehavior.start,
-  }) : super(
+  })  : _anchor = anchor,
+        super(
           key: key,
           scrollDirection: scrollDirection,
           reverse: reverse,
@@ -36,9 +37,15 @@ class UnboundedCustomScrollView extends CustomScrollView {
           slivers: slivers,
         );
 
-  final double anchor;
+  // [CustomScrollView] enforces constraints on [CustomScrollView.anchor], so
+  // we need our own version.
+  final double _anchor;
+
+  @override
+  double get anchor => _anchor;
 
   /// Build the viewport.
+  @override
   @protected
   Widget buildViewport(
     BuildContext context,
