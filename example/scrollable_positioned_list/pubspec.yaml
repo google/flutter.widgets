@@ -1,0 +1,11 @@
+name: scrollable_positioned_list_example
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_widgets:
+    path: ../../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
