@@ -5,15 +5,6 @@
 This repository contains the source code for various Flutter widgets that are
 developed by Google but not by the core Flutter team.
 
-The Gallery sample application showcases the included Flutter widgets.  To
-build it, first create the default Flutter project files:
-
-```
-cd gallery
-flutter create .
-```
-and then it can be run with `flutter run`.
-
 ## Issues
 
 Please file any issues, bugs, or feature requests in the [this
