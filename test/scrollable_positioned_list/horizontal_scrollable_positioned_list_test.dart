@@ -16,10 +16,14 @@ const itemCount = 500;
 const scrollDuration = Duration(seconds: 1);
 
 void main() {
-  Future<void> setUp(WidgetTester tester,
-      {ItemScrollController itemScrollController,
-      ItemPositionsListener itemPositionsListener,
-      bool reverse = false}) async {
+  Future<void> setUp(
+    WidgetTester tester, {
+    ItemScrollController itemScrollController,
+    ItemPositionsListener itemPositionsListener,
+    bool reverse = false,
+    EdgeInsets padding,
+    int initialScrollIndex = 0,
+  }) async {
     tester.binding.window.devicePixelRatioTestValue = 1.0;
     tester.binding.window.physicalSizeTestValue =
         const Size(screenWidth, screenHeight);
@@ -36,6 +40,8 @@ void main() {
           itemPositionsListener: itemPositionsListener,
           scrollDirection: Axis.horizontal,
           reverse: reverse,
+          padding: padding,
+          initialScrollIndex: initialScrollIndex,
         ),
       ),
     );
@@ -189,5 +195,53 @@ void main() {
             .firstWhere((position) => position.index == 109)
             .itemTrailingEdge,
         1);
+  });
+
+  testWidgets('padding test centered sliver at left',
+      (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUp(
+      tester,
+      itemScrollController: itemScrollController,
+      padding: const EdgeInsets.all(10),
+    );
+
+    expect(tester.getTopLeft(find.text('Item 0')), const Offset(10, 10));
+    expect(tester.getTopLeft(find.text('Item 1')),
+        const Offset(10 + itemWidth, 10));
+    expect(tester.getBottomRight(find.text('Item 1')),
+        const Offset(10 + 2 * itemWidth, screenHeight - 10));
+
+    unawaited(
+        itemScrollController.scrollTo(index: 490, duration: scrollDuration));
+    await tester.pumpAndSettle();
+
+    await tester.drag(
+        find.byType(ScrollablePositionedList), const Offset(-100, 0));
+    await tester.pumpAndSettle();
+
+    expect(tester.getBottomRight(find.text('Item 499')),
+        const Offset(screenWidth - 10, screenHeight - 10));
+  });
+
+  testWidgets('padding test - centered sliver not at left',
+      (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUp(
+      tester,
+      itemScrollController: itemScrollController,
+      initialScrollIndex: 2,
+      padding: const EdgeInsets.all(10),
+    );
+
+    await tester.drag(
+        find.byType(ScrollablePositionedList), const Offset(200, 0));
+    await tester.pumpAndSettle();
+
+    expect(tester.getTopLeft(find.text('Item 0')), const Offset(10, 10));
+    expect(tester.getTopLeft(find.text('Item 2')),
+        const Offset(10 + 2 * itemWidth, 10));
+    expect(tester.getTopLeft(find.text('Item 3')),
+        const Offset(10 + 3 * itemWidth, 10));
   });
 }

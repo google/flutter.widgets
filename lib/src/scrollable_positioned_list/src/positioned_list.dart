@@ -168,10 +168,7 @@ class _PositionedListState extends State<PositionedList> {
           semanticChildCount: widget.semanticChildCount ?? widget.itemCount,
           slivers: <Widget>[
             SliverPadding(
-              padding: EdgeInsets.only(
-                  top: widget.padding?.top ?? 0,
-                  left: widget.padding?.left ?? 0,
-                  right: widget.padding?.right ?? 0),
+              padding: _leadingSliverPadding,
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) =>
@@ -185,15 +182,7 @@ class _PositionedListState extends State<PositionedList> {
             ),
             SliverPadding(
               key: _centerKey,
-              padding: EdgeInsets.only(
-                  top: widget.positionedIndex == 0
-                      ? widget.padding?.top ?? 0
-                      : 0,
-                  bottom: widget.positionedIndex == widget.itemCount - 1
-                      ? widget.padding?.bottom ?? 0
-                      : 0,
-                  left: widget.padding?.left ?? 0,
-                  right: widget.padding?.right ?? 0),
+              padding: _centerSliverPadding,
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) =>
@@ -206,10 +195,7 @@ class _PositionedListState extends State<PositionedList> {
               ),
             ),
             SliverPadding(
-              padding: EdgeInsets.only(
-                  bottom: widget.padding?.bottom ?? 0,
-                  left: widget.padding?.left ?? 0,
-                  right: widget.padding?.right ?? 0),
+              padding: _trailingSliverPadding,
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) =>
@@ -234,6 +220,30 @@ class _PositionedListState extends State<PositionedList> {
           : widget.itemBuilder(context, index),
     );
   }
+
+  EdgeInsets get _leadingSliverPadding =>
+      widget.scrollDirection == Axis.vertical
+          ? widget.padding?.copyWith(bottom: 0) ?? EdgeInsets.all(0)
+          : widget.padding?.copyWith(right: 0) ?? EdgeInsets.all(0);
+
+  EdgeInsets get _centerSliverPadding => widget.scrollDirection == Axis.vertical
+      ? widget.padding?.copyWith(
+              top: widget.positionedIndex == 0 ? widget.padding.top : 0,
+              bottom: widget.positionedIndex == widget.itemCount - 1
+                  ? widget.padding.bottom
+                  : 0) ??
+          EdgeInsets.all(0)
+      : widget.padding?.copyWith(
+              left: widget.positionedIndex == 0 ? widget.padding.left : 0,
+              right: widget.positionedIndex == widget.itemCount - 1
+                  ? widget.padding.right
+                  : 0) ??
+          EdgeInsets.all(0);
+
+  EdgeInsets get _trailingSliverPadding =>
+      widget.scrollDirection == Axis.vertical
+          ? widget.padding?.copyWith(top: 0) ?? EdgeInsets.all(0)
+          : widget.padding?.copyWith(left: 0) ?? EdgeInsets.all(0);
 
   void _schedulePositionNotificationUpdate() {
     if (!updateScheduled) {
