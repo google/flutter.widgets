@@ -18,7 +18,7 @@ void main() {
   final ItemPositionsListener itemPositionNotifier =
       ItemPositionsListener.create();
 
-  Future<void> setUp(
+  Future<void> setUpWidgetTest(
     WidgetTester tester, {
     int topItem = 0,
     ScrollController scrollController,
@@ -52,7 +52,7 @@ void main() {
   }
 
   testWidgets('Short list', (WidgetTester tester) async {
-    await setUp(tester, itemCount: 3);
+    await setUpWidgetTest(tester, itemCount: 3);
 
     expect(find.text('Item 0'), findsOneWidget);
     expect(find.text('Separator 0'), findsOneWidget);
@@ -76,7 +76,7 @@ void main() {
 
   testWidgets('Short list centered at 1 scrolled up',
       (WidgetTester tester) async {
-    await setUp(tester, itemCount: 3, topItem: 1);
+    await setUpWidgetTest(tester, itemCount: 3, topItem: 1);
 
     await tester.drag(
         find.byType(PositionedList), const Offset(0, 2 * itemHeight));
@@ -103,7 +103,7 @@ void main() {
   });
 
   testWidgets('List positioned with 0 at top', (WidgetTester tester) async {
-    await setUp(tester);
+    await setUpWidgetTest(tester);
     await tester.pump();
 
     expect(find.text('Item 0'), findsOneWidget);
@@ -131,7 +131,7 @@ void main() {
   });
 
   testWidgets('List positioned with 5 at top', (WidgetTester tester) async {
-    await setUp(tester, topItem: 5);
+    await setUpWidgetTest(tester, topItem: 5);
     await tester.pump();
 
     expect(find.text('Item 4'), findsNothing);
@@ -161,7 +161,7 @@ void main() {
   });
 
   testWidgets('List positioned with 20 at bottom', (WidgetTester tester) async {
-    await setUp(tester, topItem: 20, anchor: 1);
+    await setUpWidgetTest(tester, topItem: 20, anchor: 1);
     await tester.pump();
 
     expect(find.text('Item 20'), findsNothing);
@@ -191,7 +191,7 @@ void main() {
 
   testWidgets('List positioned with item 20 at halfway',
       (WidgetTester tester) async {
-    await setUp(tester, topItem: 20, anchor: 0.5);
+    await setUpWidgetTest(tester, topItem: 20, anchor: 0.5);
     await tester.pump();
 
     expect(
@@ -208,7 +208,8 @@ void main() {
 
   testWidgets('List positioned with item 20 half off top of screen',
       (WidgetTester tester) async {
-    await setUp(tester, topItem: 20, anchor: -(itemHeight / screenHeight) / 2);
+    await setUpWidgetTest(tester,
+        topItem: 20, anchor: -(itemHeight / screenHeight) / 2);
     await tester.pump();
 
     expect(
@@ -225,7 +226,7 @@ void main() {
 
   testWidgets('List positioned with 5 at top then scroll up 2 items',
       (WidgetTester tester) async {
-    await setUp(tester, topItem: 5);
+    await setUpWidgetTest(tester, topItem: 5);
 
     await tester.drag(find.byType(PositionedList),
         const Offset(0, 2 * (itemHeight + separatorHeight)));

@@ -16,7 +16,7 @@ const itemCount = 500;
 const scrollDuration = Duration(seconds: 1);
 
 void main() {
-  Future<void> setUp(
+  Future<void> setUpWidgetTest(
     WidgetTester tester, {
     ItemScrollController itemScrollController,
     ItemPositionsListener itemPositionsListener,
@@ -43,7 +43,7 @@ void main() {
 
   testWidgets('List positioned with 0 at bottom', (WidgetTester tester) async {
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester, itemPositionsListener: itemPositionsListener);
+    await setUpWidgetTest(tester, itemPositionsListener: itemPositionsListener);
 
     expect(tester.getBottomRight(find.text('Item 0')).dy, screenHeight);
     expect(tester.getTopLeft(find.text('Item 9')).dy, 0);
@@ -65,7 +65,7 @@ void main() {
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
@@ -105,7 +105,7 @@ void main() {
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
@@ -136,7 +136,7 @@ void main() {
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
@@ -162,7 +162,7 @@ void main() {
   testWidgets('Jump to 100', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 

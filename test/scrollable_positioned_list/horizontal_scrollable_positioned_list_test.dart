@@ -16,7 +16,7 @@ const itemCount = 500;
 const scrollDuration = Duration(seconds: 1);
 
 void main() {
-  Future<void> setUp(
+  Future<void> setUpWidgetTest(
     WidgetTester tester, {
     ItemScrollController itemScrollController,
     ItemPositionsListener itemPositionsListener,
@@ -49,7 +49,7 @@ void main() {
 
   testWidgets('List positioned with 0 at left', (WidgetTester tester) async {
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester, itemPositionsListener: itemPositionsListener);
+    await setUpWidgetTest(tester, itemPositionsListener: itemPositionsListener);
 
     expect(tester.getTopLeft(find.text('Item 0')).dx, 0);
     expect(tester.getBottomRight(find.text('Item 9')).dx, screenWidth);
@@ -74,7 +74,7 @@ void main() {
 
   testWidgets('List positioned with 0 at right', (WidgetTester tester) async {
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemPositionsListener: itemPositionsListener, reverse: true);
 
     expect(tester.getBottomRight(find.text('Item 0')).dx, screenWidth);
@@ -101,7 +101,7 @@ void main() {
   testWidgets('Scroll to 2 (already on screen)', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
@@ -134,7 +134,7 @@ void main() {
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
@@ -165,7 +165,7 @@ void main() {
   testWidgets('Jump to 100', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
@@ -200,7 +200,7 @@ void main() {
   testWidgets('padding test centered sliver at left',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(
+    await setUpWidgetTest(
       tester,
       itemScrollController: itemScrollController,
       padding: const EdgeInsets.all(10),
@@ -227,7 +227,7 @@ void main() {
   testWidgets('padding test - centered sliver not at left',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(
+    await setUpWidgetTest(
       tester,
       itemScrollController: itemScrollController,
       initialScrollIndex: 2,
