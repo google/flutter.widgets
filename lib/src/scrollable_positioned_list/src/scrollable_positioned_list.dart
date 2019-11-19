@@ -32,7 +32,8 @@ const int _screenScrollCount = 2;
 ///
 /// All other parameters are the same as specified in [ListView].
 class ScrollablePositionedList extends StatefulWidget {
-  /// Create a [ScrollablePositionedList] whose items are provided by [itemBuilder].
+  /// Create a [ScrollablePositionedList] whose items are provided by
+  /// [itemBuilder].
   const ScrollablePositionedList.builder({
     @required this.itemCount,
     @required this.itemBuilder,
@@ -50,6 +51,30 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addRepaintBoundaries = true,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
+        itemPositionNotifier = itemPositionsListener,
+        separatorBuilder = null;
+
+  /// Create a [ScrollablePositionedList] whose items are provided by
+  /// [itemBuilder] and separators provided by [separatorBuilder].
+  const ScrollablePositionedList.separated({
+    @required this.itemCount,
+    @required this.itemBuilder,
+    @required this.separatorBuilder,
+    this.itemScrollController,
+    ItemPositionsListener itemPositionsListener,
+    this.initialScrollIndex = 0,
+    this.initialAlignment = 0,
+    this.scrollDirection = Axis.vertical,
+    this.reverse = false,
+    this.physics,
+    this.semanticChildCount,
+    this.padding,
+    this.addSemanticIndexes = true,
+    this.addAutomaticKeepAlives = true,
+    this.addRepaintBoundaries = true,
+  })  : assert(itemCount != null),
+        assert(itemBuilder != null),
+        assert(separatorBuilder != null),
         itemPositionNotifier = itemPositionsListener;
 
   /// Number of items the [itemBuilder] can produce.
@@ -58,6 +83,10 @@ class ScrollablePositionedList extends StatefulWidget {
   /// Called to build children for the list with
   /// 0 <= index < itemCount.
   final IndexedWidgetBuilder itemBuilder;
+
+  /// Called to build separators for between each item in the list.
+  /// Called with 0 <= index < itemCount - 1.
+  final IndexedWidgetBuilder separatorBuilder;
 
   /// Controller for jumping or scrolling to an item.
   final ItemScrollController itemScrollController;
@@ -209,6 +238,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                 child: LayoutBuilder(
                   builder: (context, constraints) => PositionedList(
                     itemBuilder: widget.itemBuilder,
+                    separatorBuilder: widget.separatorBuilder,
                     itemCount: widget.itemCount,
                     positionedIndex: backTarget,
                     controller: backScrollController,
@@ -239,6 +269,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                     child: LayoutBuilder(
                       builder: (context, constraints) => PositionedList(
                         itemBuilder: widget.itemBuilder,
+                        separatorBuilder: widget.separatorBuilder,
                         itemCount: widget.itemCount,
                         itemPositionNotifier: frontItemPositionNotifier,
                         positionedIndex: frontTarget,
