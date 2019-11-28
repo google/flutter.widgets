@@ -266,14 +266,14 @@ class VisibilityReportGridState extends State<VisibilityReportGrid> {
     final items = <Text>[];
 
     for (final MapEntry<RowColumn, double> i in entries) {
-      final String visiblePercentage = (i.value * 100).toStringAsFixed(1);
+      final visiblePercentage = (i.value * 100).toStringAsFixed(1);
       items.add(Text('${i.key}: $visiblePercentage%'));
     }
 
     // It's easier to read cells down than across, so sort by columns instead of
     // by rows.
-    final int tailIndex = items.length - items.length ~/ 3;
-    final int midIndex = tailIndex - tailIndex ~/ 2;
+    final tailIndex = items.length - items.length ~/ 3;
+    final midIndex = tailIndex - tailIndex ~/ 2;
     final head = items.getRange(0, midIndex);
     final mid = items.getRange(midIndex, tailIndex);
     final tail = items.getRange(tailIndex, items.length);
@@ -345,7 +345,7 @@ Iterable<T> collate<T>(Iterable<Iterable<T>> iterables) sync* {
 
   // ignore: literal_only_boolean_expressions, https://github.com/dart-lang/linter/issues/453
   while (true) {
-    int numEmpty = 0;
+    var numEmpty = 0;
     for (final i in iterators) {
       if (i.moveNext()) {
         yield i.current;

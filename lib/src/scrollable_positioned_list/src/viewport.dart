@@ -125,10 +125,10 @@ class UnboundedRenderViewport extends RenderViewport {
         break;
     }
 
-    final double centerOffsetAdjustment = center.centerOffsetAdjustment;
+    final centerOffsetAdjustment = center.centerOffsetAdjustment;
 
     double correction;
-    int count = 0;
+    var count = 0;
     do {
       assert(offset.pixels != null);
       correction = _attemptLayout(mainAxisExtent, crossAxisExtent,
@@ -185,24 +185,24 @@ class UnboundedRenderViewport extends RenderViewport {
     // centerOffset is the offset from the leading edge of the RenderViewport
     // to the zero scroll offset (the line between the forward slivers and the
     // reverse slivers).
-    final double centerOffset = mainAxisExtent * anchor - correctedOffset;
+    final centerOffset = mainAxisExtent * anchor - correctedOffset;
     final double reverseDirectionRemainingPaintExtent =
         centerOffset.clamp(0.0, mainAxisExtent);
     final double forwardDirectionRemainingPaintExtent =
         (mainAxisExtent - centerOffset).clamp(0.0, mainAxisExtent);
 
-    final double fullCacheExtent = mainAxisExtent + 2 * cacheExtent;
-    final double centerCacheOffset = centerOffset + cacheExtent;
+    final fullCacheExtent = mainAxisExtent + 2 * cacheExtent;
+    final centerCacheOffset = centerOffset + cacheExtent;
     final double reverseDirectionRemainingCacheExtent =
         centerCacheOffset.clamp(0.0, fullCacheExtent);
     final double forwardDirectionRemainingCacheExtent =
         (fullCacheExtent - centerCacheOffset).clamp(0.0, fullCacheExtent);
 
-    final RenderSliver leadingNegativeChild = childBefore(center);
+    final leadingNegativeChild = childBefore(center);
 
     if (leadingNegativeChild != null) {
       // negative scroll offsets
-      final double result = layoutChildSequence(
+      final result = layoutChildSequence(
         child: leadingNegativeChild,
         scrollOffset: math.max(mainAxisExtent, centerOffset) - mainAxisExtent,
         overlap: 0.0,

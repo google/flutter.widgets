@@ -360,7 +360,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
           duration: duration,
           curve: curve);
     } else {
-      final ScrollController endingScrollController =
+      final endingScrollController =
           _showFrontList ? backScrollController : frontScrollController;
       final startCompleter = Completer<void>();
       final endCompleter = Completer<void>();

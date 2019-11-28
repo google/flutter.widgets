@@ -280,8 +280,8 @@ class _PositionedListState extends State<PositionedList> {
           viewport ??= RenderAbstractViewport.of(box);
           final ValueKey<int> key = element.widget.key;
           if (widget.scrollDirection == Axis.vertical) {
-            final double reveal = viewport.getOffsetToReveal(box, 0).offset;
-            final double itemOffset = reveal -
+            final reveal = viewport.getOffsetToReveal(box, 0).offset;
+            final itemOffset = reveal -
                 viewport.offset.pixels +
                 viewport.anchor * viewport.size.height;
             positions.add(ItemPosition(
@@ -291,7 +291,7 @@ class _PositionedListState extends State<PositionedList> {
                 itemTrailingEdge: (itemOffset + box.size.height).round() /
                     scrollController.position.viewportDimension));
           } else {
-            final double itemOffset =
+            final itemOffset =
                 box.localToGlobal(Offset.zero, ancestor: viewport).dx;
             positions.add(ItemPosition(
                 index: key.value,
