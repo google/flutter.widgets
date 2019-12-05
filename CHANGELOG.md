@@ -1,3 +1,12 @@
+# 0.1.8
+
+* `ScrollablePositionedList`:
+
+  * Fix padding for horizontal lists.
+
+  * Add `ScrollablePositionedList.seperated` constructor to complete
+    [issue #34](https://github.com/google/flutter.widgets/issues/34).
+
 # 0.1.7
 
 * Added the `FeatureDiscovery` widget.
