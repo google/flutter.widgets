@@ -389,7 +389,7 @@ void main() {
     expect(customScrollView2.semanticChildCount, defaultItemCount);
   });
 
-  testWidgets('padding test 1', (WidgetTester tester) async {
+  testWidgets('padding test - centered at top', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     await setUpWidgetTest(
       tester,
@@ -415,7 +415,8 @@ void main() {
         const Offset(screenWidth - 10, screenHeight - 10));
   });
 
-  testWidgets('padding test 2', (WidgetTester tester) async {
+  testWidgets('padding test - centered sliver not at top',
+      (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     await setUpWidgetTest(
       tester,

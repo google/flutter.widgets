@@ -155,7 +155,7 @@ void main() {
         _screenProportion(numberOfItems: 1, numberOfSeparators: 1));
   });
 
-  testWidgets('padding test centered sliver at left',
+  testWidgets('padding test - centered sliver at left',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     await setUpWidgetTest(
