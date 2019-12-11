@@ -244,4 +244,55 @@ void main() {
     expect(tester.getTopLeft(find.text('Item 3')),
         const Offset(10 + 3 * itemWidth, 10));
   });
+
+  testWidgets('padding test - reversed - centered sliver at right',
+      (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUpWidgetTest(
+      tester,
+      itemScrollController: itemScrollController,
+      padding: const EdgeInsets.all(10),
+      reverse: true,
+    );
+
+    expect(tester.getTopRight(find.text('Item 0')),
+        const Offset(screenWidth - 10, 10));
+    expect(tester.getTopRight(find.text('Item 1')),
+        const Offset(screenWidth - (10 + itemWidth), 10));
+    expect(tester.getBottomLeft(find.text('Item 1')),
+        const Offset(screenWidth - (10 + 2 * itemWidth), screenHeight - 10));
+
+    unawaited(
+        itemScrollController.scrollTo(index: 490, duration: scrollDuration));
+    await tester.pumpAndSettle();
+
+    await tester.drag(
+        find.byType(ScrollablePositionedList), const Offset(100, 0));
+    await tester.pumpAndSettle();
+
+    expect(tester.getTopLeft(find.text('Item 499')), const Offset(10, 10));
+  });
+
+  testWidgets('padding test - reversed - centered sliver not at right',
+      (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUpWidgetTest(
+      tester,
+      itemScrollController: itemScrollController,
+      initialScrollIndex: 2,
+      padding: const EdgeInsets.all(10),
+      reverse: true,
+    );
+
+    await tester.drag(
+        find.byType(ScrollablePositionedList), const Offset(-200, 0));
+    await tester.pumpAndSettle();
+
+    expect(tester.getTopRight(find.text('Item 0')),
+        const Offset(screenWidth - 10, 10));
+    expect(tester.getTopRight(find.text('Item 2')),
+        const Offset(screenWidth - (10 + 2 * itemWidth), 10));
+    expect(tester.getTopRight(find.text('Item 3')),
+        const Offset(screenWidth - (10 + 3 * itemWidth), 10));
+  });
 }

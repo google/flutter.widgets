@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
@@ -245,28 +246,55 @@ class _PositionedListState extends State<PositionedList> {
   }
 
   EdgeInsets get _leadingSliverPadding =>
-      widget.scrollDirection == Axis.vertical
-          ? widget.padding?.copyWith(bottom: 0) ?? EdgeInsets.all(0)
-          : widget.padding?.copyWith(right: 0) ?? EdgeInsets.all(0);
+      (widget.scrollDirection == Axis.vertical
+          ? widget.reverse
+              ? widget.padding?.copyWith(top: 0)
+              : widget.padding?.copyWith(bottom: 0)
+          : widget.reverse
+              ? widget.padding?.copyWith(left: 0)
+              : widget.padding?.copyWith(right: 0)) ??
+      EdgeInsets.all(0);
 
   EdgeInsets get _centerSliverPadding => widget.scrollDirection == Axis.vertical
-      ? widget.padding?.copyWith(
-              top: widget.positionedIndex == 0 ? widget.padding.top : 0,
-              bottom: widget.positionedIndex == widget.itemCount - 1
-                  ? widget.padding.bottom
-                  : 0) ??
-          EdgeInsets.all(0)
-      : widget.padding?.copyWith(
-              left: widget.positionedIndex == 0 ? widget.padding.left : 0,
-              right: widget.positionedIndex == widget.itemCount - 1
-                  ? widget.padding.right
-                  : 0) ??
-          EdgeInsets.all(0);
+      ? widget.reverse
+          ? widget.padding?.copyWith(
+                  top: widget.positionedIndex == widget.itemCount - 1
+                      ? widget.padding.top
+                      : 0,
+                  bottom: widget.positionedIndex == 0
+                      ? widget.padding.bottom
+                      : 0) ??
+              EdgeInsets.all(0)
+          : widget.padding?.copyWith(
+                  top: widget.positionedIndex == 0 ? widget.padding.top : 0,
+                  bottom: widget.positionedIndex == widget.itemCount - 1
+                      ? widget.padding.bottom
+                      : 0) ??
+              EdgeInsets.all(0)
+      : widget.reverse
+          ? widget.padding?.copyWith(
+                  left: widget.positionedIndex == widget.itemCount - 1
+                      ? widget.padding.left
+                      : 0,
+                  right:
+                      widget.positionedIndex == 0 ? widget.padding.right : 0) ??
+              EdgeInsets.all(0)
+          : widget.padding?.copyWith(
+                left: widget.positionedIndex == 0 ? widget.padding.left : 0,
+                right: widget.positionedIndex == widget.itemCount - 1
+                    ? widget.padding.right
+                    : 0,
+              ) ??
+              EdgeInsets.all(0);
 
   EdgeInsets get _trailingSliverPadding =>
       widget.scrollDirection == Axis.vertical
-          ? widget.padding?.copyWith(top: 0) ?? EdgeInsets.all(0)
-          : widget.padding?.copyWith(left: 0) ?? EdgeInsets.all(0);
+          ? widget.reverse
+              ? widget.padding?.copyWith(bottom: 0) ?? EdgeInsets.all(0)
+              : widget.padding?.copyWith(top: 0) ?? EdgeInsets.all(0)
+          : widget.reverse
+              ? widget.padding?.copyWith(right: 0) ?? EdgeInsets.all(0)
+              : widget.padding?.copyWith(left: 0) ?? EdgeInsets.all(0);
 
   void _schedulePositionNotificationUpdate() {
     if (!updateScheduled) {

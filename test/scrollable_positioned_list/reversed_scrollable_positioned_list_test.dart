@@ -20,6 +20,8 @@ void main() {
     WidgetTester tester, {
     ItemScrollController itemScrollController,
     ItemPositionsListener itemPositionsListener,
+    EdgeInsets padding,
+    int initialIndex = 0,
   }) async {
     tester.binding.window.devicePixelRatioTestValue = 1.0;
     tester.binding.window.physicalSizeTestValue =
@@ -29,6 +31,7 @@ void main() {
       MaterialApp(
         home: ScrollablePositionedList.builder(
           itemCount: itemCount,
+          initialScrollIndex: initialIndex,
           itemScrollController: itemScrollController,
           itemBuilder: (context, index) => SizedBox(
             height: itemHeight,
@@ -36,6 +39,7 @@ void main() {
           ),
           itemPositionsListener: itemPositionsListener,
           reverse: true,
+          padding: padding,
         ),
       ),
     );
@@ -182,5 +186,54 @@ void main() {
             .firstWhere((position) => position.index == 109)
             .itemTrailingEdge,
         1);
+  });
+
+  testWidgets('padding test - centered sliver at bottom',
+      (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUpWidgetTest(
+      tester,
+      itemScrollController: itemScrollController,
+      padding: const EdgeInsets.all(10),
+    );
+
+    expect(tester.getBottomLeft(find.text('Item 0')),
+        const Offset(10, screenHeight - 10));
+    expect(tester.getBottomLeft(find.text('Item 1')),
+        const Offset(10, screenHeight - (10 + itemHeight)));
+    expect(tester.getTopRight(find.text('Item 1')),
+        const Offset(screenWidth - 10, screenHeight - (10 + 2 * itemHeight)));
+
+    unawaited(
+        itemScrollController.scrollTo(index: 490, duration: scrollDuration));
+    await tester.pumpAndSettle();
+
+    await tester.drag(
+        find.byType(ScrollablePositionedList), const Offset(0, 100));
+    await tester.pumpAndSettle();
+
+    expect(tester.getTopLeft(find.text('Item 499')), const Offset(10, 10));
+  });
+
+  testWidgets('padding test - centered sliver not at bottom',
+      (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUpWidgetTest(
+      tester,
+      itemScrollController: itemScrollController,
+      initialIndex: 2,
+      padding: const EdgeInsets.all(10),
+    );
+
+    await tester.drag(
+        find.byType(ScrollablePositionedList), const Offset(0, -200));
+    await tester.pumpAndSettle();
+
+    expect(tester.getBottomLeft(find.text('Item 0')),
+        const Offset(10, screenHeight - 10));
+    expect(tester.getBottomLeft(find.text('Item 2')),
+        const Offset(10, screenHeight - (10 + 2 * itemHeight)));
+    expect(tester.getBottomLeft(find.text('Item 3')),
+        const Offset(10, screenHeight - (10 + 3 * itemHeight)));
   });
 }
