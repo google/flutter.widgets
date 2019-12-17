@@ -321,10 +321,10 @@ void main() {
         find.byType(ScrollablePositionedList), const Offset(0, 4 * itemHeight));
     await tester.pumpAndSettle();
 
-    final IndexedSemantics indexSemantics3 = tester.widget(find.ancestor(
+    final indexSemantics3 = tester.widget<IndexedSemantics>(find.ancestor(
         of: find.text('Item 3'), matching: find.byType(IndexedSemantics)));
     expect(indexSemantics3.index, 3);
-    final IndexedSemantics indexSemantics4 = tester.widget(find.ancestor(
+    final indexSemantics4 = tester.widget<IndexedSemantics>(find.ancestor(
         of: find.text('Item 4'), matching: find.byType(IndexedSemantics)));
     expect(indexSemantics4.index, 4);
   });
@@ -356,16 +356,16 @@ void main() {
       itemScrollController: itemScrollController,
     );
 
-    final CustomScrollView customScrollView =
-        tester.widget(find.byType(UnboundedCustomScrollView));
+    final customScrollView =
+        tester.widget<CustomScrollView>(find.byType(UnboundedCustomScrollView));
     expect(customScrollView.semanticChildCount, 30);
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
     await tester.pumpAndSettle();
 
-    final CustomScrollView customScrollView2 =
-        tester.widget(find.byType(UnboundedCustomScrollView));
+    final customScrollView2 =
+        tester.widget<CustomScrollView>(find.byType(UnboundedCustomScrollView));
     expect(customScrollView2.semanticChildCount, 30);
   });
 
@@ -376,16 +376,16 @@ void main() {
       itemScrollController: itemScrollController,
     );
 
-    final CustomScrollView customScrollView =
-        tester.widget(find.byType(UnboundedCustomScrollView));
+    final customScrollView =
+        tester.widget<CustomScrollView>(find.byType(UnboundedCustomScrollView));
     expect(customScrollView.semanticChildCount, defaultItemCount);
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
     await tester.pumpAndSettle();
 
-    final CustomScrollView customScrollView2 =
-        tester.widget(find.byType(UnboundedCustomScrollView));
+    final customScrollView2 =
+        tester.widget<CustomScrollView>(find.byType(UnboundedCustomScrollView));
     expect(customScrollView2.semanticChildCount, defaultItemCount);
   });
 

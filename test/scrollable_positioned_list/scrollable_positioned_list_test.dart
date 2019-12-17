@@ -381,10 +381,10 @@ void main() {
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
-    Opacity opacityWidget = tester.widget(find.descendant(
+    var opacityWidget = tester.widget<Opacity>(find.descendant(
         of: find.byType(ScrollablePositionedList),
         matching: find.byType(Opacity)));
-    final double initialOpacity = opacityWidget.opacity;
+    final initialOpacity = opacityWidget.opacity;
 
     unawaited(
         itemScrollController.scrollTo(index: 20, duration: scrollDuration));
@@ -846,7 +846,7 @@ void main() {
     await tester.pump();
 
     expect(tester.getTopLeft(find.text('Item 9')).dy, 0);
-    final Opacity opacityWidget = tester.widget(find.descendant(
+    final opacityWidget = tester.widget<Opacity>(find.descendant(
         of: find.byType(ScrollablePositionedList),
         matching: find.byType(Opacity)));
     expect(opacityWidget.opacity, 1.0);
@@ -868,7 +868,7 @@ void main() {
     await tester.pump();
 
     expect(tester.getTopLeft(find.text('Item 10')).dy, 0);
-    final Opacity opacityWidget = tester.widget(find.descendant(
+    final opacityWidget = tester.widget<Opacity>(find.descendant(
         of: find.byType(ScrollablePositionedList),
         matching: find.byType(Opacity)));
     expect(opacityWidget.opacity, 1.0);
@@ -942,7 +942,7 @@ void main() {
     await tester.pump();
 
     expect(tester.getTopLeft(find.text('Item 9')).dy, closeTo(0, tolerance));
-    final Opacity opacityWidget = tester.widget(find.descendant(
+    final opacityWidget = tester.widget<Opacity>(find.descendant(
         of: find.byType(ScrollablePositionedList),
         matching: find.byType(Opacity)));
     expect(opacityWidget.opacity, 1.0);
@@ -1100,16 +1100,16 @@ void main() {
         find.byType(ScrollablePositionedList), const Offset(0, 2 * itemHeight));
     await tester.pumpAndSettle();
 
-    final IndexedSemantics indexSemantics3 = tester.widget(find.ancestor(
+    final indexSemantics3 = tester.widget<IndexedSemantics>(find.ancestor(
         of: find.text('Item 3'), matching: find.byType(IndexedSemantics)));
     expect(indexSemantics3.index, 3);
-    final IndexedSemantics indexSemantics4 = tester.widget(find.ancestor(
+    final indexSemantics4 = tester.widget<IndexedSemantics>(find.ancestor(
         of: find.text('Item 4'), matching: find.byType(IndexedSemantics)));
     expect(indexSemantics4.index, 4);
-    final IndexedSemantics indexSemantics5 = tester.widget(find.ancestor(
+    final indexSemantics5 = tester.widget<IndexedSemantics>(find.ancestor(
         of: find.text('Item 5'), matching: find.byType(IndexedSemantics)));
     expect(indexSemantics5.index, 5);
-    final IndexedSemantics indexSemantics6 = tester.widget(find.ancestor(
+    final indexSemantics6 = tester.widget<IndexedSemantics>(find.ancestor(
         of: find.text('Item 6'), matching: find.byType(IndexedSemantics)));
     expect(indexSemantics6.index, 6);
 
@@ -1123,16 +1123,16 @@ void main() {
         find.byType(ScrollablePositionedList), const Offset(0, 2 * itemHeight));
     await tester.pumpAndSettle();
 
-    final IndexedSemantics indexSemantics3b = tester.widget(find.ancestor(
+    final indexSemantics3b = tester.widget<IndexedSemantics>(find.ancestor(
         of: find.text('Item 3'), matching: find.byType(IndexedSemantics)));
     expect(indexSemantics3b.index, 3);
-    final IndexedSemantics indexSemantics4b = tester.widget(find.ancestor(
+    final indexSemantics4b = tester.widget<IndexedSemantics>(find.ancestor(
         of: find.text('Item 4'), matching: find.byType(IndexedSemantics)));
     expect(indexSemantics4b.index, 4);
-    final IndexedSemantics indexSemantics5b = tester.widget(find.ancestor(
+    final indexSemantics5b = tester.widget<IndexedSemantics>(find.ancestor(
         of: find.text('Item 5'), matching: find.byType(IndexedSemantics)));
     expect(indexSemantics5b.index, 5);
-    final IndexedSemantics indexSemantics6b = tester.widget(find.ancestor(
+    final indexSemantics6b = tester.widget<IndexedSemantics>(find.ancestor(
         of: find.text('Item 6'), matching: find.byType(IndexedSemantics)));
     expect(indexSemantics6b.index, 6);
   });
@@ -1166,16 +1166,16 @@ void main() {
       itemScrollController: itemScrollController,
     );
 
-    final CustomScrollView customScrollView =
-        tester.widget(find.byType(UnboundedCustomScrollView));
+    final customScrollView =
+        tester.widget<CustomScrollView>(find.byType(UnboundedCustomScrollView));
     expect(customScrollView.semanticChildCount, 30);
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
     await tester.pumpAndSettle();
 
-    final CustomScrollView customScrollView2 =
-        tester.widget(find.byType(UnboundedCustomScrollView));
+    final customScrollView2 =
+        tester.widget<CustomScrollView>(find.byType(UnboundedCustomScrollView));
     expect(customScrollView2.semanticChildCount, 30);
   });
 
@@ -1186,16 +1186,16 @@ void main() {
       itemScrollController: itemScrollController,
     );
 
-    final CustomScrollView customScrollView =
-        tester.widget(find.byType(UnboundedCustomScrollView));
+    final customScrollView =
+        tester.widget<CustomScrollView>(find.byType(UnboundedCustomScrollView));
     expect(customScrollView.semanticChildCount, defaultItemCount);
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
     await tester.pumpAndSettle();
 
-    final CustomScrollView customScrollView2 =
-        tester.widget(find.byType(UnboundedCustomScrollView));
+    final customScrollView2 =
+        tester.widget<CustomScrollView>(find.byType(UnboundedCustomScrollView));
     expect(customScrollView2.semanticChildCount, defaultItemCount);
   });
 

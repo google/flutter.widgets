@@ -15,8 +15,7 @@ const defaultItemCount = 500;
 const cacheExtent = itemHeight * 2;
 
 void main() {
-  final ItemPositionsListener itemPositionNotifier =
-      ItemPositionsListener.create();
+  final itemPositionNotifier = ItemPositionsListener.create();
 
   Future<void> setUpWidgetTest(
     WidgetTester tester, {

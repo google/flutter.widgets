@@ -13,7 +13,7 @@ const itemHeight = screenHeight / 10.0;
 const defaultItemCount = 500;
 
 void main() {
-  final ItemPositionsListener itemPositions = ItemPositionsListener.create();
+  final itemPositions = ItemPositionsListener.create();
 
   Future<void> setUpWidgetTest(
     WidgetTester tester, {
@@ -181,7 +181,7 @@ void main() {
 
   testWidgets('List positioned with 0 at bottom scroll to item 5',
       (WidgetTester tester) async {
-    final ScrollController scrollController = ScrollController();
+    final scrollController = ScrollController();
     await setUpWidgetTest(tester, scrollController: scrollController);
     await tester.pump();
 
@@ -209,7 +209,7 @@ void main() {
   testWidgets(
       'List positioned with 5 at bottom then scroll up 2 programatically',
       (WidgetTester tester) async {
-    final ScrollController scrollController = ScrollController();
+    final scrollController = ScrollController();
     await setUpWidgetTest(tester,
         topItem: 5, scrollController: scrollController);
 
@@ -240,7 +240,7 @@ void main() {
 
   testWidgets('List positioned with 5 at bottom and initial scroll offset',
       (WidgetTester tester) async {
-    final ScrollController scrollController =
+    final scrollController =
         ScrollController(initialScrollOffset: 2 * itemHeight);
     await setUpWidgetTest(tester,
         topItem: 5, scrollController: scrollController);

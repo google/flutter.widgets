@@ -265,7 +265,7 @@ class VisibilityReportGridState extends State<VisibilityReportGrid> {
     final entries = _visibilities.entries;
     final items = <Text>[];
 
-    for (final MapEntry<RowColumn, double> i in entries) {
+    for (final i in entries) {
       final visiblePercentage = (i.value * 100).toStringAsFixed(1);
       items.add(Text('${i.key}: $visiblePercentage%'));
     }

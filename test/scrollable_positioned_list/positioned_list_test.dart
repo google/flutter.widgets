@@ -14,8 +14,7 @@ const defaultItemCount = 500;
 const cacheExtent = itemHeight * 2;
 
 void main() {
-  final ItemPositionsListener itemPositionNotifier =
-      ItemPositionsListener.create();
+  final itemPositionNotifier = ItemPositionsListener.create();
 
   Future<void> setUpWidgetTest(
     WidgetTester tester, {
@@ -244,7 +243,7 @@ void main() {
 
   testWidgets('List positioned with 0 at top scroll up 5',
       (WidgetTester tester) async {
-    final ScrollController scrollController = ScrollController();
+    final scrollController = ScrollController();
     await setUpWidgetTest(tester, scrollController: scrollController);
     await tester.pump();
 
@@ -271,7 +270,7 @@ void main() {
 
   testWidgets('List positioned with 5 at top then scroll up 2 programatically',
       (WidgetTester tester) async {
-    final ScrollController scrollController = ScrollController();
+    final scrollController = ScrollController();
     await setUpWidgetTest(tester,
         topItem: 5, scrollController: scrollController);
 
@@ -303,7 +302,7 @@ void main() {
   testWidgets(
       'List positioned with 5 at top then scroll down 20 programatically',
       (WidgetTester tester) async {
-    final ScrollController scrollController = ScrollController();
+    final scrollController = ScrollController();
     await setUpWidgetTest(tester,
         topItem: 5, scrollController: scrollController);
 
@@ -339,7 +338,7 @@ void main() {
 
   testWidgets('List positioned with 5 at top and initial scroll offset',
       (WidgetTester tester) async {
-    final ScrollController scrollController =
+    final scrollController =
         ScrollController(initialScrollOffset: -2 * itemHeight);
     await setUpWidgetTest(tester,
         topItem: 5, scrollController: scrollController);

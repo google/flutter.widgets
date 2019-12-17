@@ -139,7 +139,7 @@ void main() {
       await tester.drag(find.text('Hello 2'), const Offset(0.0, -300.0));
       await tester.pumpAndSettle();
 
-      final TestState state = tester.state(find.byType(Test));
+      final state = tester.state<TestState>(find.byType(Test));
       state._controllers.resetScroll();
 
       expect(state._letters.position.pixels, 0.0);
@@ -148,7 +148,7 @@ void main() {
 
     testWidgets('jumpTo is synced', (tester) async {
       await tester.pumpWidget(Test());
-      final TestState state = tester.state(find.byType(Test));
+      final state = tester.state<TestState>(find.byType(Test));
 
       expect(state._letters.position.pixels, 0.0);
       expect(state._numbers.position.pixels, 0.0);
@@ -164,7 +164,7 @@ void main() {
     testWidgets('tap on another scrollable during fling stops scrolling',
         (tester) async {
       await tester.pumpWidget(Test());
-      final TestState state = tester.state(find.byType(Test));
+      final state = tester.state<TestState>(find.byType(Test));
 
       await tester.fling(find.text('Hello A'), const Offset(0.0, -50.0), 500.0);
       await tester.tap(find.text('Hello 1'));

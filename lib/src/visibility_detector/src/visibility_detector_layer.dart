@@ -18,7 +18,7 @@ import 'visibility_detector_controller.dart';
 /// ancestors.  The returned sequence is in [parent, child] order.
 Iterable<Layer> _getLayerChain(Layer start) {
   final layerChain = <Layer>[];
-  for (Layer layer = start; layer != null; layer = layer.parent) {
+  for (var layer = start; layer != null; layer = layer.parent) {
     layerChain.add(layer);
   }
   return layerChain.reversed;
@@ -33,7 +33,7 @@ Matrix4 _accumulateTransforms(Iterable<Layer> layerChain) {
   final transform = Matrix4.identity();
   if (layerChain.isNotEmpty) {
     var parent = layerChain.first;
-    for (final Layer child in layerChain.skip(1)) {
+    for (final child in layerChain.skip(1)) {
       (parent as ContainerLayer).applyTransform(child, transform);
       parent = child;
     }
@@ -222,7 +222,7 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// Executes visibility callbacks for all updated [VisibilityDetectorLayer]
   /// instances.
   static void _processCallbacks() {
-    for (final VisibilityDetectorLayer layer in _updated.values) {
+    for (final layer in _updated.values) {
       if (!layer.attached) {
         layer._fireCallback(VisibilityInfo(
             key: layer.key, size: _lastVisibility[layer.key]?.size));
