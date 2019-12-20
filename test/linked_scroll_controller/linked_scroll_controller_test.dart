@@ -133,6 +133,31 @@ void main() {
       expect(find.text('Hello 5'), findsNothing);
     });
 
+    testWidgets('offset returns 0.0 for empty group', (tester) async {
+      await tester.pumpWidget(TestEmptyGroup());
+
+      final state =
+          tester.state<TestEmptyGroupState>(find.byType(TestEmptyGroup));
+      expect(state._controllers.offset, equals(0.0));
+    });
+
+    testWidgets('offset returns current position', (tester) async {
+      await tester.pumpWidget(Test());
+
+      final state = tester.state<TestState>(find.byType(Test));
+      expect(state._controllers.offset, equals(0.0));
+
+      await tester.drag(find.text('Hello 2'), const Offset(0.0, -300.0));
+      await tester.pumpAndSettle();
+      expect(state._controllers.offset, equals(300.0));
+      expect(state._controllers.offset, equals(state._letters.offset));
+
+      await tester.drag(find.text('Hello 2'), const Offset(0.0, 300.0));
+      await tester.pumpAndSettle();
+      expect(state._controllers.offset, equals(0.0));
+      expect(state._controllers.offset, equals(state._letters.offset));
+    });
+
     testWidgets('resetScroll moves scroll back to 0', (tester) async {
       await tester.pumpWidget(Test());
 
@@ -176,6 +201,26 @@ void main() {
       expect(state._numbers.position.pixels, 50.0);
     });
   });
+}
+
+class TestEmptyGroup extends StatefulWidget {
+  @override
+  TestEmptyGroupState createState() => TestEmptyGroupState();
+}
+
+class TestEmptyGroupState extends State<TestEmptyGroup> {
+  LinkedScrollControllerGroup _controllers;
+
+  @override
+  void initState() {
+    super.initState();
+    _controllers = LinkedScrollControllerGroup();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox();
+  }
 }
 
 class Test extends StatefulWidget {

@@ -22,6 +22,10 @@ import 'package:flutter/rendering.dart';
 class LinkedScrollControllerGroup {
   final List<_LinkedScrollController> _allControllers = [];
 
+  /// The current scroll offset of the group.
+  double get offset =>
+      _attachedControllers.isEmpty ? 0.0 : _attachedControllers.first.offset;
+
   /// Creates a new controller that is linked to any existing ones.
   ScrollController addAndGet() {
     final initialScrollOffset = _attachedControllers.isEmpty
