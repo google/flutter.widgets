@@ -32,9 +32,8 @@ class HtmlView extends StatefulWidget {
   State<StatefulWidget> createState() => _HtmlViewState();
 
   /// Finds the parent [HtmlView] for the current context.
-  static _HtmlViewState of(BuildContext context) {
-    return context.ancestorStateOfType(const TypeMatcher<_HtmlViewState>());
-  }
+  static _HtmlViewState of(BuildContext context) =>
+      context.findAncestorStateOfType<_HtmlViewState>();
 }
 
 class _HtmlViewState extends State<HtmlView> {
