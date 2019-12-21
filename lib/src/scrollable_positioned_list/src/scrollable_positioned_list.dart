@@ -37,6 +37,7 @@ class ScrollablePositionedList extends StatefulWidget {
   const ScrollablePositionedList.builder({
     @required this.itemCount,
     @required this.itemBuilder,
+    Key key,
     this.itemScrollController,
     ItemPositionsListener itemPositionsListener,
     this.initialScrollIndex = 0,
@@ -52,7 +53,8 @@ class ScrollablePositionedList extends StatefulWidget {
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         itemPositionNotifier = itemPositionsListener,
-        separatorBuilder = null;
+        separatorBuilder = null,
+        super(key: key);
 
   /// Create a [ScrollablePositionedList] whose items are provided by
   /// [itemBuilder] and separators provided by [separatorBuilder].
@@ -60,6 +62,7 @@ class ScrollablePositionedList extends StatefulWidget {
     @required this.itemCount,
     @required this.itemBuilder,
     @required this.separatorBuilder,
+    Key key,
     this.itemScrollController,
     ItemPositionsListener itemPositionsListener,
     this.initialScrollIndex = 0,
@@ -75,7 +78,8 @@ class ScrollablePositionedList extends StatefulWidget {
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         assert(separatorBuilder != null),
-        itemPositionNotifier = itemPositionsListener;
+        itemPositionNotifier = itemPositionsListener,
+        super(key: key);
 
   /// Number of items the [itemBuilder] can produce.
   final int itemCount;

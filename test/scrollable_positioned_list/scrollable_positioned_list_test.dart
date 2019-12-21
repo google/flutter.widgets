@@ -21,6 +21,7 @@ const tolerance = 1e-3;
 void main() {
   Future<void> setUpWidgetTest(
     WidgetTester tester, {
+    Key key,
     ItemScrollController itemScrollController,
     ItemPositionsListener itemPositionsListener,
     int initialIndex = 0,
@@ -40,6 +41,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: ScrollablePositionedList.builder(
+          key: key,
           itemCount: itemCount ?? defaultItemCount,
           itemScrollController: itemScrollController,
           itemBuilder: (context, index) => SizedBox(
@@ -1366,5 +1368,13 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.getTopLeft(find.text('Item 0')).dy, 0);
+  });
+
+  testWidgets('List can be keyed', (WidgetTester tester) async {
+    final key = ValueKey('key');
+
+    await setUpWidgetTest(tester, key: key);
+
+    expect(find.byKey(key), findsOneWidget);
   });
 }

@@ -22,6 +22,7 @@ const tolerance = 1e-3;
 void main() {
   Future<void> setUpWidgetTest(
     WidgetTester tester, {
+    Key key,
     ItemScrollController itemScrollController,
     ItemPositionsListener itemPositionsListener,
     int initialIndex = 0,
@@ -51,6 +52,7 @@ void main() {
             height: separatorHeight,
             child: Text('Separator $index'),
           ),
+          key: key,
           itemPositionsListener: itemPositionsListener,
           initialScrollIndex: initialIndex,
           initialAlignment: initialAlignment,
@@ -472,6 +474,14 @@ void main() {
             of: find.byType(ScrollablePositionedList),
             matching: find.byType(AutomaticKeepAlive)),
         findsNothing);
+  });
+
+  testWidgets('List can be keyed', (WidgetTester tester) async {
+    final key = ValueKey('key');
+
+    await setUpWidgetTest(tester, key: key);
+
+    expect(find.byKey(key), findsOneWidget);
   });
 }
 
