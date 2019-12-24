@@ -4,7 +4,7 @@
 
   * Fix padding for horizontal lists.
 
-  * Add `ScrollablePositionedList.seperated` constructor to complete
+  * Add `ScrollablePositionedList.separated` constructor to complete
     [issue #34](https://github.com/google/flutter.widgets/issues/34).
 
 # 0.1.7
