@@ -155,6 +155,11 @@ class ScrollablePositionedList extends StatefulWidget {
 /// Controller to jump or scroll to a particular position in a
 /// [ScrollablePositionedList].
 class ItemScrollController {
+  /// Whether any ScrollablePositionedList objects are attached this object.
+  ///
+  /// If `false`, then [jumpTo] and [scrollTo] must not be called.
+  bool get isAttached => _scrollableListState != null;
+
   _ScrollablePositionedListState _scrollableListState;
 
   /// Immediately, without animation, reconfigure the list so that item at
