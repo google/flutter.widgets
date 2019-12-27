@@ -7,6 +7,8 @@
   * Add `ScrollablePositionedList.separated` constructor to complete
     [issue #34](https://github.com/google/flutter.widgets/issues/34).
 
+  * Add `isAttached` method to `ItemScrollController`.
+
 * `LinkedScrollControllerGroup`:
 
   * Add getter `offset` that returns the current scroll offset for the group.
