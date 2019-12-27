@@ -133,12 +133,14 @@ void main() {
       expect(find.text('Hello 5'), findsNothing);
     });
 
-    testWidgets('offset returns 0.0 for empty group', (tester) async {
+    testWidgets('offset throws for empty group', (tester) async {
       await tester.pumpWidget(TestEmptyGroup());
 
       final state =
           tester.state<TestEmptyGroupState>(find.byType(TestEmptyGroup));
-      expect(state._controllers.offset, equals(0.0));
+      expect(() {
+        state._controllers.offset;
+      }, throwsAssertionError);
     });
 
     testWidgets('offset returns current position', (tester) async {

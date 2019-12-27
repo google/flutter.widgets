@@ -7,6 +7,10 @@
   * Add `ScrollablePositionedList.separated` constructor to complete
     [issue #34](https://github.com/google/flutter.widgets/issues/34).
 
+* `LinkedScrollControllerGroup`:
+
+  * Add getter `offset` that returns the current scroll offset for the group.
+
 # 0.1.7
 
 * Added the `FeatureDiscovery` widget.

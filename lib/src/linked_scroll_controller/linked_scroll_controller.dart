@@ -23,8 +23,14 @@ class LinkedScrollControllerGroup {
   final List<_LinkedScrollController> _allControllers = [];
 
   /// The current scroll offset of the group.
-  double get offset =>
-      _attachedControllers.isEmpty ? 0.0 : _attachedControllers.first.offset;
+  double get offset {
+    assert(
+      _attachedControllers.isNotEmpty,
+      'LinkedScrollControllerGroup does not have any scroll controllers '
+      'attached.',
+    );
+    return _attachedControllers.first.offset;
+  }
 
   /// Creates a new controller that is linked to any existing ones.
   ScrollController addAndGet() {
