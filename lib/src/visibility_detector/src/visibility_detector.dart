@@ -91,7 +91,7 @@ class VisibilityInfo {
     assert(clipRect != null);
 
     // Compute the intersection in the widget's local coordinates.
-    final Rect visibleBounds = widgetBounds.overlaps(clipRect)
+    final visibleBounds = widgetBounds.overlaps(clipRect)
         ? widgetBounds.intersect(clipRect).shift(-widgetBounds.topLeft)
         : Rect.zero;
 
@@ -121,15 +121,15 @@ class VisibilityInfo {
   ///
   /// 0 means not visible; 1 means fully visible.
   double get visibleFraction {
-    final double visibleArea = _area(visibleBounds.size);
-    final double maxVisibleArea = _area(size);
+    final visibleArea = _area(visibleBounds.size);
+    final maxVisibleArea = _area(size);
 
     if (_floatNear(maxVisibleArea, 0)) {
       // Avoid division-by-zero.
       return 0;
     }
 
-    double visibleFraction = visibleArea / maxVisibleArea;
+    var visibleFraction = visibleArea / maxVisibleArea;
 
     if (_floatNear(visibleFraction, 0)) {
       visibleFraction = 0;
@@ -171,7 +171,7 @@ double _area(Size size) {
 
 /// Returns whether two floating-point values are approximately equal.
 bool _floatNear(double f1, double f2) {
-  final double absDiff = (f1 - f2).abs();
+  final absDiff = (f1 - f2).abs();
   return absDiff <= _kDefaultTolerance ||
       (absDiff / max(f1.abs(), f2.abs()) <= _kDefaultTolerance);
 }

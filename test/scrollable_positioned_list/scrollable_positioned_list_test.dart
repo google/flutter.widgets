@@ -19,8 +19,9 @@ const scrollDurationTolerance = Duration(milliseconds: 1);
 const tolerance = 1e-3;
 
 void main() {
-  Future<void> setUp(
+  Future<void> setUpWidgetTest(
     WidgetTester tester, {
+    Key key,
     ItemScrollController itemScrollController,
     ItemPositionsListener itemPositionsListener,
     int initialIndex = 0,
@@ -40,6 +41,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: ScrollablePositionedList.builder(
+          key: key,
           itemCount: itemCount ?? defaultItemCount,
           itemScrollController: itemScrollController,
           itemBuilder: (context, index) => SizedBox(
@@ -62,7 +64,7 @@ void main() {
 
   testWidgets('List positioned with 0 at top', (WidgetTester tester) async {
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester, itemPositionsListener: itemPositionsListener);
+    await setUpWidgetTest(tester, itemPositionsListener: itemPositionsListener);
 
     expect(find.text('Item 0'), findsOneWidget);
     expect(find.text('Item 9'), findsOneWidget);
@@ -122,7 +124,7 @@ void main() {
 
   testWidgets('List positioned with 5 at top', (WidgetTester tester) async {
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemPositionsListener: itemPositionsListener, initialIndex: 5);
 
     expect(find.text('Item 4'), findsNothing);
@@ -141,7 +143,7 @@ void main() {
 
   testWidgets('List positioned with 9 at middle', (WidgetTester tester) async {
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemPositionsListener: itemPositionsListener,
         initialIndex: 9,
         initialAlignment: 0.5);
@@ -158,7 +160,7 @@ void main() {
   testWidgets('List positioned with 9 half way off top',
       (WidgetTester tester) async {
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemPositionsListener: itemPositionsListener,
         initialIndex: 9,
         initialAlignment: -(itemHeight / screenHeight) / 2);
@@ -180,7 +182,7 @@ void main() {
   testWidgets('Scroll to 9 half way off top', (WidgetTester tester) async {
     final itemPositionsListener = ItemPositionsListener.create();
     final itemScrollController = ItemScrollController();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemPositionsListener: itemPositionsListener,
         itemScrollController: itemScrollController);
 
@@ -209,7 +211,7 @@ void main() {
   testWidgets('Jump to 9 half way off top', (WidgetTester tester) async {
     final itemPositionsListener = ItemPositionsListener.create();
     final itemScrollController = ItemScrollController();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemPositionsListener: itemPositionsListener,
         itemScrollController: itemScrollController);
 
@@ -235,7 +237,7 @@ void main() {
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener,
         initialIndex: 9,
@@ -259,7 +261,7 @@ void main() {
   testWidgets('Scroll to 1 (already on screen)', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
@@ -297,7 +299,7 @@ void main() {
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
@@ -336,7 +338,7 @@ void main() {
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
@@ -377,14 +379,14 @@ void main() {
   testWidgets('Scroll to 15 without fading', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
-    Opacity opacityWidget = tester.widget(find.descendant(
+    var opacityWidget = tester.widget<Opacity>(find.descendant(
         of: find.byType(ScrollablePositionedList),
         matching: find.byType(Opacity)));
-    final double initialOpacity = opacityWidget.opacity;
+    final initialOpacity = opacityWidget.opacity;
 
     unawaited(
         itemScrollController.scrollTo(index: 20, duration: scrollDuration));
@@ -407,7 +409,7 @@ void main() {
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
@@ -437,7 +439,7 @@ void main() {
   testWidgets('Scroll to 100 (not already on screen) front scroll view',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester, itemScrollController: itemScrollController);
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
@@ -478,7 +480,7 @@ void main() {
   testWidgets('Scroll to 100 (not already on screen) back scroll view',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester, itemScrollController: itemScrollController);
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
@@ -496,7 +498,7 @@ void main() {
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
@@ -545,7 +547,7 @@ void main() {
   testWidgets('Scroll to 100 then back to 0 back scroll view',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester, itemScrollController: itemScrollController);
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
@@ -566,7 +568,7 @@ void main() {
   testWidgets('Scroll to 100 then back to 0 front scroll view',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester, itemScrollController: itemScrollController);
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
@@ -594,7 +596,7 @@ void main() {
 
   testWidgets('Scroll 100-0-100', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester, itemScrollController: itemScrollController);
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
@@ -623,7 +625,7 @@ void main() {
   testWidgets('Jump to 100', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
@@ -651,7 +653,7 @@ void main() {
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
@@ -677,7 +679,7 @@ void main() {
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
@@ -699,7 +701,7 @@ void main() {
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
@@ -726,7 +728,7 @@ void main() {
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
@@ -749,7 +751,7 @@ void main() {
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
@@ -772,7 +774,7 @@ void main() {
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
@@ -803,7 +805,7 @@ void main() {
   testWidgets('Scroll to 100 Jump to 0 Scroll to 100',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester, itemScrollController: itemScrollController);
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
@@ -834,7 +836,7 @@ void main() {
   testWidgets('Scroll to 100 stop before half way',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester, itemScrollController: itemScrollController);
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
@@ -846,7 +848,7 @@ void main() {
     await tester.pump();
 
     expect(tester.getTopLeft(find.text('Item 9')).dy, 0);
-    final Opacity opacityWidget = tester.widget(find.descendant(
+    final opacityWidget = tester.widget<Opacity>(find.descendant(
         of: find.byType(ScrollablePositionedList),
         matching: find.byType(Opacity)));
     expect(opacityWidget.opacity, 1.0);
@@ -856,7 +858,7 @@ void main() {
 
   testWidgets('Scroll to 100 stop half way', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester, itemScrollController: itemScrollController);
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
@@ -868,7 +870,7 @@ void main() {
     await tester.pump();
 
     expect(tester.getTopLeft(find.text('Item 10')).dy, 0);
-    final Opacity opacityWidget = tester.widget(find.descendant(
+    final opacityWidget = tester.widget<Opacity>(find.descendant(
         of: find.byType(ScrollablePositionedList),
         matching: find.byType(Opacity)));
     expect(opacityWidget.opacity, 1.0);
@@ -878,7 +880,7 @@ void main() {
 
   testWidgets('Scroll to 0 stop before half way', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester, itemScrollController: itemScrollController);
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
@@ -901,7 +903,7 @@ void main() {
 
   testWidgets('Scroll to 100 stop after half way', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester, itemScrollController: itemScrollController);
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
@@ -926,7 +928,7 @@ void main() {
 
   testWidgets('Scroll to 0 stop after half way', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester, itemScrollController: itemScrollController);
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
@@ -942,7 +944,7 @@ void main() {
     await tester.pump();
 
     expect(tester.getTopLeft(find.text('Item 9')).dy, closeTo(0, tolerance));
-    final Opacity opacityWidget = tester.widget(find.descendant(
+    final opacityWidget = tester.widget<Opacity>(find.descendant(
         of: find.byType(ScrollablePositionedList),
         matching: find.byType(Opacity)));
     expect(opacityWidget.opacity, 1.0);
@@ -952,7 +954,7 @@ void main() {
 
   testWidgets('Scroll to 0 stop half way', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester, itemScrollController: itemScrollController);
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
@@ -976,7 +978,7 @@ void main() {
   testWidgets('Scroll to 100 jump to 250 half way',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester, itemScrollController: itemScrollController);
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
@@ -997,7 +999,7 @@ void main() {
   testWidgets('Scroll to 250, scroll to 100, jump to 0 half way',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester, itemScrollController: itemScrollController);
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
     unawaited(
         itemScrollController.scrollTo(index: 250, duration: scrollDuration));
@@ -1021,7 +1023,7 @@ void main() {
   testWidgets('Scroll to 100 scroll to 250 half way',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester, itemScrollController: itemScrollController);
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
@@ -1040,7 +1042,7 @@ void main() {
   testWidgets('Scroll to 250, scroll to 100, scroll to 0 half way',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester, itemScrollController: itemScrollController);
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
     unawaited(
         itemScrollController.scrollTo(index: 250, duration: scrollDuration));
@@ -1062,7 +1064,7 @@ void main() {
 
   testWidgets('physics', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController,
         physics: const BouncingScrollPhysics());
 
@@ -1093,23 +1095,23 @@ void main() {
 
   testWidgets('correct index sematics', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController, initialIndex: 5);
 
     await tester.drag(
         find.byType(ScrollablePositionedList), const Offset(0, 2 * itemHeight));
     await tester.pumpAndSettle();
 
-    final IndexedSemantics indexSemantics3 = tester.widget(find.ancestor(
+    final indexSemantics3 = tester.widget<IndexedSemantics>(find.ancestor(
         of: find.text('Item 3'), matching: find.byType(IndexedSemantics)));
     expect(indexSemantics3.index, 3);
-    final IndexedSemantics indexSemantics4 = tester.widget(find.ancestor(
+    final indexSemantics4 = tester.widget<IndexedSemantics>(find.ancestor(
         of: find.text('Item 4'), matching: find.byType(IndexedSemantics)));
     expect(indexSemantics4.index, 4);
-    final IndexedSemantics indexSemantics5 = tester.widget(find.ancestor(
+    final indexSemantics5 = tester.widget<IndexedSemantics>(find.ancestor(
         of: find.text('Item 5'), matching: find.byType(IndexedSemantics)));
     expect(indexSemantics5.index, 5);
-    final IndexedSemantics indexSemantics6 = tester.widget(find.ancestor(
+    final indexSemantics6 = tester.widget<IndexedSemantics>(find.ancestor(
         of: find.text('Item 6'), matching: find.byType(IndexedSemantics)));
     expect(indexSemantics6.index, 6);
 
@@ -1123,23 +1125,23 @@ void main() {
         find.byType(ScrollablePositionedList), const Offset(0, 2 * itemHeight));
     await tester.pumpAndSettle();
 
-    final IndexedSemantics indexSemantics3b = tester.widget(find.ancestor(
+    final indexSemantics3b = tester.widget<IndexedSemantics>(find.ancestor(
         of: find.text('Item 3'), matching: find.byType(IndexedSemantics)));
     expect(indexSemantics3b.index, 3);
-    final IndexedSemantics indexSemantics4b = tester.widget(find.ancestor(
+    final indexSemantics4b = tester.widget<IndexedSemantics>(find.ancestor(
         of: find.text('Item 4'), matching: find.byType(IndexedSemantics)));
     expect(indexSemantics4b.index, 4);
-    final IndexedSemantics indexSemantics5b = tester.widget(find.ancestor(
+    final indexSemantics5b = tester.widget<IndexedSemantics>(find.ancestor(
         of: find.text('Item 5'), matching: find.byType(IndexedSemantics)));
     expect(indexSemantics5b.index, 5);
-    final IndexedSemantics indexSemantics6b = tester.widget(find.ancestor(
+    final indexSemantics6b = tester.widget<IndexedSemantics>(find.ancestor(
         of: find.text('Item 6'), matching: find.byType(IndexedSemantics)));
     expect(indexSemantics6b.index, 6);
   });
 
   testWidgets('addIndexSemantics = false', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(
+    await setUpWidgetTest(
       tester,
       itemScrollController: itemScrollController,
       initialIndex: 5,
@@ -1160,48 +1162,48 @@ void main() {
   testWidgets('semanticChildCount specified', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
 
-    await setUp(
+    await setUpWidgetTest(
       tester,
       semanticChildCount: 30,
       itemScrollController: itemScrollController,
     );
 
-    final CustomScrollView customScrollView =
-        tester.widget(find.byType(UnboundedCustomScrollView));
+    final customScrollView =
+        tester.widget<CustomScrollView>(find.byType(UnboundedCustomScrollView));
     expect(customScrollView.semanticChildCount, 30);
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
     await tester.pumpAndSettle();
 
-    final CustomScrollView customScrollView2 =
-        tester.widget(find.byType(UnboundedCustomScrollView));
+    final customScrollView2 =
+        tester.widget<CustomScrollView>(find.byType(UnboundedCustomScrollView));
     expect(customScrollView2.semanticChildCount, 30);
   });
 
   testWidgets('semanticChildCount not specified', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(
+    await setUpWidgetTest(
       tester,
       itemScrollController: itemScrollController,
     );
 
-    final CustomScrollView customScrollView =
-        tester.widget(find.byType(UnboundedCustomScrollView));
+    final customScrollView =
+        tester.widget<CustomScrollView>(find.byType(UnboundedCustomScrollView));
     expect(customScrollView.semanticChildCount, defaultItemCount);
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
     await tester.pumpAndSettle();
 
-    final CustomScrollView customScrollView2 =
-        tester.widget(find.byType(UnboundedCustomScrollView));
+    final customScrollView2 =
+        tester.widget<CustomScrollView>(find.byType(UnboundedCustomScrollView));
     expect(customScrollView2.semanticChildCount, defaultItemCount);
   });
 
-  testWidgets('padding test 1', (WidgetTester tester) async {
+  testWidgets('padding test - centered at top', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(
+    await setUpWidgetTest(
       tester,
       itemScrollController: itemScrollController,
       padding: const EdgeInsets.all(10),
@@ -1225,9 +1227,10 @@ void main() {
         const Offset(screenWidth - 10, screenHeight - 10));
   });
 
-  testWidgets('padding test 2', (WidgetTester tester) async {
+  testWidgets('padding test - centered not at top',
+      (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(
+    await setUpWidgetTest(
       tester,
       itemScrollController: itemScrollController,
       initialIndex: 2,
@@ -1245,9 +1248,9 @@ void main() {
         const Offset(10, 10 + 3 * itemHeight));
   });
 
-  testWidgets('no repaint bounderies', (WidgetTester tester) async {
+  testWidgets('no repaint boundaries', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(
+    await setUpWidgetTest(
       tester,
       itemScrollController: itemScrollController,
       initialIndex: 2,
@@ -1266,7 +1269,7 @@ void main() {
 
   testWidgets('no automatic keep alives', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(
+    await setUpWidgetTest(
       tester,
       itemScrollController: itemScrollController,
       initialIndex: 2,
@@ -1283,7 +1286,7 @@ void main() {
 
   testWidgets('Jump to end of list', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester, itemScrollController: itemScrollController);
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
     itemScrollController.jumpTo(index: defaultItemCount);
     await tester.pumpAndSettle();
@@ -1294,7 +1297,7 @@ void main() {
 
   testWidgets('Scroll to end of list', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester, itemScrollController: itemScrollController);
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
     unawaited(itemScrollController.scrollTo(
         index: defaultItemCount, duration: scrollDuration));
@@ -1307,7 +1310,7 @@ void main() {
   testWidgets('Scroll to end of list, jump to beginning, jump to end',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester, itemScrollController: itemScrollController);
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
     unawaited(itemScrollController.scrollTo(
         index: defaultItemCount, duration: scrollDuration));
@@ -1324,7 +1327,7 @@ void main() {
   testWidgets('Jump to end of list, scroll to beginning, scroll to end',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester, itemScrollController: itemScrollController);
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
     itemScrollController.jumpTo(index: defaultItemCount);
     await tester.pumpAndSettle();
@@ -1344,7 +1347,7 @@ void main() {
       'Jump to end of list, jump to beginning with alignment not at top',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester, itemScrollController: itemScrollController);
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
     itemScrollController.jumpTo(index: defaultItemCount);
     await tester.pumpAndSettle();
@@ -1357,7 +1360,7 @@ void main() {
 
   testWidgets("Short list, can't scroll past end", (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
-    await setUp(tester,
+    await setUpWidgetTest(tester,
         itemScrollController: itemScrollController, itemCount: 3);
 
     await tester.drag(
@@ -1365,5 +1368,13 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.getTopLeft(find.text('Item 0')).dy, 0);
+  });
+
+  testWidgets('List can be keyed', (WidgetTester tester) async {
+    final key = ValueKey('key');
+
+    await setUpWidgetTest(tester, key: key);
+
+    expect(find.byKey(key), findsOneWidget);
   });
 }

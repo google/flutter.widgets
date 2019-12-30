@@ -17,8 +17,8 @@ import 'visibility_detector_controller.dart';
 /// Returns a sequence containing the specified [Layer] and all of its
 /// ancestors.  The returned sequence is in [parent, child] order.
 Iterable<Layer> _getLayerChain(Layer start) {
-  final List<Layer> layerChain = <Layer>[];
-  for (Layer layer = start; layer != null; layer = layer.parent) {
+  final layerChain = <Layer>[];
+  for (var layer = start; layer != null; layer = layer.parent) {
     layerChain.add(layer);
   }
   return layerChain.reversed;
@@ -30,10 +30,10 @@ Iterable<Layer> _getLayerChain(Layer start) {
 Matrix4 _accumulateTransforms(Iterable<Layer> layerChain) {
   assert(layerChain != null);
 
-  final Matrix4 transform = Matrix4.identity();
+  final transform = Matrix4.identity();
   if (layerChain.isNotEmpty) {
-    Layer parent = layerChain.first;
-    for (final Layer child in layerChain.skip(1)) {
+    var parent = layerChain.first;
+    for (final child in layerChain.skip(1)) {
       (parent as ContainerLayer).applyTransform(child, transform);
       parent = child;
     }
@@ -44,13 +44,13 @@ Matrix4 _accumulateTransforms(Iterable<Layer> layerChain) {
 /// Converts a [Rect] in local coordinates of the specified [Layer] to a new
 /// [Rect] in global coordinates.
 Rect _localRectToGlobal(Layer layer, Rect localRect) {
-  final Iterable<Layer> layerChain = _getLayerChain(layer);
+  final layerChain = _getLayerChain(layer);
 
   // Skip the root layer which transforms from logical pixels to physical
   // device pixels.
   assert(layerChain.isNotEmpty);
   assert(layerChain.first is TransformLayer);
-  final Matrix4 transform = _accumulateTransforms(layerChain.skip(1));
+  final transform = _accumulateTransforms(layerChain.skip(1));
   return MatrixUtils.transformRect(transform, localRect);
 }
 
@@ -122,16 +122,16 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// Computes the bounds for the corresponding [VisibilityDetector] widget, in
   /// global coordinates.
   Rect _computeWidgetBounds() {
-    final Rect r = _localRectToGlobal(this, Offset.zero & widgetSize);
+    final r = _localRectToGlobal(this, Offset.zero & widgetSize);
     return r.shift(paintOffset + _layerOffset);
   }
 
   /// Computes the accumulated clipping bounds, in global coordinates.
   Rect _computeClipRect() {
     assert(RendererBinding.instance?.renderView != null);
-    Rect clipRect = Offset.zero & RendererBinding.instance.renderView.size;
+    var clipRect = Offset.zero & RendererBinding.instance.renderView.size;
 
-    ContainerLayer parentLayer = parent;
+    var parentLayer = parent;
     while (parentLayer != null) {
       Rect curClipRect;
       if (parentLayer is ClipRectLayer) {
@@ -160,7 +160,7 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// Schedules a timer to invoke the visibility callbacks.  The timer is used
   /// to throttle and coalesce updates.
   void _scheduleUpdate() {
-    final bool isFirstUpdate = _updated.isEmpty;
+    final isFirstUpdate = _updated.isEmpty;
     _updated[key] = this;
 
     final updateInterval = VisibilityDetectorController.instance.updateInterval;
@@ -222,7 +222,7 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// Executes visibility callbacks for all updated [VisibilityDetectorLayer]
   /// instances.
   static void _processCallbacks() {
-    for (final VisibilityDetectorLayer layer in _updated.values) {
+    for (final layer in _updated.values) {
       if (!layer.attached) {
         layer._fireCallback(VisibilityInfo(
             key: layer.key, size: _lastVisibility[layer.key]?.size));
@@ -246,8 +246,8 @@ class VisibilityDetectorLayer extends ContainerLayer {
   void _fireCallback(VisibilityInfo info) {
     assert(info != null);
 
-    final VisibilityInfo oldInfo = _lastVisibility[key];
-    final bool visible = !info.visibleBounds.isEmpty;
+    final oldInfo = _lastVisibility[key];
+    final visible = !info.visibleBounds.isEmpty;
 
     if (oldInfo == null) {
       if (!visible) {

@@ -48,8 +48,8 @@ class _ScrollablePositionedListPageState
   @override
   void initState() {
     super.initState();
-    final Random heightGenerator = Random(328902348);
-    final Random colorGenerator = Random(42490823);
+    final heightGenerator = Random(328902348);
+    final colorGenerator = Random(42490823);
     itemHeights = List<double>.generate(
         numberOfItems,
         (int _) =>

@@ -22,6 +22,16 @@ import 'package:flutter/rendering.dart';
 class LinkedScrollControllerGroup {
   final List<_LinkedScrollController> _allControllers = [];
 
+  /// The current scroll offset of the group.
+  double get offset {
+    assert(
+      _attachedControllers.isNotEmpty,
+      'LinkedScrollControllerGroup does not have any scroll controllers '
+      'attached.',
+    );
+    return _attachedControllers.first.offset;
+  }
+
   /// Creates a new controller that is linked to any existing ones.
   ScrollController addAndGet() {
     final initialScrollOffset = _attachedControllers.isEmpty
@@ -155,7 +165,7 @@ class _LinkedScrollPosition extends ScrollPositionWithSingleContext {
     if (newActivity == null) {
       return;
     }
-    for (_LinkedScrollActivity activity in _peerActivities) {
+    for (var activity in _peerActivities) {
       activity.unlink(this);
     }
 
@@ -175,7 +185,7 @@ class _LinkedScrollPosition extends ScrollPositionWithSingleContext {
 
     if (owner.canLinkWithPeers) {
       _peerActivities.addAll(owner.linkWithPeers(this));
-      for (_LinkedScrollActivity activity in _peerActivities) {
+      for (var activity in _peerActivities) {
         activity.moveTo(newPixels);
       }
     }
@@ -198,7 +208,7 @@ class _LinkedScrollPosition extends ScrollPositionWithSingleContext {
 
     if (owner.canLinkWithPeers) {
       _peerActivities.addAll(owner.linkWithPeers(this));
-      for (_LinkedScrollActivity activity in _peerActivities) {
+      for (var activity in _peerActivities) {
         activity.jumpTo(value);
       }
     }
@@ -279,7 +289,7 @@ class _LinkedScrollActivity extends ScrollActivity {
   void _updateUserScrollDirection() {
     assert(drivers.isNotEmpty);
     ScrollDirection commonDirection;
-    for (_LinkedScrollPosition driver in drivers) {
+    for (var driver in drivers) {
       commonDirection ??= driver.userScrollDirection;
       if (driver.userScrollDirection != commonDirection) {
         commonDirection = ScrollDirection.idle;
@@ -290,7 +300,7 @@ class _LinkedScrollActivity extends ScrollActivity {
 
   @override
   void dispose() {
-    for (_LinkedScrollPosition driver in drivers) {
+    for (var driver in drivers) {
       driver.unlink(this);
     }
     super.dispose();

@@ -70,8 +70,7 @@ Future<List<Rect>> _setUpSelectionHandles(
   textController.selection = selection;
   await tester.pumpAndSettle();
 
-  final EditableTextState state =
-      tester.state<EditableTextState>(find.byType(EditableText));
+  final state = tester.state<EditableTextState>(find.byType(EditableText));
   expect(state.selectionOverlay.handlesAreVisible, true);
 
   // Find the text selection handles (via [CustomPaint] widgets within

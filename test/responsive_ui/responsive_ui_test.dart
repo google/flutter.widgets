@@ -186,7 +186,7 @@ void main() {
   });
 }
 
-Future<Null> runTest(WidgetTester tester,
+Future<void> runTest(WidgetTester tester,
     {Size size,
     MobileDeviceType expectedDeviceType,
     MobileDeviceSize expectedDeviceSize,

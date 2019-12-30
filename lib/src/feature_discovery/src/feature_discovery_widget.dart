@@ -17,8 +17,8 @@ class FeatureDiscoveryController extends StatefulWidget {
   FeatureDiscoveryController(this.child);
 
   static _FeatureDiscoveryControllerState of(BuildContext context) {
-    final matchResult = context.ancestorStateOfType(
-        const TypeMatcher<_FeatureDiscoveryControllerState>());
+    final matchResult =
+        context.findAncestorStateOfType<_FeatureDiscoveryControllerState>();
     if (matchResult != null) {
       return matchResult;
     }
@@ -61,8 +61,7 @@ class _FeatureDiscoveryControllerState
   void didChangeDependencies() {
     super.didChangeDependencies();
     assert(
-      context.ancestorStateOfType(
-              const TypeMatcher<_FeatureDiscoveryControllerState>()) ==
+      context.findAncestorStateOfType<_FeatureDiscoveryControllerState>() ==
           null,
       'There should not be another ancestor of type '
       'FeatureDiscoveryController in the widget tree.',

@@ -1,3 +1,18 @@
+# 0.1.8
+
+* `ScrollablePositionedList`:
+
+  * Fix padding for horizontal lists.
+
+  * Add `ScrollablePositionedList.separated` constructor to complete
+    [issue #34](https://github.com/google/flutter.widgets/issues/34).
+
+  * Add `isAttached` method to `ItemScrollController`.
+
+* `LinkedScrollControllerGroup`:
+
+  * Add getter `offset` that returns the current scroll offset for the group.
+
 # 0.1.7
 
 * Added the `FeatureDiscovery` widget.

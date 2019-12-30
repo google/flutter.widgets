@@ -13,9 +13,9 @@ const itemHeight = screenHeight / 10.0;
 const defaultItemCount = 500;
 
 void main() {
-  final ItemPositionsListener itemPositions = ItemPositionsListener.create();
+  final itemPositions = ItemPositionsListener.create();
 
-  Future<void> setUp(
+  Future<void> setUpWidgetTest(
     WidgetTester tester, {
     int topItem = 0,
     ScrollController scrollController,
@@ -45,7 +45,7 @@ void main() {
   }
 
   testWidgets('short list', (WidgetTester tester) async {
-    await setUp(tester, itemCount: 5);
+    await setUpWidgetTest(tester, itemCount: 5);
     await tester.pump();
 
     expect(tester.getBottomRight(find.text('Item 0')).dy, screenHeight);
@@ -65,7 +65,7 @@ void main() {
   });
 
   testWidgets('List positioned with 0 at bottom', (WidgetTester tester) async {
-    await setUp(tester);
+    await setUpWidgetTest(tester);
     await tester.pump();
 
     expect(tester.getBottomRight(find.text('Item 0')).dy, screenHeight);
@@ -85,7 +85,7 @@ void main() {
   });
 
   testWidgets('List positioned with 5 at bottom', (WidgetTester tester) async {
-    await setUp(tester, topItem: 5);
+    await setUpWidgetTest(tester, topItem: 5);
     await tester.pump();
 
     expect(find.text('Item 4'), findsNothing);
@@ -116,7 +116,7 @@ void main() {
   });
 
   testWidgets('List positioned with 15 at bottom', (WidgetTester tester) async {
-    await setUp(tester, topItem: 15, anchor: 0);
+    await setUpWidgetTest(tester, topItem: 15, anchor: 0);
     await tester.pump();
 
     expect(find.text('Item 14'), findsNothing);
@@ -126,7 +126,7 @@ void main() {
   });
 
   testWidgets('List positioned with 15 at top', (WidgetTester tester) async {
-    await setUp(tester, topItem: 15, anchor: 1);
+    await setUpWidgetTest(tester, topItem: 15, anchor: 1);
     await tester.pump();
 
     expect(find.text('Item 15'), findsNothing);
@@ -158,7 +158,7 @@ void main() {
 
   testWidgets('List positioned with 5 at bottom then scroll up 2',
       (WidgetTester tester) async {
-    await setUp(tester, topItem: 5);
+    await setUpWidgetTest(tester, topItem: 5);
 
     await tester.drag(
         find.byType(PositionedList), const Offset(0, 2 * itemHeight));
@@ -181,8 +181,8 @@ void main() {
 
   testWidgets('List positioned with 0 at bottom scroll to item 5',
       (WidgetTester tester) async {
-    final ScrollController scrollController = ScrollController();
-    await setUp(tester, scrollController: scrollController);
+    final scrollController = ScrollController();
+    await setUpWidgetTest(tester, scrollController: scrollController);
     await tester.pump();
 
     scrollController.jumpTo(5 * itemHeight);
@@ -209,8 +209,9 @@ void main() {
   testWidgets(
       'List positioned with 5 at bottom then scroll up 2 programatically',
       (WidgetTester tester) async {
-    final ScrollController scrollController = ScrollController();
-    await setUp(tester, topItem: 5, scrollController: scrollController);
+    final scrollController = ScrollController();
+    await setUpWidgetTest(tester,
+        topItem: 5, scrollController: scrollController);
 
     scrollController.jumpTo(2 * itemHeight);
     await tester.pump();
@@ -239,9 +240,10 @@ void main() {
 
   testWidgets('List positioned with 5 at bottom and initial scroll offset',
       (WidgetTester tester) async {
-    final ScrollController scrollController =
+    final scrollController =
         ScrollController(initialScrollOffset: 2 * itemHeight);
-    await setUp(tester, topItem: 5, scrollController: scrollController);
+    await setUpWidgetTest(tester,
+        topItem: 5, scrollController: scrollController);
 
     expect(find.text('Item 6'), findsNothing);
     expect(find.text('Item 7'), findsOneWidget);

@@ -9,7 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:flutter_widgets/src/html_widget/html_widget.dart';
 
-Future<Null> _pumpWithDirectionality(WidgetTester tester, Widget widget) async {
+Future<void> _pumpWithDirectionality(WidgetTester tester, Widget widget) async {
   await tester.pumpWidget(Directionality(
     textDirection: TextDirection.ltr,
     child: widget,
