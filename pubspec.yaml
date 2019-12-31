@@ -7,7 +7,7 @@ homepage: https://github.com/google/flutter.widgets
 
 environment:
   sdk: ">=2.3.0 <3.0.0"
-  flutter: ^1.9.1
+  flutter: ^1.12.13+hotfix.5
 
 dependencies:
   collection: ^1.14.5
