@@ -1,3 +1,10 @@
+# 0.1.9
+
+* `ScrollablePositionedList`:
+
+  * Store scroll state in page storage to fix
+    [issue #43](https://github.com/google/flutter.widgets/issues/43).
+
 # 0.1.8
 
 * `ScrollablePositionedList`:
