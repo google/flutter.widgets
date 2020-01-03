@@ -182,9 +182,11 @@ void main() {
   testWidgets('Scroll to 9 half way off top', (WidgetTester tester) async {
     final itemPositionsListener = ItemPositionsListener.create();
     final itemScrollController = ItemScrollController();
+    expect(itemScrollController.isAttached, false);
     await setUpWidgetTest(tester,
         itemPositionsListener: itemPositionsListener,
         itemScrollController: itemScrollController);
+    expect(itemScrollController.isAttached, true);
 
     unawaited(itemScrollController.scrollTo(
         index: 9,
