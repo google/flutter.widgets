@@ -1248,6 +1248,45 @@ void main() {
         const Offset(10, 10 + 3 * itemHeight));
   });
 
+  testWidgets('padding - first element centered - scroll up',
+      (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUpWidgetTest(
+      tester,
+      itemScrollController: itemScrollController,
+      padding: const EdgeInsets.all(10),
+    );
+
+    await tester.drag(
+        find.byType(ScrollablePositionedList), const Offset(0, 100));
+    await tester.pumpAndSettle();
+
+    expect(tester.getTopLeft(find.text('Item 0')), const Offset(10, 10));
+  });
+
+  testWidgets('padding - last element centered - scroll down',
+      (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUpWidgetTest(
+      tester,
+      itemScrollController: itemScrollController,
+      padding: const EdgeInsets.all(10),
+    );
+
+    unawaited(itemScrollController.scrollTo(
+        index: defaultItemCount - 1, duration: scrollDuration));
+    await tester.pumpAndSettle();
+
+    await tester.drag(
+        find.byType(ScrollablePositionedList), const Offset(0, -100));
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getBottomLeft(find.text('Item ${defaultItemCount - 1}')),
+      const Offset(10, screenHeight - 10),
+    );
+  });
+
   testWidgets('no repaint boundaries', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     await setUpWidgetTest(

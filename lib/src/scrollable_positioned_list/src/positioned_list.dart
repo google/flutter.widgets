@@ -173,23 +173,24 @@ class _PositionedListState extends State<PositionedList> {
           physics: widget.physics,
           semanticChildCount: widget.semanticChildCount ?? widget.itemCount,
           slivers: <Widget>[
-            SliverPadding(
-              padding: _leadingSliverPadding,
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) => widget.separatorBuilder == null
-                      ? _buildItem(widget.positionedIndex - (index + 1))
-                      : _buildSeparatedListElement(
-                          2 * widget.positionedIndex - (index + 1)),
-                  childCount: widget.separatorBuilder == null
-                      ? widget.positionedIndex
-                      : 2 * widget.positionedIndex,
-                  addSemanticIndexes: false,
-                  addRepaintBoundaries: widget.addRepaintBoundaries,
-                  addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+            if (widget.positionedIndex > 0)
+              SliverPadding(
+                padding: _leadingSliverPadding,
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) => widget.separatorBuilder == null
+                        ? _buildItem(widget.positionedIndex - (index + 1))
+                        : _buildSeparatedListElement(
+                            2 * widget.positionedIndex - (index + 1)),
+                    childCount: widget.separatorBuilder == null
+                        ? widget.positionedIndex
+                        : 2 * widget.positionedIndex,
+                    addSemanticIndexes: false,
+                    addRepaintBoundaries: widget.addRepaintBoundaries,
+                    addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+                  ),
                 ),
               ),
-            ),
             SliverPadding(
               key: _centerKey,
               padding: _centerSliverPadding,
@@ -206,23 +207,24 @@ class _PositionedListState extends State<PositionedList> {
                 ),
               ),
             ),
-            SliverPadding(
-              padding: _trailingSliverPadding,
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) => widget.separatorBuilder == null
-                      ? _buildItem(index + widget.positionedIndex + 1)
-                      : _buildSeparatedListElement(
-                          index + 2 * widget.positionedIndex + 1),
-                  childCount: widget.separatorBuilder == null
-                      ? widget.itemCount - widget.positionedIndex - 1
-                      : 2 * (widget.itemCount - widget.positionedIndex - 1),
-                  addSemanticIndexes: false,
-                  addRepaintBoundaries: widget.addRepaintBoundaries,
-                  addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+            if (widget.positionedIndex < widget.itemCount - 1)
+              SliverPadding(
+                padding: _trailingSliverPadding,
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) => widget.separatorBuilder == null
+                        ? _buildItem(index + widget.positionedIndex + 1)
+                        : _buildSeparatedListElement(
+                            index + 2 * widget.positionedIndex + 1),
+                    childCount: widget.separatorBuilder == null
+                        ? widget.itemCount - widget.positionedIndex - 1
+                        : 2 * (widget.itemCount - widget.positionedIndex - 1),
+                    addSemanticIndexes: false,
+                    addRepaintBoundaries: widget.addRepaintBoundaries,
+                    addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       );
