@@ -160,6 +160,47 @@ void main() {
       expect(state._controllers.offset, equals(state._letters.offset));
     });
 
+    testWidgets('onOffsetChanged fires on scroll', (tester) async {
+      await tester.pumpWidget(Test());
+      final state = tester.state<TestState>(find.byType(Test));
+
+      var onOffsetChangedCount = 0;
+      void listener() {
+        onOffsetChangedCount++;
+      }
+
+      state._controllers.addOffsetChangedListener(listener);
+
+      expect(state._controllers.offset, equals(0.0));
+      expect(onOffsetChangedCount, equals(0));
+
+      await tester.drag(find.text('Hello 2'), const Offset(0.0, -1.0));
+      await tester.pumpAndSettle();
+      expect(state._controllers.offset, equals(1.0));
+      // The count should be incremented since the scroll offset changed.
+      expect(onOffsetChangedCount, equals(1));
+
+      await tester.drag(find.text('Hello 2'), const Offset(0.0, 0.0));
+      await tester.pumpAndSettle();
+      expect(state._controllers.offset, equals(1.0));
+      // The count should be unchanged since the scroll offset is unchanged.
+      expect(onOffsetChangedCount, equals(1));
+
+      await tester.drag(find.text('Hello 2'), const Offset(0.0, -1.0));
+      await tester.pumpAndSettle();
+      expect(state._controllers.offset, equals(2.0));
+      // The count should be incremented since the scroll offset changed.
+      expect(onOffsetChangedCount, equals(2));
+
+      state._controllers.removeOffsetChangedListener(listener);
+
+      await tester.drag(find.text('Hello 2'), const Offset(0.0, -1.0));
+      await tester.pumpAndSettle();
+      expect(state._controllers.offset, equals(3.0));
+      // The count should be unchanged since we removed the listener.
+      expect(onOffsetChangedCount, equals(2));
+    });
+
     testWidgets('resetScroll moves scroll back to 0', (tester) async {
       await tester.pumpWidget(Test());
 

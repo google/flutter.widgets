@@ -20,7 +20,13 @@ import 'package:flutter/rendering.dart';
 /// Without the keys, Flutter may reuse a controller after it has been disposed,
 /// which can cause the controller offsets to fall out of sync.
 class LinkedScrollControllerGroup {
-  final List<_LinkedScrollController> _allControllers = [];
+  LinkedScrollControllerGroup() {
+    _offsetNotifier = _LinkedScrollControllerGroupOffsetNotifier(this);
+  }
+
+  final _allControllers = <_LinkedScrollController>[];
+
+  _LinkedScrollControllerGroupOffsetNotifier _offsetNotifier;
 
   /// The current scroll offset of the group.
   double get offset {
@@ -40,7 +46,18 @@ class LinkedScrollControllerGroup {
     final controller =
         _LinkedScrollController(this, initialScrollOffset: initialScrollOffset);
     _allControllers.add(controller);
+    controller.addListener(_offsetNotifier.notifyListeners);
     return controller;
+  }
+
+  /// Adds a callback that will be called when the value of [offset] changes.
+  void addOffsetChangedListener(VoidCallback onChanged) {
+    _offsetNotifier.addListener(onChanged);
+  }
+
+  /// Removes the specified offset changed listener.
+  void removeOffsetChangedListener(VoidCallback listener) {
+    _offsetNotifier.removeListener(listener);
   }
 
   Iterable<_LinkedScrollController> get _attachedControllers =>
@@ -50,6 +67,31 @@ class LinkedScrollControllerGroup {
   void resetScroll() {
     for (final controller in _attachedControllers) {
       controller.jumpTo(0.0);
+    }
+  }
+}
+
+/// This class provides change notification for [LinkedScrollControllerGroup]'s
+/// scroll offset.
+///
+/// This change notifier de-duplicates change events by only firing listeners
+/// when the scroll offset of the group has changed.
+class _LinkedScrollControllerGroupOffsetNotifier extends ChangeNotifier {
+  _LinkedScrollControllerGroupOffsetNotifier(this.controllerGroup);
+
+  final LinkedScrollControllerGroup controllerGroup;
+
+  /// The cached offset for the group.
+  ///
+  /// This value will be used in determining whether to notify listeners.
+  double _cachedOffset;
+
+  @override
+  void notifyListeners() {
+    final currentOffset = controllerGroup.offset;
+    if (currentOffset != _cachedOffset) {
+      _cachedOffset = currentOffset;
+      super.notifyListeners();
     }
   }
 }

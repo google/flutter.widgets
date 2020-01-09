@@ -201,8 +201,8 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     with TickerProviderStateMixin {
   final frontItemPositionNotifier = ItemPositionsNotifier();
   final backItemPositionNotifier = ItemPositionsNotifier();
-  final frontScrollController = ScrollController();
-  final backScrollController = ScrollController();
+  final frontScrollController = ScrollController(keepScrollOffset: false);
+  final backScrollController = ScrollController(keepScrollOffset: false);
   final frontOpacity =
       ProxyAnimation(const AlwaysStoppedAnimation<double>(1.0));
 
@@ -218,8 +218,10 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   @override
   void initState() {
     super.initState();
-    frontTarget = widget.initialScrollIndex;
-    frontAlignment = widget.initialAlignment;
+    ItemPosition initialPosition = PageStorage.of(context).readState(context);
+    frontTarget = initialPosition?.index ?? widget.initialScrollIndex;
+    frontAlignment =
+        initialPosition?.itemLeadingEdge ?? widget.initialAlignment;
     widget.itemScrollController?._attach(this);
     frontItemPositionNotifier.itemPositions.addListener(_updatePositions);
     backItemPositionNotifier.itemPositions.addListener(_updatePositions);
@@ -470,19 +472,22 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       listDisplay == _ListDisplay.front || listDisplay == _ListDisplay.both;
 
   void _updatePositions() {
-    if (_showFrontList) {
-      widget.itemPositionNotifier?.itemPositions?.value =
-          frontItemPositionNotifier.itemPositions.value.where(
-              (ItemPosition position) =>
-                  position.itemLeadingEdge < 1 &&
-                  position.itemTrailingEdge > 0);
-    } else {
-      widget.itemPositionNotifier?.itemPositions?.value =
-          backItemPositionNotifier.itemPositions.value.where(
-              (ItemPosition position) =>
-                  position.itemLeadingEdge < 1 &&
-                  position.itemTrailingEdge > 0);
+    final itemPositions = _showFrontList
+        ? frontItemPositionNotifier.itemPositions.value.where(
+            (ItemPosition position) =>
+                position.itemLeadingEdge < 1 && position.itemTrailingEdge > 0)
+        : backItemPositionNotifier.itemPositions.value.where(
+            (ItemPosition position) =>
+                position.itemLeadingEdge < 1 && position.itemTrailingEdge > 0);
+    if (itemPositions.isNotEmpty) {
+      PageStorage.of(context).writeState(
+          context,
+          itemPositions.reduce((value, element) =>
+              value.itemLeadingEdge < element.itemLeadingEdge
+                  ? value
+                  : element));
     }
+    widget.itemPositionNotifier?.itemPositions?.value = itemPositions;
   }
 }
 

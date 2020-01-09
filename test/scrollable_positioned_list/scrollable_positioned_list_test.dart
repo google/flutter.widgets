@@ -182,9 +182,11 @@ void main() {
   testWidgets('Scroll to 9 half way off top', (WidgetTester tester) async {
     final itemPositionsListener = ItemPositionsListener.create();
     final itemScrollController = ItemScrollController();
+    expect(itemScrollController.isAttached, false);
     await setUpWidgetTest(tester,
         itemPositionsListener: itemPositionsListener,
         itemScrollController: itemScrollController);
+    expect(itemScrollController.isAttached, true);
 
     unawaited(itemScrollController.scrollTo(
         index: 9,
@@ -1248,6 +1250,45 @@ void main() {
         const Offset(10, 10 + 3 * itemHeight));
   });
 
+  testWidgets('padding - first element centered - scroll up',
+      (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUpWidgetTest(
+      tester,
+      itemScrollController: itemScrollController,
+      padding: const EdgeInsets.all(10),
+    );
+
+    await tester.drag(
+        find.byType(ScrollablePositionedList), const Offset(0, 100));
+    await tester.pumpAndSettle();
+
+    expect(tester.getTopLeft(find.text('Item 0')), const Offset(10, 10));
+  });
+
+  testWidgets('padding - last element centered - scroll down',
+      (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUpWidgetTest(
+      tester,
+      itemScrollController: itemScrollController,
+      padding: const EdgeInsets.all(10),
+    );
+
+    unawaited(itemScrollController.scrollTo(
+        index: defaultItemCount - 1, duration: scrollDuration));
+    await tester.pumpAndSettle();
+
+    await tester.drag(
+        find.byType(ScrollablePositionedList), const Offset(0, -100));
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getBottomLeft(find.text('Item ${defaultItemCount - 1}')),
+      const Offset(10, screenHeight - 10),
+    );
+  });
+
   testWidgets('no repaint boundaries', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     await setUpWidgetTest(
@@ -1376,5 +1417,189 @@ void main() {
     await setUpWidgetTest(tester, key: key);
 
     expect(find.byKey(key), findsOneWidget);
+  });
+
+  testWidgets(
+      'Maintain programmatic position (9 half way off top) in page view',
+      (WidgetTester tester) async {
+    final itemPositionsListener = ItemPositionsListener.create();
+    final itemScrollController = ItemScrollController();
+
+    tester.binding.window.devicePixelRatioTestValue = 1.0;
+    tester.binding.window.physicalSizeTestValue =
+        const Size(screenWidth, screenHeight);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: PageView(
+          children: [
+            KeyedSubtree(
+              key: PageStorageKey('key'),
+              child: ScrollablePositionedList.builder(
+                itemCount: defaultItemCount,
+                itemScrollController: itemScrollController,
+                itemBuilder: (context, index) => SizedBox(
+                  height: itemHeight,
+                  child: Text('Item $index'),
+                ),
+                itemPositionsListener: itemPositionsListener,
+              ),
+            ),
+            Center(
+              child: Text('Test'),
+            )
+          ],
+        ),
+      ),
+    );
+
+    itemScrollController.jumpTo(
+        index: 9, alignment: -(itemHeight / screenHeight) / 2);
+    await tester.pump();
+
+    await tester.drag(find.byType(PageView), const Offset(-500, 0));
+    await tester.pumpAndSettle();
+
+    await tester.drag(find.byType(PageView), const Offset(500, 0));
+    await tester.pumpAndSettle();
+
+    expect(tester.getTopLeft(find.text('Item 9')).dy, -itemHeight / 2);
+
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 9)
+            .itemLeadingEdge,
+        -(itemHeight / screenHeight) / 2);
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 9)
+            .itemTrailingEdge,
+        (itemHeight / screenHeight) / 2);
+  });
+
+  testWidgets('Maintain user scroll position (1 half way off top) in page view',
+      (WidgetTester tester) async {
+    final itemPositionsListener = ItemPositionsListener.create();
+    final itemScrollController = ItemScrollController();
+
+    tester.binding.window.devicePixelRatioTestValue = 1.0;
+    tester.binding.window.physicalSizeTestValue =
+        const Size(screenWidth, screenHeight);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: PageView(
+          children: [
+            KeyedSubtree(
+              key: PageStorageKey('key'),
+              child: ScrollablePositionedList.builder(
+                itemCount: defaultItemCount,
+                itemScrollController: itemScrollController,
+                itemBuilder: (context, index) => SizedBox(
+                  height: itemHeight,
+                  child: Text('Item $index'),
+                ),
+                itemPositionsListener: itemPositionsListener,
+              ),
+            ),
+            Center(
+              child: Text('Test'),
+            )
+          ],
+        ),
+      ),
+    );
+
+    await tester.drag(
+        find.byType(ScrollablePositionedList), const Offset(0, -itemHeight));
+    await tester.pumpAndSettle();
+
+    final item0Bottom = tester.getBottomRight(find.text('Item 0')).dy;
+    expect(item0Bottom, lessThan(itemHeight));
+
+    await tester.drag(find.byType(PageView), const Offset(-500, 0));
+    await tester.pumpAndSettle();
+
+    await tester.drag(find.byType(PageView), const Offset(500, 0));
+    await tester.pumpAndSettle();
+
+    expect(tester.getBottomRight(find.text('Item 0')).dy, item0Bottom);
+
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 0)
+            .itemLeadingEdge,
+        -(itemHeight / screenHeight) / 2);
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 0)
+            .itemTrailingEdge,
+        (itemHeight / screenHeight) / 2);
+  });
+
+  testWidgets(
+      'Maintain programmatic and user position (9 half way off top) in page view',
+      (WidgetTester tester) async {
+    final itemPositionsListener = ItemPositionsListener.create();
+    final itemScrollController = ItemScrollController();
+
+    tester.binding.window.devicePixelRatioTestValue = 1.0;
+    tester.binding.window.physicalSizeTestValue =
+        const Size(screenWidth, screenHeight);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: PageView(
+          children: [
+            KeyedSubtree(
+              key: PageStorageKey('key'),
+              child: ScrollablePositionedList.builder(
+                itemCount: defaultItemCount,
+                itemScrollController: itemScrollController,
+                itemBuilder: (context, index) => SizedBox(
+                  height: itemHeight,
+                  child: Text('Item $index'),
+                ),
+                itemPositionsListener: itemPositionsListener,
+              ),
+            ),
+            Center(
+              child: Text('Test'),
+            )
+          ],
+        ),
+      ),
+    );
+
+    itemScrollController.jumpTo(index: 9);
+    await tester.pump();
+
+    expect(tester.getBottomRight(find.text('Item 9')).dy, itemHeight);
+
+    await tester.drag(
+        find.byType(ScrollablePositionedList), const Offset(0, -itemHeight));
+    await tester.pumpAndSettle();
+
+    final item9Bottom = tester.getBottomRight(find.text('Item 9')).dy;
+    expect(item9Bottom, lessThan(itemHeight));
+
+    await tester.drag(find.byType(PageView), const Offset(-500, 0));
+    await tester.pumpAndSettle();
+
+    await tester.drag(find.byType(PageView), const Offset(500, 0));
+    await tester.pumpAndSettle();
+
+    expect(tester.getBottomRight(find.text('Item 9')).dy, item9Bottom);
+
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 9)
+            .itemLeadingEdge,
+        -(itemHeight / screenHeight) / 2);
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 9)
+            .itemTrailingEdge,
+        (itemHeight / screenHeight) / 2);
   });
 }
