@@ -7,8 +7,8 @@
 
 * `LinkedScrollControllerGroup`:
 
-  * Add `LinkedScrollControllerGroup.onOffsetChanged` method that calls the
-    provided callback when the scroll offset of the group changes.
+  * Add `LinkedScrollControllerGroup.addOffsetChangedListener` method that calls
+    the provided callback when the scroll offset of the group changes.
 
 # 0.1.8
 
