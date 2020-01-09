@@ -5,6 +5,11 @@
   * Store scroll state in page storage to fix
     [issue #43](https://github.com/google/flutter.widgets/issues/43).
 
+* `LinkedScrollControllerGroup`:
+
+  * Add `LinkedScrollControllerGroup.addOffsetChangedListener` method that calls
+    the provided callback when the scroll offset of the group changes.
+
 # 0.1.8
 
 * `ScrollablePositionedList`:
