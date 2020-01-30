@@ -43,6 +43,7 @@ class PositionedList extends StatefulWidget {
     this.addSemanticIndexes = true,
     this.addRepaintBoundaries = true,
     this.addAutomaticKeepAlives = true,
+    this.shrinkWrap = false,
   })  : assert(itemCount != null),
         assert(itemBuilder != null);
 
@@ -121,6 +122,8 @@ class PositionedList extends StatefulWidget {
   /// See [SliverChildBuilderDelegate.addAutomaticKeepAlives].
   final bool addAutomaticKeepAlives;
 
+  final bool shrinkWrap;
+
   @override
   State<StatefulWidget> createState() => _PositionedListState();
 }
@@ -168,6 +171,7 @@ class _PositionedListState extends State<PositionedList> {
           center: _centerKey,
           controller: scrollController,
           scrollDirection: widget.scrollDirection,
+          shrinkWrap: widget.shrinkWrap,
           reverse: widget.reverse,
           cacheExtent: widget.cacheExtent,
           physics: widget.physics,

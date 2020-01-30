@@ -50,6 +50,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addSemanticIndexes = true,
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
+    this.shrinkWrap = false,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         itemPositionNotifier = itemPositionsListener,
@@ -75,6 +76,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addSemanticIndexes = true,
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
+    this.shrinkWrap = false,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         assert(separatorBuilder != null),
@@ -147,6 +149,9 @@ class ScrollablePositionedList extends StatefulWidget {
   ///
   /// See [SliverChildBuilderDelegate.addRepaintBoundaries].
   final bool addRepaintBoundaries;
+
+
+  final bool shrinkWrap;
 
   @override
   State<StatefulWidget> createState() => _ScrollablePositionedListState();
@@ -265,6 +270,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                     padding: widget.padding,
                     addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
                     addRepaintBoundaries: widget.addRepaintBoundaries,
+                    shrinkWrap: widget.shrinkWrap,
                   ),
                 ),
               ),
