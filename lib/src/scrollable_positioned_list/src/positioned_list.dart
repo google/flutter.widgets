@@ -327,7 +327,7 @@ class _PositionedListState extends State<PositionedList> {
                   itemTrailingEdge: (itemOffset + box.size.height).round() /
                       scrollController.position.viewportDimension));
             } else {
-              final reveal = viewport.getOffsetToReveal(box, 0).offset;
+              final reveal = viewport.getOffsetToReveal(box, 0.0).offset;
               final itemOffset = reveal -
                   viewport.offset.pixels +
                   viewport.anchor * viewport.size.height;
