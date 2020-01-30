@@ -168,7 +168,7 @@ class _PositionedListState extends State<PositionedList> {
         elementNotifier: registeredElements,
         child: UnboundedCustomScrollView(
           anchor: widget.alignment,
-          center: null,
+          center: _centerKey,
           controller: scrollController,
           scrollDirection: widget.scrollDirection,
           shrinkWrap: widget.shrinkWrap,
@@ -308,7 +308,8 @@ class _PositionedListState extends State<PositionedList> {
       SchedulerBinding.instance.addPostFrameCallback((_) {
         if (registeredElements.value == null) return;
         final positions = <ItemPosition>[];
-        RenderViewport viewport;
+        
+        var viewport;
         for (var element in registeredElements.value) {
           final RenderBox box = element.renderObject;
           viewport ??= RenderAbstractViewport.of(box);
