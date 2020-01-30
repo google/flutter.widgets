@@ -315,16 +315,29 @@ class _PositionedListState extends State<PositionedList> {
           viewport ??= RenderAbstractViewport.of(box);
           final ValueKey<int> key = element.widget.key;
           if (widget.scrollDirection == Axis.vertical) {
-            final reveal = viewport.getOffsetToReveal(box, 0).offset;
-            final itemOffset = reveal -
-                viewport.offset.pixels +
-                viewport.anchor * viewport.size.height;
-            positions.add(ItemPosition(
-                index: key.value,
-                itemLeadingEdge: itemOffset.round() /
-                    scrollController.position.viewportDimension,
-                itemTrailingEdge: (itemOffset + box.size.height).round() /
-                    scrollController.position.viewportDimension));
+            if (widget.shrinkWrap) {
+              final reveal = viewport.getOffsetToReveal(box, 0.0).offset;
+              final itemOffset = reveal -
+                  viewport.offset.pixels +
+                  0.0 * viewport.size.height;
+              positions.add(ItemPosition(
+                  index: key.value,
+                  itemLeadingEdge: itemOffset.round() /
+                      scrollController.position.viewportDimension,
+                  itemTrailingEdge: (itemOffset + box.size.height).round() /
+                      scrollController.position.viewportDimension));
+            } else {
+              final reveal = viewport.getOffsetToReveal(box, 0).offset;
+              final itemOffset = reveal -
+                  viewport.offset.pixels +
+                  viewport.anchor * viewport.size.height;
+              positions.add(ItemPosition(
+                  index: key.value,
+                  itemLeadingEdge: itemOffset.round() /
+                      scrollController.position.viewportDimension,
+                  itemTrailingEdge: (itemOffset + box.size.height).round() /
+                      scrollController.position.viewportDimension));
+            }
           } else {
             final itemOffset =
                 box.localToGlobal(Offset.zero, ancestor: viewport).dx;
