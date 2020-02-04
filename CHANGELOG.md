@@ -1,3 +1,10 @@
+# 0.1.10
+* `LinkedScrollControllerGroup`:
+
+  * Add `LinkedScrollControllerGroup.animateTo` and
+    `LinkedScrollControllerGroup.jumpTo` methods that control the scroll
+    position of the group.
+
 # 0.1.9
 
 * `ScrollablePositionedList`:

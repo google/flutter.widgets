@@ -63,11 +63,30 @@ class LinkedScrollControllerGroup {
   Iterable<_LinkedScrollController> get _attachedControllers =>
       _allControllers.where((controller) => controller.hasClients);
 
+  /// Animates the scroll position of all linked controllers to [offset].
+  Future<void> animateTo(
+    double offset, {
+    @required Curve curve,
+    @required Duration duration,
+  }) async {
+    final animations = <Future<void>>[];
+    for (final controller in _attachedControllers) {
+      animations
+          .add(controller.animateTo(offset, duration: duration, curve: curve));
+    }
+    return Future.wait<void>(animations).then<void>((List<void> _) => null);
+  }
+
+  /// Jumps the scroll position of all linked controllers to [value].
+  void jumpTo(double value) {
+    for (final controller in _attachedControllers) {
+      controller.jumpTo(value);
+    }
+  }
+
   /// Resets the scroll position of all linked controllers to 0.
   void resetScroll() {
-    for (final controller in _attachedControllers) {
-      controller.jumpTo(0.0);
-    }
+    jumpTo(0.0);
   }
 }
 

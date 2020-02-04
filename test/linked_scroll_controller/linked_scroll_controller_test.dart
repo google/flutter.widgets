@@ -6,6 +6,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pedantic/pedantic.dart';
 import 'package:flutter_widgets/src/linked_scroll_controller/linked_scroll_controller.dart';
 
 /// This test sets up two linked, side-by-side [ListView]s, one with letter
@@ -199,6 +200,44 @@ void main() {
       expect(state._controllers.offset, equals(3.0));
       // The count should be unchanged since we removed the listener.
       expect(onOffsetChangedCount, equals(2));
+    });
+
+    testWidgets('jumpTo jumps group to offset', (tester) async {
+      await tester.pumpWidget(Test());
+
+      final state = tester.state<TestState>(find.byType(Test));
+      expect(state._controllers.offset, equals(0.0));
+      expect(state._letters.position.pixels, equals(0.0));
+      expect(state._numbers.position.pixels, equals(0.0));
+
+      state._controllers.jumpTo(50.0);
+
+      expect(state._controllers.offset, equals(50.0));
+      expect(state._letters.position.pixels, equals(50.0));
+      expect(state._numbers.position.pixels, equals(50.0));
+    });
+
+    testWidgets('animateTo animates group to offset', (tester) async {
+      await tester.pumpWidget(Test());
+
+      final state = tester.state<TestState>(find.byType(Test));
+      expect(state._controllers.offset, equals(0.0));
+      expect(state._letters.position.pixels, equals(0.0));
+      expect(state._numbers.position.pixels, equals(0.0));
+
+      // The call to `animateTo` needs to be unawaited because the animation is
+      // handled by a [DrivenScrollActivity], which only completes when the
+      // scroll activity is disposed.
+      unawaited(state._controllers.animateTo(
+        50.0,
+        curve: Curves.easeInOutCubic,
+        duration: const Duration(milliseconds: 200),
+      ));
+      await tester.pumpAndSettle();
+
+      expect(state._controllers.offset, equals(50.0));
+      expect(state._letters.position.pixels, equals(50.0));
+      expect(state._numbers.position.pixels, equals(50.0));
     });
 
     testWidgets('resetScroll moves scroll back to 0', (tester) async {
