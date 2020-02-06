@@ -338,22 +338,32 @@ class RowColumn extends Comparable<RowColumn> {
 /// Returns an [Iterable] containing the nth element (if it exists) of every
 /// [Iterable] in `iterables` in sequence.
 ///
+/// Unlike [zip](https://pub.dev/documentation/quiver/latest/quiver.iterables/zip.html),
+/// returns a single sequence and continues until *all* [Iterable]s are
+/// exhausted.
+///
 /// For example, `collate([[1, 4, 7], [2, 5, 8, 9], [3, 6]])` would return a
 /// sequence `1, 2, 3, 4, 5, 6, 7, 8, 9`.
+@visibleForTesting
 Iterable<T> collate<T>(Iterable<Iterable<T>> iterables) sync* {
-  final iterators = iterables.map((e) => e.iterator).toList(growable: false);
+  assert(iterables != null);
+
+  final iterators = [for (final iterable in iterables) iterable.iterator];
+  if (iterators.isEmpty) {
+    return;
+  }
 
   // ignore: literal_only_boolean_expressions, https://github.com/dart-lang/linter/issues/453
   while (true) {
-    var numEmpty = 0;
+    var exhaustedCount = 0;
     for (final i in iterators) {
       if (i.moveNext()) {
         yield i.current;
         continue;
       }
 
-      numEmpty += 1;
-      if (numEmpty == iterators.length) {
+      exhaustedCount += 1;
+      if (exhaustedCount == iterators.length) {
         // All iterators are at their ends.
         return;
       }
