@@ -260,7 +260,7 @@ class VisibilityDetectorLayer extends ContainerLayer {
     if (visible) {
       _lastVisibility[key] = info;
     } else {
-      // Only keep visible items in the maps so that they don't grow unbounded.
+      // Track only visible items so that the maps don't grow unbounded.
       _lastVisibility.remove(key);
       _lastBounds.remove(key);
     }

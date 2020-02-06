@@ -25,13 +25,11 @@ class VisibilityDetectorController {
   /// should call [notifyNow] explicitly to flush them if desired.
   Duration updateInterval = const Duration(milliseconds: 500);
 
-  /// Forces firing all pending visibility callbacks immmediately.
+  /// Forces firing all pending visibility callbacks immediately.
   ///
   /// This might be desirable just prior to tearing down the widget tree (such
   /// as when switching views or when exiting the application).
-  void notifyNow() {
-    VisibilityDetectorLayer.notifyNow();
-  }
+  void notifyNow() => VisibilityDetectorLayer.notifyNow();
 
   /// Forgets any pending visibility callbacks for the [VisibilityDetector] with
   /// the given [key].
@@ -40,9 +38,7 @@ class VisibilityDetectorController {
   ///
   /// This method can be used to cancel timers after the [VisibilityDetector]
   /// has been detached to avoid pending timers in tests.
-  void forget(Key key) {
-    VisibilityDetectorLayer.forget(key);
-  }
+  void forget(Key key) => VisibilityDetectorLayer.forget(key);
 
   /// Returns the last known bounds for the [VisibilityDetector] with the given
   /// [key] in global coordinates.
