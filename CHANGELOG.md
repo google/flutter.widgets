@@ -1,3 +1,13 @@
+# 0.1.11
+* Fix exports of `FeatureDiscovery` and `MaterialResponsiveUiData`
+  ([issue #63](https://github.com/google/flutter.widgets/issues/63)).
+
+* `VisibilityDetector`:
+
+  * Style and comment adjustments.
+
+  * Fix a potential infinite loop in the demo app and add tests for it.
+
 # 0.1.10
 * `LinkedScrollControllerGroup`:
 
