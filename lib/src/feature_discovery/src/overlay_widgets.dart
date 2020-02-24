@@ -11,6 +11,66 @@ const tapTargetRadius = 44.0;
 const tapTargetToContentDistance = 20.0;
 const gutterHeight = 88.0;
 
+class RingPainter extends CustomPainter {
+  final Color color;
+  final Offset innerOffset;
+  final double innerRadius;
+
+  RingPainter({this.color, this.innerOffset, this.innerRadius});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final outer = Path()
+      ..addOval(Rect.fromCircle(
+        center: center,
+        radius: size.width,
+      ));
+
+    final inner = Path()
+      ..addOval(Rect.fromCircle(
+        center: innerOffset, //.translate(-innerRadius / 2, -innerRadius / 2),
+        radius: innerRadius,
+      ));
+    final doughnut = Path.combine(PathOperation.difference, outer, inner);
+    final paint = Paint()..color = color;
+    canvas.drawPath(doughnut, paint);
+  }
+
+  @override
+  bool shouldRepaint(RingPainter oldDelegate) {
+    return this.color != oldDelegate.color ||
+        this.innerOffset != oldDelegate.innerOffset ||
+        this.innerRadius != oldDelegate.innerRadius;
+  }
+
+  @override
+  bool shouldRebuildSemantics(RingPainter oldDelegate) {
+    return false;
+  }
+}
+
+class Ring extends StatelessWidget {
+  const Ring({Key key, this.color, this.innerOffset, this.radius})
+      : super(key: key);
+
+  final Color color;
+  final Offset innerOffset;
+  final double radius;
+
+  @override
+  Widget build(BuildContext context) {
+    final RenderBox box = context.findRenderObject();
+    return CustomPaint(
+      painter: RingPainter(
+        color: color,
+        innerOffset: box?.globalToLocal(innerOffset) ?? innerOffset,
+        innerRadius: radius,
+      ),
+    );
+  }
+}
+
 /// Background of the overlay.
 ///
 /// TODO: Expand on radius and center calculations for tablet view.
@@ -125,6 +185,7 @@ class Background extends StatelessWidget {
     }
   }
 
+  double get innerRadius => animations.tapTargetRadius(status).value;
   double get opacity => animations.backgroundOpacity(status).value;
 
   @override
@@ -137,11 +198,12 @@ class Background extends StatelessWidget {
           child: Opacity(
             opacity: opacity,
             child: Container(
-              height: radius * 2,
-              width: radius * 2,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
+              height: radius,
+              width: radius,
+              child: Ring(
                 color: color,
+                innerOffset: center,
+                radius: innerRadius,
               ),
             ),
           ),
@@ -312,7 +374,7 @@ class TapTarget extends StatelessWidget {
   final void Function() onTap;
 
   /// Child widget that will be promoted by the overlay.
-  final Icon child;
+  final Widget child;
 
   TapTarget({
     @required this.animations,
@@ -340,16 +402,12 @@ class TapTarget extends StatelessWidget {
         translation: Offset(-0.5, -0.5),
         child: InkWell(
           onTap: onTap,
-          child: Opacity(
-            opacity: opacity,
-            child: Container(
-              height: radius * 2,
-              width: radius * 2,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              ),
-              child: child,
+          child: Container(
+            height: radius,
+            width: radius,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              shape: BoxShape.circle,
             ),
           ),
         ),
