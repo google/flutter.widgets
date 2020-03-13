@@ -27,8 +27,8 @@ set -e
 
 # Run the tests.
 echo "Running tests in each package..."
-for package in packages/*/; do
-  pushd "packages/$package"
+for package in packages/*; do
+  pushd "$package"
   flutter test
   popd
 done
