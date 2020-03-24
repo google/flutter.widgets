@@ -1,34 +1,42 @@
 #!/bin/bash
 
+# Fast fail the script on failures.
+set -e
+
+shopt -s globstar nullglob
+
 # Make sure dartfmt is run on everything
 echo "Checking dartfmt..."
 NEEDS_DARTFMT="$(dartfmt -n packages tool)"
-if [[ ${NEEDS_DARTFMT} != "" ]]
+if [[ "${NEEDS_DARTFMT}" != "" ]]
 then
   echo "FAILED"
   echo "${NEEDS_DARTFMT}"
   exit 1
 fi
 echo "PASSED"
+echo
 
 # Make sure we pass the analyzer
 echo "Checking dartanalyzer..."
-FAILS_ANALYZER="$(find packages tool -name "*.dart" | xargs dartanalyzer --options .analysis_options)"
-if [[ $FAILS_ANALYZER == *"[error]"* ]]
-then
-  echo "FAILED"
-  echo "${FAILS_ANALYZER}"
-  exit 1
-fi
+for package_pubspec in packages/**/pubspec.yaml ; do
+  package_dir=$(dirname "${package_pubspec}")
+  echo "${package_dir}"
+  pushd "${package_dir}" > /dev/null
+  flutter analyze
+  popd > /dev/null
+  echo
+done
 echo "PASSED"
-
-# Fast fail the script on failures.
-set -e
+echo
 
 # Run the tests.
 echo "Running tests in each package..."
-for package in packages/*; do
-  pushd "$package"
+for test_dir in packages/**/test/ ; do
+  echo "${test_dir}"
+  pushd "${test_dir}/.." > /dev/null
   flutter test
-  popd
+  popd > /dev/null
+  echo
 done
+
