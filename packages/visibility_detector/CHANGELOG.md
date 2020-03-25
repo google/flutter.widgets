@@ -1,3 +1,7 @@
+# 0.1.5-dev
+
+* Compatibility fixes to `demo.dart` for Flutter 1.13.8.
+
 # 0.1.4
 
 * `VisibilityDetector`:
