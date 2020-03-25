@@ -237,8 +237,8 @@ void main() {
 
       await tester.pumpWidget(VisibilityDetector(
         key: key,
-        child: const Placeholder(),
         onVisibilityChanged: (_) {},
+        child: const Placeholder(),
       ));
       await tester.pumpWidget(const Placeholder());
       controller.forget(key);
