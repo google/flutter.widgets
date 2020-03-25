@@ -2,23 +2,23 @@
 
 * Compatibility fixes to `demo.dart` for Flutter 1.13.8.
 
+* Added an example to the `README.md` file.
+
+* Moved `demo.dart` to an `examples/` directory and renamed it.
+
 # 0.1.4
 
-* `VisibilityDetector`:
+* Style and comment adjustments.
 
-  * Style and comment adjustments.
-
-  * Fix a potential infinite loop in the demo app and add tests for it.
+* Fix a potential infinite loop in the demo app and add tests for it.
 
 # 0.1.3
 
-* `VisibilityDetector`:
+* Fixed positioning of text selection handles for `EditableText`-based
+  widgets (e.g. `TextField`, `CupertinoTextField`) when used within a
+  `VisibilityDetector`.
 
-  * Fixed positioning of text selection handles for `EditableText`-based
-    widgets (e.g. `TextField`, `CupertinoTextField`) when used within a
-    `VisibilityDetector`.
-
-  * Added `VisibilityDetectorController.widgetBoundsFor`.
+* Added `VisibilityDetectorController.widgetBoundsFor`.
 
 # 0.1.2
 

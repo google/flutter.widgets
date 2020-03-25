@@ -16,3 +16,5 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  visibility_detector_example:
+    path: example/

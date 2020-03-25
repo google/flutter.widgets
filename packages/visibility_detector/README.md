@@ -6,6 +6,23 @@ callback when the widget's visibility changes. (It actually reports when the
 visibility of the `VisibilityDetector` itself changes, and its visibility is
 expected to be identical to that of its child.)
 
+Example usage:
+
+```dart
+@override
+Widget build(BuildContext context) {
+  return VisibilityDetector(
+    key: Key('my-widget-key'),
+    onVisibilityChanged: (visibilityInfo) {
+      var visiblePercentage = visibilityInfo.visibleFraction * 100;
+      debugPrint(
+          'Widget ${visibilityInfo.key} is ${visiblePercentage}% visible');
+    },
+    child: someOtherWidget,
+  );
+}
+```
+
 Callbacks are not fired immediately on visibility changes.  Instead, callbacks
 are deferred and coalesced such that the callback for each `VisibilityDetector`
 will be invoked at most once per `VisibilityDetectorController.updateInterval`

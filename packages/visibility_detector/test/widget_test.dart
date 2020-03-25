@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:visibility_detector/visibility_detector.dart';
-import 'package:visibility_detector/demo.dart' as demo;
+
+import 'package:visibility_detector_example/main.dart' as demo;
 
 /// Maps [row, column] indices to the last reported [VisibilityInfo] for the
 /// corresponding [VisibilityDetector] widget in the demo app.

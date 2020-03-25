@@ -5,11 +5,12 @@
 // https://developers.google.com/open-source/licenses/bsd
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:visibility_detector/demo.dart';
+
+import 'package:visibility_detector_example/main.dart';
 
 void main() {
   test('collate works', () {
-    expect(collate([]).toList(), []);
+    expect(collate(<List<int>>[]).toList(), <int>[]);
     expect(collate([<int>[]]).toList(), <int>[]);
     expect(
         collate([

@@ -1,0 +1,15 @@
+name: visibility_detector_example
+
+environment:
+  sdk: ">=2.3.0 <3.0.0"
+  flutter: ^1.13.8
+
+dependencies:
+  flutter:
+    sdk: flutter
+  visibility_detector:
+    path: ../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
