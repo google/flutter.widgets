@@ -7,8 +7,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-
-import 'visibility_detector.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 const String title = 'VisibilityDetector Demo';
 
