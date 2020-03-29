@@ -50,6 +50,13 @@ void main() {
     );
   }
 
+  testWidgets('Empty list', (WidgetTester tester) async {
+    await setUpWidgetTest(tester, itemCount: 0);
+
+    expect(find.text('Item 0'), findsNothing);
+    expect(find.text('Separator 0'), findsNothing);
+  });
+
   testWidgets('Short list', (WidgetTester tester) async {
     await setUpWidgetTest(tester, itemCount: 3);
 

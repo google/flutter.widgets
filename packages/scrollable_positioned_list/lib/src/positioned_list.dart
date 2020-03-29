@@ -200,7 +200,7 @@ class _PositionedListState extends State<PositionedList> {
                       ? _buildItem(index + widget.positionedIndex)
                       : _buildSeparatedListElement(
                           index + 2 * widget.positionedIndex),
-                  childCount: 1,
+                  childCount: widget.itemCount != 0 ? 1 : 0,
                   addSemanticIndexes: false,
                   addRepaintBoundaries: widget.addRepaintBoundaries,
                   addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
