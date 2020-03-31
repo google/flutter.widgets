@@ -21,7 +21,7 @@ ScrollablePositionedList.builder(
   itemCount: 500,
   itemBuilder: (context, index) => Text('Item $index'),
   itemScrollController: itemScrollController,
-  itemPositionListener: itemPositionListener,
+  itemPositionsListener: itemPositionsListener,
 );
 ```
 
