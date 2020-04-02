@@ -15,13 +15,13 @@ A `ScrollablePositionedList` can be created with:
 
 ```dart
 final ItemScrollController itemScrollController = ItemScrollController();
-final ItemPositionsListener itemPositionListener = ItemPositionsListener.create();
+final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
 
 ScrollablePositionedList.builder(
   itemCount: 500,
   itemBuilder: (context, index) => Text('Item $index'),
   itemScrollController: itemScrollController,
-  itemPositionListener: itemPositionListener,
+  itemPositionsListener: itemPositionsListener,
 );
 ```
 
@@ -43,7 +43,7 @@ itemScrollController.jumpTo(index: 150);
 One can monitor what items are visible on screen with:
 
 ```dart
-itemPositionListener.positions.addListener((positions) => ...);
+itemPositionsListener.positions.addListener((positions) => ...);
 ```
 
 A full example can be found in the example folder.
