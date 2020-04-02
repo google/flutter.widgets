@@ -1,3 +1,10 @@
+# 0.1.3
+
+  * Don't build items when `itemCount` is 0. Fixes
+    [issue #78](https://github.com/google/flutter.widgets/issues/78).
+
+  * Fix typos in `README.md`.
+
 # 0.1.2
 
   * Store scroll state in page storage to fix
