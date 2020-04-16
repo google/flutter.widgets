@@ -262,7 +262,8 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                     itemPositionNotifier: backItemPositionNotifier,
                     scrollDirection: widget.scrollDirection,
                     reverse: widget.reverse,
-                    cacheExtent: constraints.maxHeight * _screenScrollCount,
+                    cacheExtent: widget.cacheExtent ??
+                        constraints.maxHeight * _screenScrollCount,
                     alignment: backAlignment,
                     physics: widget.physics,
                     addSemanticIndexes: widget.addSemanticIndexes,
@@ -293,7 +294,8 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                         controller: frontScrollController,
                         scrollDirection: widget.scrollDirection,
                         reverse: widget.reverse,
-                        cacheExtent: constraints.maxHeight * _screenScrollCount,
+                        cacheExtent: widget.cacheExtent ??
+                            constraints.maxHeight * _screenScrollCount,
                         alignment: frontAlignment,
                         physics: widget.physics,
                         addSemanticIndexes: widget.addSemanticIndexes,
