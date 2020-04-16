@@ -1,3 +1,8 @@
+# 0.1.4
+
+  * Expose `cacheExtent` property. Fixes
+    [issue #90](https://github.com/google/flutter.widgets/issues/90).
+
 # 0.1.3
 
   * Don't build items when `itemCount` is 0. Fixes
