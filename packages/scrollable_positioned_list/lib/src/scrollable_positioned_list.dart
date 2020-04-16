@@ -222,6 +222,9 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     frontTarget = initialPosition?.index ?? widget.initialScrollIndex;
     frontAlignment =
         initialPosition?.itemLeadingEdge ?? widget.initialAlignment;
+    if (widget.itemCount != null && frontTarget > widget.itemCount - 1) {
+      frontTarget = widget.itemCount - 1;
+    }
     widget.itemScrollController?._attach(this);
     frontItemPositionNotifier.itemPositions.addListener(_updatePositions);
     backItemPositionNotifier.itemPositions.addListener(_updatePositions);
@@ -233,6 +236,19 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     frontItemPositionNotifier.itemPositions.removeListener(_updatePositions);
     backItemPositionNotifier.itemPositions.removeListener(_updatePositions);
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(ScrollablePositionedList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.itemCount != null) {
+      if (frontTarget > widget.itemCount - 1) {
+        frontTarget = widget.itemCount - 1;
+      }
+      if (backTarget > widget.itemCount - 1) {
+        backTarget = widget.itemCount - 1;
+      }
+    }
   }
 
   @override
