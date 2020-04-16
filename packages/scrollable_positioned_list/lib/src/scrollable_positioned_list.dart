@@ -50,6 +50,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addSemanticIndexes = true,
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
+    this.cacheExtent,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         itemPositionNotifier = itemPositionsListener,
@@ -75,6 +76,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addSemanticIndexes = true,
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
+    this.cacheExtent,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         assert(separatorBuilder != null),
@@ -147,6 +149,9 @@ class ScrollablePositionedList extends StatefulWidget {
   ///
   /// See [SliverChildBuilderDelegate.addRepaintBoundaries].
   final bool addRepaintBoundaries;
+
+  /// {@macro flutter.widgets.scrollable.cacheExtent}
+  final double cacheExtent;
 
   @override
   State<StatefulWidget> createState() => _ScrollablePositionedListState();
