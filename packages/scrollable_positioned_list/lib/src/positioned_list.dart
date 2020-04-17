@@ -208,7 +208,8 @@ class _PositionedListState extends State<PositionedList> {
                 ),
               ),
             ),
-            if (widget.positionedIndex < widget.itemCount - 1)
+            if (widget.positionedIndex >= 0 &&
+                widget.positionedIndex < widget.itemCount - 1)
               SliverPadding(
                 padding: _trailingSliverPadding,
                 sliver: SliverList(
