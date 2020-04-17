@@ -45,7 +45,7 @@ void main() {
           itemCount: itemCount,
           itemScrollController: itemScrollController,
           itemBuilder: (context, index) {
-            assert(index <= itemCount - 1);
+            assert(index >= 0 && index <= itemCount - 1);
             return SizedBox(
               height: itemHeight,
               child: Text('Item $index'),
@@ -1604,5 +1604,146 @@ void main() {
             .firstWhere((position) => position.index == 9)
             .itemTrailingEdge,
         (itemHeight / screenHeight) / 2);
+  });
+
+  testWidgets("List with no items", (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUpWidgetTest(tester,
+        itemScrollController: itemScrollController, itemCount: 0);
+
+    expect(find.text('Item 0'), findsNothing);
+  });
+
+  testWidgets("List with 1 item", (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUpWidgetTest(tester,
+        itemScrollController: itemScrollController, itemCount: 1);
+
+    expect(find.text('Item 0'), findsOneWidget);
+    expect(find.text('Item 1'), findsNothing);
+  });
+
+  testWidgets("List with 3 items, initialIndex 0", (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUpWidgetTest(tester,
+        itemScrollController: itemScrollController,
+        itemCount: 3,
+        initialIndex: 0);
+
+    expect(find.text('Item 2'), findsOneWidget);
+    expect(find.text('Item 3'), findsNothing);
+  });
+
+  testWidgets("List with 3 items, initialIndex 1", (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUpWidgetTest(tester,
+        itemScrollController: itemScrollController,
+        itemCount: 3,
+        initialIndex: 1);
+
+    expect(find.text('Item 2'), findsOneWidget);
+    expect(find.text('Item 3'), findsNothing);
+  });
+
+  testWidgets("List with 3 items, initialIndex 2", (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUpWidgetTest(tester,
+        itemScrollController: itemScrollController,
+        itemCount: 3,
+        initialIndex: 2);
+
+    expect(find.text('Item 2'), findsOneWidget);
+    expect(find.text('Item 3'), findsNothing);
+  });
+
+  testWidgets('Jump to 100 then set itemCount to 0',
+      (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    final itemPositionsListener = ItemPositionsListener.create();
+
+    Function(void Function()) setState;
+    int itemCount = defaultItemCount;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: StatefulBuilder(
+          builder: (context, fn) {
+            setState = fn;
+            return ScrollablePositionedList.builder(
+              itemCount: itemCount,
+              itemScrollController: itemScrollController,
+              itemPositionsListener: itemPositionsListener,
+              itemBuilder: (context, index) {
+                assert(index >= 0 && index <= itemCount - 1);
+                return SizedBox(
+                  height: itemHeight,
+                  child: Text('Item $index'),
+                );
+              },
+            );
+          },
+        ),
+      ),
+    );
+
+    itemScrollController.jumpTo(index: 100);
+    await tester.pumpAndSettle();
+    expect(find.text('Item 100'), findsOneWidget);
+
+    assert(setState != null);
+    itemCount = 0;
+    setState(() {});
+    await tester.pumpAndSettle();
+
+    expect(find.text('Item 0'), findsNothing);
+    expect(find.text('Item 100'), findsNothing);
+    expect(itemPositionsListener.itemPositions.value.isEmpty, isTrue);
+  });
+
+  testWidgets('List positioned with 100 at top then set itemCount to 100',
+      (WidgetTester tester) async {
+    tester.binding.window.devicePixelRatioTestValue = 1.0;
+    tester.binding.window.physicalSizeTestValue =
+        const Size(screenWidth, screenHeight);
+
+    final itemScrollController = ItemScrollController();
+    final itemPositionsListener = ItemPositionsListener.create();
+
+    Function(void Function()) setState;
+    int itemCount = defaultItemCount;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: StatefulBuilder(
+          builder: (context, fn) {
+            setState = fn;
+            return ScrollablePositionedList.builder(
+              initialScrollIndex: 100,
+              initialAlignment: 0,
+              itemCount: itemCount,
+              itemScrollController: itemScrollController,
+              itemPositionsListener: itemPositionsListener,
+              itemBuilder: (context, index) {
+                assert(index >= 0 && index <= itemCount - 1);
+                return SizedBox(
+                  height: itemHeight,
+                  child: Text('Item $index'),
+                );
+              },
+            );
+          },
+        ),
+      ),
+    );
+
+    expect(tester.getTopLeft(find.text('Item 100')).dy, 0);
+
+    assert(setState != null);
+    itemCount = 100;
+    setState(() {});
+    await tester.pumpAndSettle();
+
+    expect(find.text('Item 100'), findsNothing);
+    expect(tester.getBottomLeft(find.text('Item 99')).dy, screenHeight);
   });
 }
