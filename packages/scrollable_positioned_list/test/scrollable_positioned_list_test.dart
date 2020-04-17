@@ -26,7 +26,7 @@ void main() {
     ItemPositionsListener itemPositionsListener,
     int initialIndex = 0,
     double initialAlignment = 0.0,
-    int itemCount,
+    int itemCount = defaultItemCount,
     ScrollPhysics physics,
     bool addSemanticIndexes = true,
     int semanticChildCount,
@@ -37,7 +37,6 @@ void main() {
     tester.binding.window.devicePixelRatioTestValue = 1.0;
     tester.binding.window.physicalSizeTestValue =
         const Size(screenWidth, screenHeight);
-    itemCount = itemCount ?? defaultItemCount;
 
     await tester.pumpWidget(
       MaterialApp(
