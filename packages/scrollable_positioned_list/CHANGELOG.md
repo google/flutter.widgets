@@ -1,3 +1,9 @@
+# 0.1.4
+
+  *  itemBuilders should not be called with indices > itemCount - 1.  Fixes
+     [issue #42](https://github.com/google/flutter.widgets/issues/42) and
+     [issue #77](https://github.com/google/flutter.widgets/issues/77).
+
 # 0.1.3
 
   * Don't build items when `itemCount` is 0. Fixes
