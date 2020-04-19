@@ -44,7 +44,8 @@ class PositionedList extends StatefulWidget {
     this.addRepaintBoundaries = true,
     this.addAutomaticKeepAlives = true,
   })  : assert(itemCount != null),
-        assert(itemBuilder != null);
+        assert(itemBuilder != null),
+        assert((positionedIndex == 0) || (positionedIndex < itemCount));
 
   /// Number of items the [itemBuilder] can produce.
   final int itemCount;
@@ -207,7 +208,8 @@ class _PositionedListState extends State<PositionedList> {
                 ),
               ),
             ),
-            if (widget.positionedIndex < widget.itemCount - 1)
+            if (widget.positionedIndex >= 0 &&
+                widget.positionedIndex < widget.itemCount - 1)
               SliverPadding(
                 padding: _trailingSliverPadding,
                 sliver: SliverList(
