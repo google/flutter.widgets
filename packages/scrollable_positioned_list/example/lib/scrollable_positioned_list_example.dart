@@ -93,6 +93,7 @@ class _ScrollablePositionedListPageState
           SizedBox(
             width: 200,
             child: Slider(
+              useV2Slider: true,
               value: alignment,
               onChanged: (double value) => setState(() => alignment = value),
             ),
