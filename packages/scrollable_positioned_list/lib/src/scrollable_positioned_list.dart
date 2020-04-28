@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
@@ -50,6 +51,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addSemanticIndexes = true,
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
+    this.minCacheExtent,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         itemPositionNotifier = itemPositionsListener,
@@ -75,6 +77,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addSemanticIndexes = true,
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
+    this.minCacheExtent,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         assert(separatorBuilder != null),
@@ -148,6 +151,15 @@ class ScrollablePositionedList extends StatefulWidget {
   /// See [SliverChildBuilderDelegate.addRepaintBoundaries].
   final bool addRepaintBoundaries;
 
+  /// The minimum cache extent used by the underlying scroll lists.
+  /// See [ScrollView.cacheExtent].
+  ///
+  /// Note that the [ScrollablePositionedList] uses two lists to simulate long
+  /// scrolls, so using the [ScrollController.scrollTo] method may result
+  /// in builds of widgets that would otherwise already be built in the
+  /// cache extent.
+  final double minCacheExtent;
+
   @override
   State<StatefulWidget> createState() => _ScrollablePositionedListState();
 }
@@ -212,6 +224,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   double frontAlignment;
   Function cancelScrollCallback;
   Function endScrollCallback;
+  double maxLocalScroll;
   _ListDisplay listDisplay = _ListDisplay.front;
   void Function() startAnimationCallback = () {};
 
@@ -268,24 +281,27 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                   startAnimationCallback();
                 },
                 child: LayoutBuilder(
-                  builder: (context, constraints) => PositionedList(
-                    itemBuilder: widget.itemBuilder,
-                    separatorBuilder: widget.separatorBuilder,
-                    itemCount: widget.itemCount,
-                    positionedIndex: backTarget,
-                    controller: backScrollController,
-                    itemPositionNotifier: backItemPositionNotifier,
-                    scrollDirection: widget.scrollDirection,
-                    reverse: widget.reverse,
-                    cacheExtent: constraints.maxHeight * _screenScrollCount,
-                    alignment: backAlignment,
-                    physics: widget.physics,
-                    addSemanticIndexes: widget.addSemanticIndexes,
-                    semanticChildCount: widget.semanticChildCount,
-                    padding: widget.padding,
-                    addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-                    addRepaintBoundaries: widget.addRepaintBoundaries,
-                  ),
+                  builder: (context, constraints) {
+                    maxLocalScroll = constraints.maxHeight * _screenScrollCount;
+                    return PositionedList(
+                      itemBuilder: widget.itemBuilder,
+                      separatorBuilder: widget.separatorBuilder,
+                      itemCount: widget.itemCount,
+                      positionedIndex: backTarget,
+                      controller: backScrollController,
+                      itemPositionNotifier: backItemPositionNotifier,
+                      scrollDirection: widget.scrollDirection,
+                      reverse: widget.reverse,
+                      cacheExtent: _cacheExtent(constraints),
+                      alignment: backAlignment,
+                      physics: widget.physics,
+                      addSemanticIndexes: widget.addSemanticIndexes,
+                      semanticChildCount: widget.semanticChildCount,
+                      padding: widget.padding,
+                      addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+                      addRepaintBoundaries: widget.addRepaintBoundaries,
+                    );
+                  },
                 ),
               ),
             if (_showFrontList)
@@ -299,24 +315,28 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                   builder: (context, child) => Opacity(
                     opacity: frontOpacity.value,
                     child: LayoutBuilder(
-                      builder: (context, constraints) => PositionedList(
-                        itemBuilder: widget.itemBuilder,
-                        separatorBuilder: widget.separatorBuilder,
-                        itemCount: widget.itemCount,
-                        itemPositionNotifier: frontItemPositionNotifier,
-                        positionedIndex: frontTarget,
-                        controller: frontScrollController,
-                        scrollDirection: widget.scrollDirection,
-                        reverse: widget.reverse,
-                        cacheExtent: constraints.maxHeight * _screenScrollCount,
-                        alignment: frontAlignment,
-                        physics: widget.physics,
-                        addSemanticIndexes: widget.addSemanticIndexes,
-                        semanticChildCount: widget.semanticChildCount,
-                        padding: widget.padding,
-                        addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-                        addRepaintBoundaries: widget.addRepaintBoundaries,
-                      ),
+                      builder: (context, constraints) {
+                        maxLocalScroll =
+                            constraints.maxHeight * _screenScrollCount;
+                        return PositionedList(
+                          itemBuilder: widget.itemBuilder,
+                          separatorBuilder: widget.separatorBuilder,
+                          itemCount: widget.itemCount,
+                          itemPositionNotifier: frontItemPositionNotifier,
+                          positionedIndex: frontTarget,
+                          controller: frontScrollController,
+                          scrollDirection: widget.scrollDirection,
+                          reverse: widget.reverse,
+                          cacheExtent: _cacheExtent(constraints),
+                          alignment: frontAlignment,
+                          physics: widget.physics,
+                          addSemanticIndexes: widget.addSemanticIndexes,
+                          semanticChildCount: widget.semanticChildCount,
+                          padding: widget.padding,
+                          addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+                          addRepaintBoundaries: widget.addRepaintBoundaries,
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -324,6 +344,14 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
           ],
         ),
       );
+
+  double _cacheExtent(BoxConstraints constraints) =>
+      widget.minCacheExtent == null
+          ? constraints.maxHeight * _screenScrollCount
+          : max(
+              constraints.maxHeight * _screenScrollCount,
+              widget.minCacheExtent,
+            );
 
   void _jumpTo({@required int index, double alignment}) {
     cancelScrollCallback?.call();
@@ -379,8 +407,6 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     final startingListDisplay = listDisplay;
     final startingScrollController =
         _showFrontList ? frontScrollController : backScrollController;
-    final scrollAmount = _screenScrollCount *
-        startingScrollController.position.viewportDimension;
     final itemPosition = (_showFrontList
             ? frontItemPositionNotifier
             : backItemPositionNotifier)
@@ -388,16 +414,22 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
         .value
         .firstWhere((ItemPosition itemPosition) => itemPosition.index == index,
             orElse: () => null);
-    if (itemPosition != null) {
-      final scrollAmount = itemPosition.itemLeadingEdge *
-          startingScrollController.position.viewportDimension;
+    final localScrollAmount = itemPosition == null
+        ? null
+        : itemPosition.itemLeadingEdge *
+            startingScrollController.position.viewportDimension;
+    if (localScrollAmount != null &&
+        maxLocalScroll != null &&
+        localScrollAmount <= maxLocalScroll) {
       await startingScrollController.animateTo(
           startingScrollController.offset +
-              scrollAmount -
+              localScrollAmount -
               alignment * startingScrollController.position.viewportDimension,
           duration: duration,
           curve: curve);
     } else {
+      final scrollAmount = _screenScrollCount *
+          startingScrollController.position.viewportDimension;
       final endingScrollController =
           _showFrontList ? backScrollController : frontScrollController;
       final startCompleter = Completer<void>();

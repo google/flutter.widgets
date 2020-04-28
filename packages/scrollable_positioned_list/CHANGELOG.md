@@ -1,3 +1,7 @@
+# 0.1.5
+
+  * Added minCacheExtent to ScrollablePositionedList
+
 # 0.1.4
 
   *  itemBuilders should not be called with indices > itemCount - 1.  Fixes
