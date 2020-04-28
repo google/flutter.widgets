@@ -1,6 +1,9 @@
 # 0.1.5
 
   * Added minCacheExtent to ScrollablePositionedList
+  * Fixes the issue when item count updated from zero to one and `index` in 
+    `itemBuilder` becomes `-1`.  Fixes
+    [issue #104](https://github.com/google/flutter.widgets/issues/104).
 
 # 0.1.4
 
