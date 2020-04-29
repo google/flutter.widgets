@@ -483,6 +483,50 @@ void main() {
 
     expect(find.byKey(key), findsOneWidget);
   });
+
+  testWidgets('Empty list then update to single item list',
+      (WidgetTester tester) async {
+    tester.binding.window.devicePixelRatioTestValue = 1.0;
+    tester.binding.window.physicalSizeTestValue =
+        const Size(screenWidth, screenHeight);
+
+    final itemScrollController = ItemScrollController();
+    final itemPositionsListener = ItemPositionsListener.create();
+    final itemCount = ValueNotifier<int>(0);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ValueListenableBuilder(
+          valueListenable: itemCount,
+          builder: (context, itemCount, child) {
+            return ScrollablePositionedList.separated(
+              initialScrollIndex: 0,
+              initialAlignment: 0,
+              itemCount: itemCount,
+              itemScrollController: itemScrollController,
+              itemPositionsListener: itemPositionsListener,
+              itemBuilder: (context, index) => SizedBox(
+                height: itemHeight,
+                child: Text('Item $index'),
+              ),
+              separatorBuilder: (context, index) => SizedBox(
+                height: separatorHeight,
+                child: Text('Separator $index'),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    itemCount.value = 1;
+    await tester.pumpAndSettle();
+
+    expect(find.text('Item 0'), findsOneWidget);
+    expect(find.text('Separator 0'), findsNothing);
+  });
 }
 
 double _screenProportion({double numberOfItems, double numberOfSeparators}) =>
