@@ -657,6 +657,64 @@ void main() {
         1);
   });
 
+  testWidgets('Scroll to -10', (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    final itemPositionsListener = ItemPositionsListener.create();
+    await setUpWidgetTest(tester,
+        itemScrollController: itemScrollController,
+        itemPositionsListener: itemPositionsListener);
+
+    await itemScrollController.scrollTo(
+      index: -10,
+      duration: const Duration(milliseconds: 300),
+    );
+
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(scrollDuration + scrollDurationTolerance);
+
+    expect(tester.getTopLeft(find.text('Item 0')).dy, 0);
+    expect(tester.getBottomLeft(find.text('Item 9')).dy, screenHeight);
+
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 0)
+            .itemLeadingEdge,
+        0);
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 9)
+            .itemTrailingEdge,
+        1);
+  });
+
+  testWidgets('Jump to -10', (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    final itemPositionsListener = ItemPositionsListener.create();
+    await setUpWidgetTest(tester,
+        itemScrollController: itemScrollController,
+        itemPositionsListener: itemPositionsListener);
+
+    itemScrollController.jumpTo(index: -10);
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(scrollDuration + scrollDurationTolerance);
+
+    expect(tester.getTopLeft(find.text('Item 0')).dy, 0);
+    expect(tester.getBottomLeft(find.text('Item 9')).dy, screenHeight);
+
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 0)
+            .itemLeadingEdge,
+        0);
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 9)
+            .itemTrailingEdge,
+        1);
+  });
+
   testWidgets('Jump to 100 and position at bottom',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();

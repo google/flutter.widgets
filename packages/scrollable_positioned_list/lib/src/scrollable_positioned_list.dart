@@ -362,11 +362,22 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
               widget.minCacheExtent,
             );
 
-  void _jumpTo({@required int index, double alignment}) {
-    cancelScrollCallback?.call();
+  int _normalizeIndex(int index) {
     if (index > widget.itemCount - 1) {
       index = widget.itemCount - 1;
     }
+    if (index < 0) {
+      index = 0;
+    }
+
+    return index;
+  }
+
+  void _jumpTo({@required int index, double alignment}) {
+    cancelScrollCallback?.call();
+
+    index = _normalizeIndex(index);
+
     if (_showFrontList) {
       frontScrollController.jumpTo(0);
       setState(() {
@@ -387,9 +398,8 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       double alignment,
       @required Duration duration,
       Curve curve = Curves.linear}) async {
-    if (index > widget.itemCount - 1) {
-      index = widget.itemCount - 1;
-    }
+    index = _normalizeIndex(index);
+
     if (cancelScrollCallback != null) {
       cancelScrollCallback();
       SchedulerBinding.instance.addPostFrameCallback((_) {
