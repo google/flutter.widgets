@@ -2,9 +2,12 @@
 
 * Compatibility fixes to `demo.dart` for Flutter 1.13.8.
 
-* Added an example to the `README.md` file.
+* Moved `demo.dart` to an `examples/` directory, renamed it, and added
+  instructions to `README.md`.
 
-* Moved `demo.dart` to an `examples/` directory and renamed it.
+* Adjusted tests to use `TestWindow` instead of `RenderView`.
+
+* Added a "Known limitations" section to `README.md`.
 
 # 0.1.4
 

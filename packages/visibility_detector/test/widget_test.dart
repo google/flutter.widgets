@@ -280,25 +280,19 @@ void main() {
     'VisibilityDetector reports visibility changes after a simulated screen '
     'rotation',
     callback: (tester) async {
-      final oldViewSize = tester.binding.renderView?.size;
-      expect(oldViewSize, isNotNull);
-
-      final newViewSize = Size(oldViewSize.height, oldViewSize.width);
-
       _expectVisibility(demo.RowColumn(0, 6), 0.360);
 
       // This item was never visible, so we have no data for it.
       expect(_positionToVisibilityInfo[demo.RowColumn(5, 0)], null);
 
-      // Simulate a rotation.
-      await _setViewSize(tester, newViewSize);
+      await _simulateScreenRotation(tester);
       await tester.pump(VisibilityDetectorController.instance.updateInterval);
 
       _expectVisibility(demo.RowColumn(0, 6), 0, epsilon: 0);
       _expectVisibility(demo.RowColumn(5, 0), 1, epsilon: 0);
 
-      // Simulate a rotation back to the original size.
-      await _setViewSize(tester, oldViewSize);
+      // Rotate back to the original size.
+      await _simulateScreenRotation(tester);
       await tester.pump(VisibilityDetectorController.instance.updateInterval);
 
       // Re-verify the original visibilities.
@@ -311,8 +305,9 @@ void main() {
     'VisibilityDetector computes widget bounds in global coordinates',
     widget: _TestOffset(key: _testOffsetKey),
     callback: (tester) async {
-      final viewSize = tester.binding.renderView?.size;
-      expect(viewSize, isNotNull);
+      final testWindow = tester.binding.window;
+      final viewSizeLogical =
+          testWindow.physicalSize / testWindow.devicePixelRatio;
 
       final bounds =
           VisibilityDetectorController.instance.widgetBoundsFor(_testOffsetKey);
@@ -323,7 +318,7 @@ void main() {
       expect(
         bounds,
         Rect.fromCenter(
-          center: Offset(viewSize.width / 2, viewSize.height / 2),
+          center: viewSizeLogical.center(Offset.zero),
           width: _TestOffset.detectorWidth,
           height: _TestOffset.detectorHeight,
         ),
@@ -417,8 +412,12 @@ Future<void> _doStateChange(WidgetTester tester, VoidCallback callback) async {
   await tester.pump(VisibilityDetectorController.instance.updateInterval);
 }
 
-/// Sets the view size.  Used to simulate a screen rotation.
-Future<void> _setViewSize(WidgetTester tester, Size newSize) async {
+// Simulates a screen rotation by swapping the screen width and height.
+Future<void> _simulateScreenRotation(WidgetTester tester) {
+  final oldViewSizePixels = tester.binding.window.physicalSize;
+  final newViewSizePixels =
+      Size(oldViewSizePixels.height, oldViewSizePixels.width);
+
   // The typical way to simulate a screen rotation is to wrap the widget tree
   // in a [SizedBox] and change its dimensions.  However, empirical testing
   // indicates that that approach does extra work that an actual screen rotation
@@ -426,11 +425,10 @@ Future<void> _setViewSize(WidgetTester tester, Size newSize) async {
   // [VisibilityDetectorLayer.attach] without triggering
   // [VisibilityDetectorLayer.addToScene], whereas the [SizedBox] approach
   // triggers both.
-  await tester.binding.setSurfaceSize(newSize);
-  tester.binding.scheduleFrame();
+  tester.binding.window.physicalSizeTestValue = newViewSizePixels;
 
   // Wait for the new frame.
-  await tester.pump();
+  return tester.pump();
 }
 
 /// Verifies that the specified cell of the demo app reported the expected
