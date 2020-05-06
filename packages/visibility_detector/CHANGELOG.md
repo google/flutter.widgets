@@ -1,4 +1,4 @@
-# 0.1.5-dev
+# 0.1.5
 
 * Compatibility fixes to `demo.dart` for Flutter 1.13.8.
 

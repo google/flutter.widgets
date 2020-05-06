@@ -1,5 +1,7 @@
 name: visibility_detector_example
 
+publish_to: 'none'
+
 environment:
   sdk: ">=2.3.0 <3.0.0"
   flutter: ^1.13.8
