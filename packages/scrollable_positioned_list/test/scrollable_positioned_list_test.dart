@@ -1851,8 +1851,12 @@ void main() {
 
   testWidgets('Position list when not enough above top item to fill viewport',
       (WidgetTester tester) async {
-    await setUpWidgetTest(tester,
-        itemCount: 2, initialAlignment: 0.8, initialIndex: 1);
+    await setUpWidgetTest(
+      tester,
+      itemCount: 2,
+      initialAlignment: 0.8,
+      initialIndex: 1,
+    );
 
     await tester.pumpAndSettle();
 
