@@ -1855,11 +1855,11 @@ void main() {
       tester,
       itemCount: 2,
       initialAlignment: 0.8,
-      initialIndex: 1,
+      initialIndex: 0,
     );
 
     await tester.pumpAndSettle();
 
-    expect(tester.getTopLeft(find.text('Item 0')).dy, 0);
+    expect(tester.getTopLeft(find.text('Item 0')).dy, screenHeight * 0.8);
   });
 }
