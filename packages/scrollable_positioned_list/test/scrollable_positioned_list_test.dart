@@ -1848,4 +1848,41 @@ void main() {
 
     await tester.pumpAndSettle();
   });
+
+  testWidgets('Rebuild with scroll controller', (WidgetTester tester) async {
+    tester.binding.window.devicePixelRatioTestValue = 1.0;
+    tester.binding.window.physicalSizeTestValue =
+    const Size(screenWidth, screenHeight);
+
+    final key = ValueNotifier<Key>(ValueKey('key'));
+    final itemScrollController = ItemScrollController();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ValueListenableBuilder(
+          valueListenable: key,
+          builder: (context, key, child) {
+            return Container(
+              key: key,
+              child: ScrollablePositionedList.builder(
+                itemCount: 10,
+                itemScrollController: itemScrollController,
+                itemBuilder: (context, index) {
+                  return SizedBox(
+                    height: itemHeight,
+                    child: Text('Item $index'),
+                  );
+                },
+              ),
+            );
+          },
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    key.value = ValueKey('newKey');
+    await tester.pumpAndSettle();
+  });
 }
