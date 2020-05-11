@@ -246,8 +246,13 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   }
 
   @override
-  void dispose() {
+  void deactivate() {
+    super.deactivate();
     widget.itemScrollController?._detach();
+  }
+
+  @override
+  void dispose() {
     frontItemPositionNotifier.itemPositions.removeListener(_updatePositions);
     backItemPositionNotifier.itemPositions.removeListener(_updatePositions);
     super.dispose();
