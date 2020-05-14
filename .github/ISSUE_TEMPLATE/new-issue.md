@@ -8,15 +8,20 @@ assignees: ''
 ---
 
 ## Problem description
-<!-- Please describe the bug or feature request.  This repository includes multiple packages, so please specify which package you are reporting the issue against. -->
+<!--
+Which package? This repository includes multiple packages. Specify which package you are reporting the issue against and describe the bug or feature request.
+-->
 
 ## Steps to reproduce
-<!-- If you are reporting a bug, a minimal, complete, verifiable example (ideally a test case) would help a lot.  How reproducible is the problem? -->
+<!--
+1. If you are reporting a bug, a minimal, complete, verifiable example (ideally a test case) would help a lot.
+2. How reproducible is the problem?
+-->
 
 1.
 
 ## Expected behavior
-<!-- A clear and concise description of what you expected to happen. -->
+<!-- What did you expect to happen? -->
 
 ## Actual behavior
 <!-- What actually happened? -->
