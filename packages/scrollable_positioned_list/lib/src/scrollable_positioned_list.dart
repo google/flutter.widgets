@@ -224,7 +224,6 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   double frontAlignment;
   Function cancelScrollCallback;
   Function endScrollCallback;
-  double maxLocalScroll;
   _ListDisplay listDisplay = _ListDisplay.front;
   void Function() startAnimationCallback = () {};
 
@@ -291,7 +290,6 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                 },
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    maxLocalScroll = constraints.maxHeight * _screenScrollCount;
                     return PositionedList(
                       itemBuilder: widget.itemBuilder,
                       separatorBuilder: widget.separatorBuilder,
@@ -325,8 +323,6 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                     opacity: frontOpacity.value,
                     child: LayoutBuilder(
                       builder: (context, constraints) {
-                        maxLocalScroll =
-                            constraints.maxHeight * _screenScrollCount;
                         return PositionedList(
                           itemBuilder: widget.itemBuilder,
                           separatorBuilder: widget.separatorBuilder,
@@ -423,13 +419,9 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
         .value
         .firstWhere((ItemPosition itemPosition) => itemPosition.index == index,
             orElse: () => null);
-    final localScrollAmount = itemPosition == null
-        ? null
-        : itemPosition.itemLeadingEdge *
-            startingScrollController.position.viewportDimension;
-    if (localScrollAmount != null &&
-        maxLocalScroll != null &&
-        localScrollAmount <= maxLocalScroll) {
+    if (itemPosition != null) {
+      final localScrollAmount = itemPosition.itemLeadingEdge *
+          startingScrollController.position.viewportDimension;
       await startingScrollController.animateTo(
           startingScrollController.offset +
               localScrollAmount -

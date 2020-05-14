@@ -1782,61 +1782,21 @@ void main() {
     expect(find.text('Item 20'), findsOneWidget);
   });
 
-  testWidgets(
-      'Scroll to 100 (not already on screen) front scroll view with large minCacheExtent',
+  testWidgets('Scroll to 100 without fading large minCacheExtent',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
+    final itemPositionsListener = ItemPositionsListener.create();
     await setUpWidgetTest(
       tester,
       itemScrollController: itemScrollController,
+      itemPositionsListener: itemPositionsListener,
       minCacheExtent: 200 * itemHeight,
     );
 
-    unawaited(
-        itemScrollController.scrollTo(index: 100, duration: scrollDuration));
-    await tester.pump();
-    await tester.pump();
-    expect(
-        tester
-            .widget<Opacity>(find.descendant(
-                of: find.byType(ScrollablePositionedList),
-                matching: find.byType(Opacity)))
-            .opacity,
-        closeTo(1, 0.01));
-
-    await tester.pump(scrollDuration ~/ 2);
-
-    expect(tester.getTopLeft(find.text('Item 10')).dy, 0);
-    expect(tester.getBottomLeft(find.text('Item 19')).dy, screenHeight);
-    expect(
-        tester
-            .widget<Opacity>(find.descendant(
-                of: find.byType(ScrollablePositionedList),
-                matching: find.byType(Opacity)))
-            .opacity,
-        closeTo(0.5, 0.01));
-
-    await tester.pump(scrollDuration ~/ 2);
-    expect(
-        tester
-            .widget<Opacity>(find.descendant(
-                of: find.byType(ScrollablePositionedList),
-                matching: find.byType(Opacity)))
-            .opacity,
-        closeTo(0, 0.01));
-
-    await tester.pumpAndSettle();
-  });
-
-  testWidgets(
-      'Scroll to 100 (not already on screen) back scroll view with large minCacheExtent',
-      (WidgetTester tester) async {
-    final itemScrollController = ItemScrollController();
-    await setUpWidgetTest(
-      tester,
-      itemScrollController: itemScrollController,
-      minCacheExtent: 200 * itemHeight,
-    );
+    var opacityWidget = tester.widget<Opacity>(find.descendant(
+        of: find.byType(ScrollablePositionedList),
+        matching: find.byType(Opacity)));
+    final initialOpacity = opacityWidget.opacity;
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
@@ -1844,8 +1804,13 @@ void main() {
     await tester.pump();
     await tester.pump(scrollDuration ~/ 2);
 
-    expect(tester.getBottomLeft(find.text('Item 99')).dy, screenHeight);
+    opacityWidget = tester.widget(find.descendant(
+        of: find.byType(ScrollablePositionedList),
+        matching: find.byType(Opacity)));
+    expect(opacityWidget.opacity, initialOpacity);
 
     await tester.pumpAndSettle();
+
+    expect(find.text('Item 100'), findsOneWidget);
   });
 }
