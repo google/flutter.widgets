@@ -1656,8 +1656,6 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Item 100'), findsOneWidget);
 
-    print('>>>>>>>>>>>>>>.x');
-
     itemCount.value = 0;
     await tester.pumpAndSettle();
 
