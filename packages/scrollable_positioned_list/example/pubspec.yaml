@@ -1,5 +1,9 @@
 name: scrollable_positioned_list_example
 
+environment:
+  sdk: ">=2.3.0 <3.0.0"
+  flutter: ^1.12.13+hotfix.5
+
 dependencies:
   flutter:
     sdk: flutter
