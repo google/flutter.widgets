@@ -1848,4 +1848,20 @@ void main() {
 
     await tester.pumpAndSettle();
   });
+
+  testWidgets('Position list when not enough above top item to fill viewport',
+      (WidgetTester tester) async {
+    const alignment = 0.8;
+
+    await setUpWidgetTest(
+      tester,
+      itemCount: 2,
+      initialAlignment: alignment,
+      initialIndex: 0,
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(tester.getTopLeft(find.text('Item 0')).dy, screenHeight * alignment);
+  });
 }

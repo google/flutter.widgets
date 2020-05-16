@@ -4,9 +4,9 @@
 
 import 'dart:math' as math;
 
-import 'package:meta/meta.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 /// A render object that is bigger on the inside.
 ///
@@ -137,11 +137,12 @@ class UnboundedRenderViewport extends RenderViewport {
         offset.correctBy(correction);
       } else {
         // *** Difference from [RenderViewport].
-        if (offset.applyContentDimensions(
-          _minScrollExtent + mainAxisExtent * anchor,
-          math.max(math.min(0.0, _minScrollExtent + mainAxisExtent * anchor),
-              _maxScrollExtent - mainAxisExtent * (1.0 - anchor)),
-        )) break;
+        final top = _minScrollExtent + mainAxisExtent * anchor;
+        final bottom = _maxScrollExtent - mainAxisExtent * (1.0 - anchor);
+        final maxScrollOffset = math.max(math.min(0.0, top), bottom);
+        final minScrollOffset = math.min(top, maxScrollOffset);
+        if (offset.applyContentDimensions(minScrollOffset, maxScrollOffset))
+          break;
         // *** End of difference from [RenderViewport].
       }
       count += 1;
