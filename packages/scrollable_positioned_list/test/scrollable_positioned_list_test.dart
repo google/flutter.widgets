@@ -1864,7 +1864,7 @@ void main() {
             return Container(
               key: key,
               child: ScrollablePositionedList.builder(
-                itemCount: 10,
+                itemCount: 200,
                 itemScrollController: itemScrollController,
                 itemBuilder: (context, index) {
                   return SizedBox(
@@ -1883,10 +1883,66 @@ void main() {
 
     key.value = ValueKey('newKey');
     await tester.pumpAndSettle();
+
+    unawaited(
+        itemScrollController.scrollTo(index: 100, duration: scrollDuration));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Item 100'), findsOneWidget);
   });
 
-  testWidgets('Container key change with scroll controller',
+  testWidgets('Double rebuild with scroll controller',
       (WidgetTester tester) async {
+    tester.binding.window.devicePixelRatioTestValue = 1.0;
+    tester.binding.window.physicalSizeTestValue =
+        const Size(screenWidth, screenHeight);
+    final outerKey = ValueNotifier<Key>(ValueKey('outerKey'));
+    final innerKey = GlobalKey();
+    final listKey = ValueNotifier<Key>(ValueKey(null));
+    final itemScrollController = ItemScrollController();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ValueListenableBuilder(
+          valueListenable: outerKey,
+          builder: (context, outerKey, child) => ValueListenableBuilder(
+            valueListenable: listKey,
+            builder: (context, listKey, child) => Container(
+              key: outerKey,
+              child: Builder(
+                builder: (context) => Container(
+                  key: innerKey,
+                  child: ScrollablePositionedList.builder(
+                    key: listKey,
+                    itemCount: 200,
+                    itemScrollController: itemScrollController,
+                    itemBuilder: (context, index) => SizedBox(
+                      height: itemHeight,
+                      child: Text('Item $index'),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    outerKey.value = ValueKey('newOuterKey');
+    listKey.value = ValueKey('newListKey');
+    await tester.pumpAndSettle();
+
+    unawaited(
+        itemScrollController.scrollTo(index: 100, duration: scrollDuration));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Item 100'), findsOneWidget);
+  });
+
+  testWidgets('Key change with scroll controller', (WidgetTester tester) async {
     tester.binding.window.devicePixelRatioTestValue = 1.0;
     tester.binding.window.physicalSizeTestValue =
         const Size(screenWidth, screenHeight);
