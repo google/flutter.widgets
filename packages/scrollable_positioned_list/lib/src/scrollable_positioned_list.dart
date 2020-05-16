@@ -247,7 +247,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
 
   @override
   void deactivate() {
-    if (widget.itemScrollController.isAttached) {
+    if (widget?.itemScrollController?.isAttached ?? false) {
       widget.itemScrollController?._detach();
     }
     super.deactivate();
