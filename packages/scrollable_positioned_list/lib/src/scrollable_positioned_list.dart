@@ -204,14 +204,11 @@ class ItemScrollController {
   }
 
   void _attach(_ScrollablePositionedListState scrollableListState) {
-    print('**** attach $scrollableListState to ItemScrollController $id}');
     assert(_scrollableListState == null);
     _scrollableListState = scrollableListState;
   }
 
   void _detach() {
-    print('**** detach $_scrollableListState from ItemScrollController $id}');
-
     assert(_scrollableListState != null);
     _scrollableListState = null;
   }
@@ -238,8 +235,6 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
 
   @override
   void initState() {
-    print('>>>>>> initState $this');
-
     super.initState();
     ItemPosition initialPosition = PageStorage.of(context).readState(context);
     frontTarget = initialPosition?.index ?? widget.initialScrollIndex;
@@ -256,13 +251,6 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   }
 
   @override
-  void didChangeDependencies () {
-    print('>>>>>> didChangeDependencies $this');
-
-    super.didChangeDependencies();
-  }
-
-  @override
   void deactivate() {
     widget.itemScrollController?._detach();
     super.deactivate();
@@ -270,7 +258,6 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
 
   @override
   void dispose() {
-    print('>>>>>> dispose $this');
     frontItemPositionNotifier.itemPositions.removeListener(_updatePositions);
     backItemPositionNotifier.itemPositions.removeListener(_updatePositions);
     super.dispose();
@@ -278,7 +265,6 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
 
   @override
   void didUpdateWidget(ScrollablePositionedList oldWidget) {
-    print('>>>>>> didUpdateWidget $this');
     super.didUpdateWidget(oldWidget);
     if (oldWidget?.itemScrollController?._scrollableListState == this) {
       oldWidget.itemScrollController._detach();
