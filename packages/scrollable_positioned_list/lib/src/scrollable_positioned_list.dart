@@ -164,9 +164,14 @@ class ScrollablePositionedList extends StatefulWidget {
   State<StatefulWidget> createState() => _ScrollablePositionedListState();
 }
 
+int nextID = 0;
+
 /// Controller to jump or scroll to a particular position in a
 /// [ScrollablePositionedList].
 class ItemScrollController {
+  final int id;
+  ItemScrollController() : id = nextID++;
+
   /// Whether any ScrollablePositionedList objects are attached this object.
   ///
   /// If `false`, then [jumpTo] and [scrollTo] must not be called.
@@ -199,11 +204,14 @@ class ItemScrollController {
   }
 
   void _attach(_ScrollablePositionedListState scrollableListState) {
+    print('**** attach $scrollableListState to ItemScrollController $id}');
     assert(_scrollableListState == null);
     _scrollableListState = scrollableListState;
   }
 
   void _detach() {
+    print('**** detach $_scrollableListState from ItemScrollController $id}');
+
     assert(_scrollableListState != null);
     _scrollableListState = null;
   }
@@ -230,6 +238,8 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
 
   @override
   void initState() {
+    print('>>>>>> initState $this');
+
     super.initState();
     ItemPosition initialPosition = PageStorage.of(context).readState(context);
     frontTarget = initialPosition?.index ?? widget.initialScrollIndex;
@@ -246,13 +256,21 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   }
 
   @override
+  void didChangeDependencies () {
+    print('>>>>>> didChangeDependencies $this');
+
+    super.didChangeDependencies();
+  }
+
+  @override
   void deactivate() {
-    super.deactivate();
     widget.itemScrollController?._detach();
+    super.deactivate();
   }
 
   @override
   void dispose() {
+    print('>>>>>> dispose $this');
     frontItemPositionNotifier.itemPositions.removeListener(_updatePositions);
     backItemPositionNotifier.itemPositions.removeListener(_updatePositions);
     super.dispose();
@@ -260,7 +278,14 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
 
   @override
   void didUpdateWidget(ScrollablePositionedList oldWidget) {
+    print('>>>>>> didUpdateWidget $this');
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.itemScrollController?.isAttached ?? false) {
+      oldWidget.itemScrollController._detach();
+    }
+    if (!(widget.itemScrollController?.isAttached ?? false)) {
+      widget.itemScrollController?._attach(this);
+    }
     if (widget.itemCount != null) {
       if (widget.itemCount == 0) {
         setState(() {
