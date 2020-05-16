@@ -280,10 +280,13 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   void didUpdateWidget(ScrollablePositionedList oldWidget) {
     print('>>>>>> didUpdateWidget $this');
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.itemScrollController?.isAttached ?? false) {
+    if (oldWidget?.itemScrollController?._scrollableListState == this) {
       oldWidget.itemScrollController._detach();
     }
-    if (!(widget.itemScrollController?.isAttached ?? false)) {
+    if (widget.itemScrollController?._scrollableListState != this) {
+      if (widget.itemScrollController?.isAttached ?? false) {
+        widget.itemScrollController._detach();
+      }
       widget.itemScrollController?._attach(this);
     }
     if (widget.itemCount != null) {

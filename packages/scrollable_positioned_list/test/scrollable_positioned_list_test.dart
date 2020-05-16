@@ -1964,10 +1964,11 @@ void main() {
     expect(find.text('Item 70'), findsOneWidget);
   });
 
-  testWidgets('Scroll after rebuild when resusing state', (WidgetTester tester) async {
+  testWidgets('Scroll after rebuild when resusing state',
+      (WidgetTester tester) async {
     tester.binding.window.devicePixelRatioTestValue = 1.0;
     tester.binding.window.physicalSizeTestValue =
-    const Size(screenWidth, screenHeight);
+        const Size(screenWidth, screenHeight);
     final containerKey = ValueNotifier<Key>(ValueKey('key'));
     final scrollKey = GlobalKey();
     final itemScrollController = ItemScrollController();
@@ -2008,10 +2009,11 @@ void main() {
     expect(find.text('Item 70'), findsOneWidget);
   });
 
-  testWidgets('Scroll after changing scroll controller', (WidgetTester tester) async {
+  testWidgets('Scroll after changing scroll controller',
+      (WidgetTester tester) async {
     tester.binding.window.devicePixelRatioTestValue = 1.0;
     tester.binding.window.physicalSizeTestValue =
-    const Size(screenWidth, screenHeight);
+        const Size(screenWidth, screenHeight);
 
     final itemScrollController0 = ItemScrollController();
     final itemScrollController1 = ItemScrollController();
@@ -2023,14 +2025,14 @@ void main() {
           valueListenable: itemScrollControllerListenable,
           builder: (context, itemScrollController, child) {
             return ScrollablePositionedList.builder(
-                itemCount: 100,
-                itemScrollController: itemScrollController,
-                itemBuilder: (context, index) {
-                  return SizedBox(
-                    height: itemHeight,
-                    child: Text('Item $index'),
-                  );
-                },
+              itemCount: 100,
+              itemScrollController: itemScrollController,
+              itemBuilder: (context, index) {
+                return SizedBox(
+                  height: itemHeight,
+                  child: Text('Item $index'),
+                );
+              },
             );
           },
         ),
@@ -2052,5 +2054,80 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Item 70'), findsOneWidget);
+  });
+
+  testWidgets('Scroll after swapping scroll controllers',
+      (WidgetTester tester) async {
+    tester.binding.window.devicePixelRatioTestValue = 1.0;
+    tester.binding.window.physicalSizeTestValue =
+        const Size(screenWidth, screenHeight);
+
+    final itemScrollController0 = ItemScrollController();
+    final itemScrollController1 = ItemScrollController();
+    final topItemScrollControllerListenable =
+        ValueNotifier(itemScrollController0);
+    final bottomItemScrollControllerListenable =
+        ValueNotifier(itemScrollController1);
+
+    await tester.pumpWidget(MaterialApp(
+      home: Column(
+        children: [
+          Expanded(
+            child: ValueListenableBuilder(
+              valueListenable: topItemScrollControllerListenable,
+              builder: (context, itemScrollController, child) {
+                return ScrollablePositionedList.builder(
+                  itemCount: 100,
+                  itemScrollController: itemScrollController,
+                  itemBuilder: (context, index) {
+                    return SizedBox(
+                      height: itemHeight,
+                      child: Text('Item $index'),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+          Expanded(
+            child: ValueListenableBuilder(
+              valueListenable: bottomItemScrollControllerListenable,
+              builder: (context, itemScrollController, child) {
+                return ScrollablePositionedList.builder(
+                  itemCount: 100,
+                  itemScrollController: itemScrollController,
+                  itemBuilder: (context, index) {
+                    return SizedBox(
+                      height: itemHeight,
+                      child: Text('Item $index'),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    ));
+
+    await tester.pumpAndSettle();
+    expect(itemScrollController0.isAttached, true);
+    expect(itemScrollController1.isAttached, true);
+
+    topItemScrollControllerListenable.value = itemScrollController1;
+    bottomItemScrollControllerListenable.value = itemScrollController0;
+    await tester.pumpAndSettle();
+
+    expect(itemScrollController0.isAttached, true);
+    expect(itemScrollController1.isAttached, true);
+
+    unawaited(
+        itemScrollController1.scrollTo(index: 70, duration: scrollDuration));
+    unawaited(
+        itemScrollController0.scrollTo(index: 50, duration: scrollDuration));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Item 70'), findsOneWidget);
+    expect(find.text('Item 50'), findsOneWidget);
   });
 }
