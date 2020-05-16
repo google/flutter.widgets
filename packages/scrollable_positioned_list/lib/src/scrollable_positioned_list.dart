@@ -164,14 +164,9 @@ class ScrollablePositionedList extends StatefulWidget {
   State<StatefulWidget> createState() => _ScrollablePositionedListState();
 }
 
-int nextID = 0;
-
 /// Controller to jump or scroll to a particular position in a
 /// [ScrollablePositionedList].
 class ItemScrollController {
-  final int id;
-  ItemScrollController() : id = nextID++;
-
   /// Whether any ScrollablePositionedList objects are attached this object.
   ///
   /// If `false`, then [jumpTo] and [scrollTo] must not be called.
