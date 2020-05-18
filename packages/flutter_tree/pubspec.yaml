@@ -1,0 +1,18 @@
+name: flutter_tree
+version: 0.1.0
+description: >
+  A widget, that visualises a tree structure, where a node can be any widget.
+homepage: https://github.com/google/flutter.widgets
+
+environment:
+  sdk: ">=2.3.0 <3.0.0"
+  flutter: ^1.12.13+hotfix.5
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  test:
+  flutter_test:
+    sdk: flutter
