@@ -7,7 +7,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_tree/flutter_tree.dart';
-import 'package:third_party.dart.flutter_tree.testing/widget_testing.dart';
+
+/// Wraps widget to MaterialApp and pumps.
+Future<void> wrapAndPump(WidgetTester tester, Widget widget) async {
+  var wrapped = MaterialApp(
+    home: SingleChildScrollView(
+        child: SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Card(child: widget),
+    )),
+  );
+  await tester.pumpWidget(wrapped);
+}
 
 void main() {
   testWidgets('Tree renders all nodes when expanded.',
