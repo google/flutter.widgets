@@ -1,3 +1,10 @@
+# 0.1.6
+  * Change to do local scroll (without a fade) whenever target item is found 
+    within the cache.
+  * Added sdk constraints to the example.
+  * Moved `itemScrollControllerDetachment` to
+    `_ScrollablePositionedListState.deactivate`.
+
 # 0.1.5
 
   * Added minCacheExtent to ScrollablePositionedList
