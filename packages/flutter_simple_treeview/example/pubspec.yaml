@@ -1,0 +1,23 @@
+name: flutter_tree_demo
+
+environment:
+  sdk: '>=2.3.0-dev.0.1 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Currently the example references flutter_simple_treeview by relative path.
+  # If you copy the example to other place, you need to either update the path
+  # or reference pub.dev:
+  #
+  # flutter_simple_treeview: <latest version>
+  #
+  # Find the latest version here: https://pub.dev/packages/flutter_simple_treeview
+  flutter_simple_treeview:
+    path: ..
+
+flutter:
+  uses-material-design: true
+
+
