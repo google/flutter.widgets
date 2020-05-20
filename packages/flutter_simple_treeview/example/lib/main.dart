@@ -17,7 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_simple_treeview/flutter_simple_treeview.dart';
 
-Future main() {
+void main() {
   runApp(Demo());
 }
 
