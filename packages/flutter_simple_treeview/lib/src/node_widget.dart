@@ -10,7 +10,7 @@ import 'builder.dart';
 import 'tree_node.dart';
 import 'tree_state.dart';
 
-/// Widget, that display one [TreeNode] with its children.
+/// Widget that displays one [TreeNode] and its children.
 class NodeWidget extends StatefulWidget {
   final TreeNode treeNode;
   final double indent;
@@ -39,7 +39,7 @@ class _NodeWidgetState extends State<NodeWidget> {
     var icon =
         _isLeaf ? null : _isExpanded ? Icons.expand_more : Icons.chevron_right;
 
-    void onIconPressed() => _isLeaf
+    VoidCallback onIconPressed = _isLeaf
         ? null
         : () => setState(() {
               widget.state.toggleNodeExpanded(widget.treeNode.key);
