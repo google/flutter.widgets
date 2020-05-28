@@ -1,14 +1,4 @@
-// Copyright 2020 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// Copyright 2018 the Dart project authors.
+// Copyright 2020 the Dart project authors.
 //
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file or at
@@ -21,7 +11,15 @@ void main() {
   runApp(Demo());
 }
 
-class Demo extends StatelessWidget {
+class Demo extends StatefulWidget {
+  @override
+  _DemoState createState() => _DemoState();
+}
+
+class _DemoState extends State<Demo> {
+  final Key _key = ValueKey(22);
+  final TreeController _controller = TreeController(allNodesExpanded: true);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -35,9 +33,33 @@ class Demo extends StatelessWidget {
                 Text("FLUTTER-SIMPLE-TREEVIEW"),
                 SizedBox(height: 20),
                 SizedBox(
-                  height: 500,
-                  width: 500,
+                  height: 300,
+                  width: 300,
                   child: buildTree(),
+                ),
+                RaisedButton(
+                  child: Text("Expand All"),
+                  onPressed: () => setState(() {
+                    _controller.expandAll();
+                  }),
+                ),
+                RaisedButton(
+                  child: Text("Collapse All"),
+                  onPressed: () => setState(() {
+                    _controller.collapseAll();
+                  }),
+                ),
+                RaisedButton(
+                  child: Text("Expand node 22"),
+                  onPressed: () => setState(() {
+                    _controller.expandNode(_key);
+                  }),
+                ),
+                RaisedButton(
+                  child: Text("Collapse node 22"),
+                  onPressed: () => setState(() {
+                    _controller.collapseNode(_key);
+                  }),
                 ),
               ],
             ),
@@ -49,7 +71,7 @@ class Demo extends StatelessWidget {
 
   Widget buildTree() {
     return TreeView(
-      allNodesExpanded: true,
+      treeController: _controller,
       nodes: [
         TreeNode(content: Text("node 1")),
         TreeNode(
@@ -58,12 +80,15 @@ class Demo extends StatelessWidget {
             TreeNode(content: Text("node 21")),
             TreeNode(
               content: Text("node 22"),
+              key: _key,
+              children: [
+                TreeNode(
+                  content: Icon(Icons.sentiment_very_satisfied),
+                ),
+              ],
             ),
             TreeNode(
               content: Text("node 23"),
-              children: [
-                TreeNode(content: Icon(Icons.sentiment_very_satisfied)),
-              ],
             ),
           ],
         ),
