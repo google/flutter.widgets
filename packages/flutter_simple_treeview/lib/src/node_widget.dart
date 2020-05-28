@@ -1,4 +1,4 @@
-// Copyright 2018 the Dart project authors.
+// Copyright 2020 the Dart project authors.
 //
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file or at
@@ -7,15 +7,15 @@
 import 'package:flutter/material.dart';
 
 import 'builder.dart';
-import 'tree_node.dart';
-import 'tree_state.dart';
+import 'primitives/tree_controller.dart';
+import 'primitives/tree_node.dart';
 
 /// Widget that displays one [TreeNode] and its children.
 class NodeWidget extends StatefulWidget {
   final TreeNode treeNode;
   final double indent;
   final double iconSize;
-  final TreeState state;
+  final TreeController state;
 
   const NodeWidget(
       {Key key, this.treeNode, this.indent, this.state, this.iconSize})
@@ -39,11 +39,10 @@ class _NodeWidgetState extends State<NodeWidget> {
     var icon =
         _isLeaf ? null : _isExpanded ? Icons.expand_more : Icons.chevron_right;
 
-    VoidCallback onIconPressed = _isLeaf
+    var onIconPressed = _isLeaf
         ? null
-        : () => setState(() {
-              widget.state.toggleNodeExpanded(widget.treeNode.key);
-            });
+        : () => setState(
+            () => widget.state.toggleNodeExpanded(widget.treeNode.key));
 
     return Column(
       children: [
