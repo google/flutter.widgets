@@ -6,6 +6,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_simple_treeview/flutter_simple_treeview.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(Demo());
@@ -61,6 +62,13 @@ class _DemoState extends State<Demo> {
                     _controller.collapseNode(_key);
                   }),
                 ),
+                FlatButton(
+                    child: Text(
+                      "Source Code",
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                    onPressed: () async => await launch(
+                        'https://github.com/google/flutter.widgets/tree/master/packages/flutter_simple_treeview/example')),
               ],
             ),
           ),

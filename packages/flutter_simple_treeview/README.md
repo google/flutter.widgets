@@ -3,7 +3,7 @@ This widget visualises a tree structure, where a node can be any widget.
 
 ## Demo
 
-[https://f-tree.codemagic.app](https://f-tree.codemagic.app)
+[https://flutter_simple_treeview.codemagic.app](https://flutter_simple_treeview.codemagic.app)
 
 ## Usage
 
