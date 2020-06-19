@@ -1,0 +1,19 @@
+name: self_storing_input
+version: 2.0.1
+description: >
+  A set of input widgets that automatically save and load
+  the entered value to a data store.
+homepage: https://github.com/google/flutter.widgets
+
+environment:
+  sdk: ">=2.3.0 <3.0.0"
+  flutter: ^1.12.13+hotfix.5
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  test:
+  flutter_test:
+    sdk: flutter
