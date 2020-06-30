@@ -18,14 +18,15 @@ class _DemoSaver with ChangeNotifier implements Saver {
   bool _savingFailed = false;
 
   @override
-  Future<T> load<T>(Object address) async {
+  Future<T> load<T>(Object itemKey) async {
+    // This delay is for demo purposes.
     await Future.delayed(Duration(milliseconds: 500));
-    return storage[address];
+    return storage[itemKey];
   }
 
   @override
-  OperationResult validate<T>(Object address, T value) {
-    if (address == Fields.phrase &&
+  OperationResult validate<T>(Object itemKey, T value) {
+    if (itemKey == Fields.phrase &&
         value is String &&
         (value?.toString()?.length ?? 0) % 2 == 1) {
       return OperationResult.error('Value should have even number of letters.');
@@ -34,20 +35,16 @@ class _DemoSaver with ChangeNotifier implements Saver {
   }
 
   @override
-  Future<OperationResult> save<T>(Object address, T value) async {
+  Future<OperationResult> save<T>(Object itemKey, T value) async {
     _savingFailed = !_savingFailed;
+    // This delay is for demo purposes.
     await Future.delayed(Duration(milliseconds: 500));
     if (_savingFailed) {
       return OperationResult.error(
-          'This is a very long error massage to demonstrate '
-          'how the component handles saving failures. For demo purposes '
-          'every second saving will fail. A real '
-          'message can be like this: "Unfortunately '
-          'we could not save the value to the storage. '
-          'Check your internet connection and try again. '
-          'Contact us if the problem persists."');
+          'Failed to save. It will fail every second time '
+          'for demo purposes.');
     }
-    storage[address] = value;
+    storage[itemKey] = value;
     notifyListeners();
     return OperationResult.success();
   }
@@ -86,7 +83,10 @@ class _DemoState extends State<Demo> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('SELF_STORING_INPUT DEMO'),
+                  Text('SELF_STORING_INPUT\nDEMO'),
+                  SizedBox(height: 50),
+                  Text('Save and load times are hard coded\n'
+                      'in this demo to be 0.5 seconds.'),
                   SizedBox(height: 50),
                   ...buildDemo(),
                   SizedBox(height: 50),

@@ -32,7 +32,7 @@ void main() {
         (WidgetTester tester) async {
       await _wrapAndPump(
           tester,
-          OverlayBox(EditingSession(
+          OverlayBox(SharedState(
             null,
             null,
             NoOpSaver(),

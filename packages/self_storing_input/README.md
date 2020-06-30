@@ -10,27 +10,30 @@ the entered value to a data store.
 
 ### Define Saver
 
-Implement Saver that loads, validates and saves data items by address. Address
-can be of any form. You can make it a string that contains resource URL 
-or you can make it a structure that contains connection string, table,
-object id and column name.
+Implement a Saver that loads, validates and saves data items by itemKey. 
+The itemKey can be of any form. You can make it a resource URL string   
+or a tuple <connectionString, table, objectId, column>.
+
+Find example of an in-memory Saver  
+[here]('https://github.com/google/flutter.widgets/tree/master/packages/self_storing_input/example/lib/main.dart#L16').
 
 ### Define Input
 
-Put self storing input widgets to your screen and parameterize each with the
-defined Saver and address. The widgets will take care of loading data, 
+Add self storing input widgets to your screen and parameterize each with the
+defined Saver and itemKey. The widgets will take care of loading data, 
 validating data, saving data, and handling failure modes like poor internet
 connection and data storage failures.
 
 ### Close Editing Overlays on Tap
 
-Define OverlayController in your screen state:
+Define an OverlayController in your screen state:
 
 ```
 OverlayController _controller = OverlayController();
 ```
 
-Wrap your screen widget body with GestureDetector to close editing overlays on tap:
+Wrap your screen widget body with a GestureDetector to close editing overlays
+on tap:
 
 ```
 GestureDetector(

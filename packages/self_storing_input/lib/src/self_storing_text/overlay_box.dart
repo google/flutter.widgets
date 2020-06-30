@@ -6,36 +6,37 @@ import '../primitives/the_progress_indicator.dart';
 import 'overlay_controller.dart';
 import 'self_storing_text_style.dart';
 
-/// State, that needs to be shared between widgets after user clicks 'Edit'.
-class EditingSession with ChangeNotifier {
+/// State that needs to be shared between [OverlayBox] and its
+/// parent.
+class SharedState with ChangeNotifier {
   String _storedValue;
   final OverlayController overlayController;
   final Saver saver;
-  final Object address;
+  final Object itemKey;
   final SelfStoringTextStyle style;
 
   String get storedValue => _storedValue;
   set storedValue(String value) {
-    _storedValue = value;
-    notifyListeners();
+    if (value != _storedValue) {
+      _storedValue = value;
+      notifyListeners();
+    }
   }
 
-  EditingSession(
+  SharedState(
     storedValue,
     this.overlayController,
     this.saver,
-    this.address,
+    this.itemKey,
     this.style,
   ) : _storedValue = storedValue;
 }
 
 /// The panel that pops up, when user clicks 'Edit'.
 class OverlayBox extends StatefulWidget {
-  final EditingSession session;
+  final SharedState sharedState;
 
-  const OverlayBox(
-    this.session,
-  );
+  const OverlayBox(this.sharedState);
 
   @override
   _OverlayBoxState createState() => _OverlayBoxState();
@@ -50,9 +51,15 @@ class _OverlayBoxState extends State<OverlayBox> {
 
   @override
   void initState() {
-    _textController.text = widget.session.storedValue;
+    _textController.text = widget.sharedState.storedValue;
     _textController.addListener(_onTextChange);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _textController.removeListener(_onTextChange);
+    super.dispose();
   }
 
   @override
@@ -67,28 +74,28 @@ class _OverlayBoxState extends State<OverlayBox> {
   /// This method is invoked when user types.
   void _onTextChange() {
     _savingError = null;
-    _validationError = widget.session.saver
-        .validate<String>(widget.session.address, _textController.text)
+    _validationError = widget.sharedState.saver
+        .validate<String>(widget.sharedState.itemKey, _textController.text)
         .error;
     setState(() {});
   }
 
   /// This method is invoked when user clicked 'Save'.
   Future<OperationResult> _saveEnteredValue() async {
-    // We do not differentiate null and empty value, because TextEditor
-    // does not.
-    // If original value was null, user clicked 'Edit' and then,
-    // without changing value, clicked 'Save', we do not want empty string
-    // to be stored.
-    if ((_textController.text ?? '') == (widget.session.storedValue ?? '')) {
+    var value = _textController.text;
+    // We cannot differentiate empty string and null,
+    // so we always save null for consistency.
+    if (value == '') value = null;
+
+    if (value == widget.sharedState.storedValue) {
       return OperationResult.success();
     }
 
-    var operationResult = await widget.session.saver
-        .save(widget.session.address, _textController.text);
+    var operationResult =
+        await widget.sharedState.saver.save(widget.sharedState.itemKey, value);
 
     if (operationResult.isSuccess) {
-      widget.session.storedValue = _textController.text;
+      widget.sharedState.storedValue = value;
     }
 
     return operationResult;
@@ -97,11 +104,11 @@ class _OverlayBoxState extends State<OverlayBox> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        width: widget.session.style.overlayWidth,
-        height: widget.session.style.overlayHeight,
+        width: widget.sharedState.style.overlayWidth,
+        height: widget.sharedState.style.overlayHeight,
         margin: EdgeInsets.symmetric(
-            horizontal: widget.session.style.overlayMargin),
-        child: _isSaving ? TheProgressIndicator() : buildContent(context));
+            horizontal: widget.sharedState.style.overlayMargin),
+        child: _isSaving ? theProgressIndicator : buildContent(context));
   }
 
   Widget buildContent(BuildContext context) {
@@ -116,8 +123,8 @@ class _OverlayBoxState extends State<OverlayBox> {
             child: TextFormField(
               controller: _textController,
               focusNode: _focusNode,
-              maxLines: widget.session.style.maxLines,
-              keyboardType: widget.session.style.keyboardType,
+              maxLines: widget.sharedState.style.maxLines,
+              keyboardType: widget.sharedState.style.keyboardType,
               decoration: InputDecoration(
                 suffixIcon: IconButton(
                   icon: Icon(Icons.clear),
@@ -144,8 +151,8 @@ class _OverlayBoxState extends State<OverlayBox> {
     return FlatButton(
       // Button Cancel
       onPressed: () {
-        widget.session.overlayController.close();
-        _textController.text = widget.session.storedValue ?? '';
+        widget.sharedState.overlayController.close();
+        _textController.text = widget.sharedState.storedValue ?? '';
       },
       child: Icon(Icons.close),
     );
@@ -163,7 +170,7 @@ class _OverlayBoxState extends State<OverlayBox> {
               var savingResult = await _saveEnteredValue();
               _savingError = savingResult.error;
               if (savingResult.isSuccess) {
-                widget.session.overlayController.close();
+                widget.sharedState.overlayController.close();
               }
               _isSaving = false;
               setState(() => {});
@@ -175,8 +182,8 @@ class _OverlayBoxState extends State<OverlayBox> {
   Widget _buildErrorWidget(String text, BuildContext context) {
     return SizedBox(
       height: Theme.of(context).buttonTheme.height,
-      width: widget.session.style.overlayWidth -
-          widget.session.style.overlayMargin * 2 -
+      width: widget.sharedState.style.overlayWidth -
+          widget.sharedState.style.overlayMargin * 2 -
           Theme.of(context).buttonTheme.minWidth * 2,
       child: SingleChildScrollView(
         child: Text(text),

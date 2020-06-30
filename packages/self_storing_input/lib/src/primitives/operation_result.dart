@@ -1,11 +1,9 @@
 /// Result of value validation.
 class OperationResult {
-  final bool isSuccess;
+  bool get isSuccess => error == null;
   final String error;
 
-  OperationResult.success()
-      : isSuccess = true,
-        error = null;
+  const OperationResult.success() : error = null;
 
-  OperationResult.error(this.error) : isSuccess = false;
+  const OperationResult.error(this.error);
 }

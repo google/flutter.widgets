@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:self_storing_input/src/self_storing_text/edit_button.dart';
 
 import 'primitives/saver.dart';
 import 'primitives/the_progress_indicator.dart';
@@ -9,13 +10,13 @@ import 'self_storing_text/self_storing_text_style.dart';
 /// A widget to enter and store single or multiline text.
 class SelfStoringText extends StatefulWidget {
   final Saver saver;
-  final Object address;
+  final Object itemKey;
   final String emptyText;
   final OverlayController overlayController;
   final SelfStoringTextStyle style;
 
   SelfStoringText(
-    this.address, {
+    this.itemKey, {
     Key key,
     this.saver = const NoOpSaver(),
     this.emptyText = '--',
@@ -28,10 +29,9 @@ class SelfStoringText extends StatefulWidget {
   _SelfStoringTextState createState() => _SelfStoringTextState();
 }
 
-class _SelfStoringTextState<D> extends State<SelfStoringText> {
-  EditingSession _editingSession;
+class _SelfStoringTextState extends State<SelfStoringText> {
+  SharedState _state;
   bool _isLoading = true;
-  OverlayEntry _overlay;
 
   @override
   void initState() {
@@ -39,60 +39,41 @@ class _SelfStoringTextState<D> extends State<SelfStoringText> {
     super.initState();
   }
 
-  void _closeOverlay() {
-    _overlay?.remove();
-    _overlay = null;
+  @override
+  void dispose() {
+    _state.removeListener(_emptySetState);
+    super.dispose();
   }
 
-  Future _loadValue() async {
-    var storedValue = await widget.saver.load<String>(widget.address);
-    _editingSession = EditingSession(
+  void _emptySetState() {}
+
+  Future<void> _loadValue() async {
+    var storedValue = await widget.saver.load<String>(widget.itemKey);
+    _state = SharedState(
       storedValue,
       widget.overlayController,
       widget.saver,
-      widget.address,
+      widget.itemKey,
       widget.style,
-    )..addListener(() => setState(() {}));
-    _editingSession.overlayController.addListener(_closeOverlay);
+    )..addListener(_emptySetState);
+
     setState(() => _isLoading = false);
   }
 
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return TheProgressIndicator();
+      return theProgressIndicator;
     }
 
-    var text = _editingSession.storedValue;
+    var text = _state.storedValue;
     if (text == null || text.isEmpty) text = widget.emptyText;
 
     return Row(
       children: [
-        Text(text),
-        IconButton(
-          icon: Icon(Icons.edit),
-          onPressed: () {
-            _editingSession.overlayController.close();
-            _overlay = _buildOverlay(context);
-            Overlay.of(context).insert(_overlay);
-          },
-        ),
+        Flexible(child: Text(text)),
+        EditButton(_state),
       ],
     );
-  }
-
-  OverlayEntry _buildOverlay(BuildContext context) {
-    RenderBox renderBox = context.findRenderObject();
-    var offset = renderBox.localToGlobal(Offset.zero);
-
-    return OverlayEntry(
-        builder: (context) => Positioned(
-              left: offset.dx + widget.style.offsetLeft,
-              top: offset.dy + widget.style.offsetTop,
-              child: Material(
-                elevation: widget.style.overlayElevation,
-                child: OverlayBox(_editingSession),
-              ),
-            ));
   }
 }
