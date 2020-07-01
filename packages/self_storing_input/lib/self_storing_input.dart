@@ -5,7 +5,7 @@
 // https://developers.google.com/open-source/licenses/bsd
 
 export 'src/primitives/operation_result.dart';
+export 'src/primitives/overlay.dart';
 export 'src/primitives/saver.dart';
 export 'src/self_storing_text.dart';
-export 'src/self_storing_text/overlay_controller.dart';
 export 'src/self_storing_text/self_storing_text_style.dart';

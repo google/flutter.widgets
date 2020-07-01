@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:self_storing_input/self_storing_input.dart';
+import 'package:self_storing_input/src/primitives/overlay_builder.dart';
 import 'package:self_storing_input/src/self_storing_text/overlay_box.dart';
 
 /// Wraps widget to MaterialApp and pumps.
@@ -30,15 +31,14 @@ void main() {
 
     testWidgets('overlay renders successfully if trivial parameters provided.',
         (WidgetTester tester) async {
+      var style = SelfStoringTextStyle();
+      var content = OverlayBox(SharedState(
+        saver: NoOpSaver(),
+        style: style,
+      ));
+
       await _wrapAndPump(
-          tester,
-          OverlayBox(SharedState(
-            null,
-            null,
-            NoOpSaver(),
-            null,
-            SelfStoringTextStyle(),
-          )));
+          tester, applyOverlayStyle(style.overlayStyle, content));
     });
   });
 }

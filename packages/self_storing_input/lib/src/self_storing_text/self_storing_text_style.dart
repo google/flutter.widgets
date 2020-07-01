@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:self_storing_input/self_storing_input.dart';
 
 /// A style for [SelfStoringText].
 class SelfStoringTextStyle {
-  final double overlayElevation;
-  final double overlayWidth;
-  final double overlayHeight;
-  final double overlayMargin;
+  final OverlayStyle overlayStyle;
   final TextInputType keyboardType;
 
   /// Maximum number of lines. Infinite if null.
@@ -14,10 +12,7 @@ class SelfStoringTextStyle {
   final int maxLines;
 
   const SelfStoringTextStyle(
-      {this.overlayElevation = 4.0,
-      this.overlayWidth = 500,
-      this.overlayHeight = 100,
-      this.overlayMargin = 8,
+      {this.overlayStyle = const OverlayStyle(),
       this.keyboardType,
       this.maxLines = 1});
 }

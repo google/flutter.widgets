@@ -126,7 +126,7 @@ class _DemoState extends State<Demo> {
         overlayController: _controller,
         saver: _saver,
         style: SelfStoringTextStyle(
-          overlayHeight: 130,
+          overlayStyle: OverlayStyle(height: 130),
           keyboardType: TextInputType.multiline,
           maxLines: null,
         ),

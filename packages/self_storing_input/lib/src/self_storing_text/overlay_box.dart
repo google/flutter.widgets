@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../primitives/operation_result.dart';
+import '../primitives/overlay.dart';
 import '../primitives/saver.dart';
 import '../primitives/the_progress_indicator.dart';
-import 'overlay_controller.dart';
 import 'self_storing_text_style.dart';
 
 /// State that needs to be shared between [OverlayBox] and its
@@ -23,13 +23,13 @@ class SharedState with ChangeNotifier {
     }
   }
 
-  SharedState(
+  SharedState({
     storedValue,
     this.overlayController,
     this.saver,
     this.itemKey,
     this.style,
-  ) : _storedValue = storedValue;
+  }) : _storedValue = storedValue;
 }
 
 /// The panel that pops up, when user clicks 'Edit'.
@@ -103,12 +103,7 @@ class _OverlayBoxState extends State<OverlayBox> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        width: widget.sharedState.style.overlayWidth,
-        height: widget.sharedState.style.overlayHeight,
-        margin: EdgeInsets.symmetric(
-            horizontal: widget.sharedState.style.overlayMargin),
-        child: _isSaving ? theProgressIndicator : buildContent(context));
+    return _isSaving ? theProgressIndicator : buildContent(context);
   }
 
   Widget buildContent(BuildContext context) {
@@ -182,8 +177,8 @@ class _OverlayBoxState extends State<OverlayBox> {
   Widget _buildErrorWidget(String text, BuildContext context) {
     return SizedBox(
       height: Theme.of(context).buttonTheme.height,
-      width: widget.sharedState.style.overlayWidth -
-          widget.sharedState.style.overlayMargin * 2 -
+      width: widget.sharedState.style.overlayStyle.width -
+          widget.sharedState.style.overlayStyle.margin * 2 -
           Theme.of(context).buttonTheme.minWidth * 2,
       child: SingleChildScrollView(
         child: Text(text),
