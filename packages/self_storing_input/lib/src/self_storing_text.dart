@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:self_storing_input/src/self_storing_text/edit_button.dart';
 
+import 'primitives/overlay.dart';
 import 'primitives/saver.dart';
 import 'primitives/the_progress_indicator.dart';
 import 'self_storing_text/overlay_box.dart';
-import 'self_storing_text/overlay_controller.dart';
 import 'self_storing_text/self_storing_text_style.dart';
 
 /// A widget to enter and store single or multiline text.
@@ -50,11 +50,11 @@ class _SelfStoringTextState extends State<SelfStoringText> {
   Future<void> _loadValue() async {
     var storedValue = await widget.saver.load<String>(widget.itemKey);
     _state = SharedState(
-      storedValue,
-      widget.overlayController,
-      widget.saver,
-      widget.itemKey,
-      widget.style,
+      storedValue: storedValue,
+      overlayController: widget.overlayController,
+      saver: widget.saver,
+      itemKey: widget.itemKey,
+      style: widget.style,
     )..addListener(_emptySetState);
 
     setState(() => _isLoading = false);
