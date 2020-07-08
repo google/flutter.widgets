@@ -45,7 +45,7 @@ class _SelfStoringTextState extends State<SelfStoringText> {
     super.dispose();
   }
 
-  void _emptySetState() {}
+  void _emptySetState() => setState(() {});
 
   Future<void> _loadValue() async {
     var storedValue = await widget.saver.load<String>(widget.itemKey);
