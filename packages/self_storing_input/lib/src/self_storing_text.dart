@@ -41,11 +41,11 @@ class _SelfStoringTextState extends State<SelfStoringText> {
 
   @override
   void dispose() {
-    _state.removeListener(_emptySetState);
+    _state.removeListener(_onSharedStateChange);
     super.dispose();
   }
 
-  void _emptySetState() => setState(() {});
+  void _onSharedStateChange() => setState(() {});
 
   Future<void> _loadValue() async {
     var storedValue = await widget.saver.load<String>(widget.itemKey);
@@ -55,7 +55,7 @@ class _SelfStoringTextState extends State<SelfStoringText> {
       saver: widget.saver,
       itemKey: widget.itemKey,
       style: widget.style,
-    )..addListener(_emptySetState);
+    )..addListener(_onSharedStateChange);
 
     setState(() => _isLoading = false);
   }
