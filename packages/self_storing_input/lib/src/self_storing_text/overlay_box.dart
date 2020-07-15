@@ -6,6 +6,10 @@ import '../primitives/saver.dart';
 import '../primitives/the_progress_indicator.dart';
 import 'self_storing_text_style.dart';
 
+const Key okButtonKey = ValueKey('okButton');
+const Key cancelButtonKey = ValueKey('cancelButton');
+const Key clearButtonKey = ValueKey('clearButton');
+
 /// State that needs to be shared between [OverlayBox] and its
 /// parent.
 class SharedState with ChangeNotifier {
@@ -122,6 +126,7 @@ class _OverlayBoxState extends State<OverlayBox> {
               keyboardType: widget.sharedState.style.keyboardType,
               decoration: InputDecoration(
                 suffixIcon: IconButton(
+                  key: clearButtonKey,
                   icon: Icon(Icons.clear),
                   onPressed: () {
                     _textController.text = '';
@@ -144,7 +149,7 @@ class _OverlayBoxState extends State<OverlayBox> {
 
   Widget _buildCancelButton() {
     return FlatButton(
-      // Button Cancel
+      key: cancelButtonKey,
       onPressed: () {
         widget.sharedState.overlayController.close();
         _textController.text = widget.sharedState.storedValue ?? '';
@@ -155,7 +160,7 @@ class _OverlayBoxState extends State<OverlayBox> {
 
   Widget _buildOkButton() {
     return FlatButton(
-      // Button OK
+      key: okButtonKey,
       onPressed: _validationError != null
           ? null
           : () async {
