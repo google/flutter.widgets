@@ -11,6 +11,8 @@ import 'package:url_launcher/url_launcher.dart';
 class Fields {
   static const String phrase = 'phrase';
   static const String paragraph = 'paragraph';
+  static const String tristate = 'tristate';
+  static const String twostate = 'twostate';
 }
 
 class _DemoSaver with ChangeNotifier implements Saver {
@@ -86,7 +88,9 @@ class _DemoState extends State<Demo> {
                   Text('SELF_STORING_INPUT\nDEMO'),
                   SizedBox(height: 50),
                   Text('Save and load times are hard coded\n'
-                      'in this demo to be 0.5 seconds.'),
+                      'in this demo to be 0.5 seconds.\n\n'
+                      'Also for demo purposes the save operation\n'
+                      'will fail every second time.'),
                   SizedBox(height: 50),
                   ...buildDemo(),
                   SizedBox(height: 50),
@@ -126,12 +130,27 @@ class _DemoState extends State<Demo> {
         overlayController: _controller,
         saver: _saver,
         style: SelfStoringTextStyle(
-          overlayStyle: OverlayStyle(height: 130),
+          overlayStyle: OverlayStyle.forTextEditor(height: 130),
           keyboardType: TextInputType.multiline,
           maxLines: null,
         ),
       )),
-      SizedBox(height: 60),
+      SizedBox(height: 20),
+      SelfStoringCheckbox(
+        Fields.tristate,
+        saver: _saver,
+        overlayController: _controller,
+        title: Text(Fields.tristate),
+      ),
+      SizedBox(height: 20),
+      SelfStoringCheckbox(
+        Fields.twostate,
+        saver: _saver,
+        overlayController: _controller,
+        title: Text(Fields.twostate),
+        tristate: false,
+      ),
+      SizedBox(height: 40),
       if (_saver.storage.isNotEmpty) Text('STORAGE CONTENT:'),
       SizedBox(height: 20),
       for (var id in _saver.storage.keys)

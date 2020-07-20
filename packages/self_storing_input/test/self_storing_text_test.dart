@@ -9,24 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:self_storing_input/self_storing_input.dart';
 import 'package:self_storing_input/src/self_storing_text/overlay_box.dart';
 
-/// Wraps widget to MaterialApp and pumps.
-Future<void> _wrapAndPump(WidgetTester tester, Widget widget) async {
-  var wrapped = MaterialApp(
-    home: SingleChildScrollView(
-        child: SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Card(child: widget),
-    )),
-  );
-  await tester.pumpWidget(wrapped);
-}
-
-/// Wraps widget into sized and aligned container
-Widget _sizeAndLayout(Widget child) => SizedBox(
-      width: 5000,
-      height: 5000,
-      child: Align(alignment: Alignment.topLeft, child: child),
-    );
+import 'testing/widget_testing.dart';
 
 /// Saves and loads values fast and successfully.
 /// Validation always returns true.
@@ -58,7 +41,7 @@ void main() {
         'itemKey',
         saver: saver,
       );
-      await _wrapAndPump(tester, _sizeAndLayout(textWidget));
+      await wrapAndPump(tester, sizeAndLayout(textWidget));
       await tester.pumpAndSettle();
 
       // Check the text value.
@@ -78,7 +61,7 @@ void main() {
         itemKey,
         saver: saver,
       );
-      await _wrapAndPump(tester, _sizeAndLayout(textWidget));
+      await wrapAndPump(tester, sizeAndLayout(textWidget));
       await tester.pumpAndSettle();
 
       // Check the text value.
@@ -98,7 +81,7 @@ void main() {
         itemKey,
         saver: saver,
       );
-      await _wrapAndPump(tester, _sizeAndLayout(textWidget));
+      await wrapAndPump(tester, sizeAndLayout(textWidget));
       await tester.pumpAndSettle();
 
       // Click the edit button.
@@ -140,7 +123,7 @@ void main() {
         itemKey,
         saver: saver,
       );
-      await _wrapAndPump(tester, _sizeAndLayout(textWidget));
+      await wrapAndPump(tester, sizeAndLayout(textWidget));
       await tester.pumpAndSettle();
 
       // Check the text value.
@@ -182,7 +165,7 @@ void main() {
         itemKey,
         saver: saver,
       );
-      await _wrapAndPump(tester, _sizeAndLayout(textWidget));
+      await wrapAndPump(tester, sizeAndLayout(textWidget));
       await tester.pumpAndSettle();
 
       // Click the edit button.

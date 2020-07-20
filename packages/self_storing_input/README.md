@@ -24,7 +24,7 @@ defined Saver and itemKey. The widgets will take care of loading data,
 validating data, saving data, and handling failure modes like poor internet
 connection and data storage failures.
 
-### Close Editing Overlays on Tap
+### Close the Overlays on Tap
 
 Define an OverlayController in your screen state:
 
