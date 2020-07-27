@@ -1,3 +1,8 @@
+# 0.1.7
+  * Apply viewport dimensions in UnboundedRenderedViewport.performResize.
+    To work around change in https://github.com/flutter/flutter/pull/61973 
+    causing breakage
+
 # 0.1.6
   * Change to do local scroll (without a fade) whenever target item is found 
     within the cache.
