@@ -1,7 +1,14 @@
+// Copyright 2020 the Dart project authors.
+//
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file or at
+// https://developers.google.com/open-source/licenses/bsd
+
 import 'package:flutter/material.dart';
 
 import '../primitives/overlay_builder.dart';
 import 'overlay_box.dart';
+import 'shared_state.dart';
 
 /// Button that opens editing area when clicked.
 class EditButton extends StatefulWidget {
@@ -31,7 +38,7 @@ class _EditButtonState extends State<EditButton> {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.edit),
+      icon: Icon(Icons.edit, color: Theme.of(context).accentColor),
       onPressed: () {
         widget.state.overlayController.close();
         _overlay = _buildOverlay(context);

@@ -1,3 +1,9 @@
+// Copyright 2020 the Dart project authors.
+//
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file or at
+// https://developers.google.com/open-source/licenses/bsd
+
 import 'package:flutter/material.dart';
 
 /// A controller for the overlay of a widget,
@@ -17,10 +23,17 @@ class OverlayStyle {
   final double height;
   final double margin;
 
-  const OverlayStyle({
+  const OverlayStyle.forTextEditor({
     this.elevation = 4.0,
     this.width = 500,
     this.height = 100,
     this.margin = 8,
+  });
+
+  const OverlayStyle.forMessage({
+    this.elevation = 4.0,
+    this.width = 200,
+    this.height = 80,
+    this.margin = 2,
   });
 }

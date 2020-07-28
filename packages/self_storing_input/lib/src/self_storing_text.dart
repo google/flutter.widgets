@@ -1,11 +1,17 @@
+// Copyright 2020 the Dart project authors.
+//
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file or at
+// https://developers.google.com/open-source/licenses/bsd
+
 import 'package:flutter/material.dart';
 import 'package:self_storing_input/src/self_storing_text/edit_button.dart';
 
 import 'primitives/overlay.dart';
 import 'primitives/saver.dart';
 import 'primitives/the_progress_indicator.dart';
-import 'self_storing_text/overlay_box.dart';
 import 'self_storing_text/self_storing_text_style.dart';
+import 'self_storing_text/shared_state.dart';
 
 /// A widget to enter and store single or multiline text.
 class SelfStoringText extends StatefulWidget {

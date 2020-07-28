@@ -1,36 +1,18 @@
+// Copyright 2020 the Dart project authors.
+//
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file or at
+// https://developers.google.com/open-source/licenses/bsd
+
 import 'package:flutter/material.dart';
 
 import '../primitives/operation_result.dart';
-import '../primitives/overlay.dart';
-import '../primitives/saver.dart';
 import '../primitives/the_progress_indicator.dart';
-import 'self_storing_text_style.dart';
+import 'shared_state.dart';
 
-/// State that needs to be shared between [OverlayBox] and its
-/// parent.
-class SharedState with ChangeNotifier {
-  String _storedValue;
-  final OverlayController overlayController;
-  final Saver saver;
-  final Object itemKey;
-  final SelfStoringTextStyle style;
-
-  String get storedValue => _storedValue;
-  set storedValue(String value) {
-    if (value != _storedValue) {
-      _storedValue = value;
-      notifyListeners();
-    }
-  }
-
-  SharedState({
-    storedValue,
-    this.overlayController,
-    this.saver,
-    this.itemKey,
-    this.style,
-  }) : _storedValue = storedValue;
-}
+const Key okButtonKey = ValueKey('okButton');
+const Key cancelButtonKey = ValueKey('cancelButton');
+const Key clearButtonKey = ValueKey('clearButton');
 
 /// The panel that pops up, when user clicks 'Edit'.
 class OverlayBox extends StatefulWidget {
@@ -122,6 +104,7 @@ class _OverlayBoxState extends State<OverlayBox> {
               keyboardType: widget.sharedState.style.keyboardType,
               decoration: InputDecoration(
                 suffixIcon: IconButton(
+                  key: clearButtonKey,
                   icon: Icon(Icons.clear),
                   onPressed: () {
                     _textController.text = '';
@@ -144,7 +127,7 @@ class _OverlayBoxState extends State<OverlayBox> {
 
   Widget _buildCancelButton() {
     return FlatButton(
-      // Button Cancel
+      key: cancelButtonKey,
       onPressed: () {
         widget.sharedState.overlayController.close();
         _textController.text = widget.sharedState.storedValue ?? '';
@@ -155,7 +138,7 @@ class _OverlayBoxState extends State<OverlayBox> {
 
   Widget _buildOkButton() {
     return FlatButton(
-      // Button OK
+      key: okButtonKey,
       onPressed: _validationError != null
           ? null
           : () async {

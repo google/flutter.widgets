@@ -1,5 +1,13 @@
+// Copyright 2020 the Dart project authors.
+//
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file or at
+// https://developers.google.com/open-source/licenses/bsd
+
 import 'package:flutter/material.dart';
 import 'package:self_storing_input/self_storing_input.dart';
+
+import '../primitives/overlay.dart';
 
 /// A style for [SelfStoringText].
 class SelfStoringTextStyle {
@@ -12,7 +20,7 @@ class SelfStoringTextStyle {
   final int maxLines;
 
   const SelfStoringTextStyle(
-      {this.overlayStyle = const OverlayStyle(),
+      {this.overlayStyle = const OverlayStyle.forTextEditor(),
       this.keyboardType,
       this.maxLines = 1});
 }
