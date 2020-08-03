@@ -305,9 +305,8 @@ void main() {
     'VisibilityDetector computes widget bounds in global coordinates',
     widget: _TestOffset(key: _testOffsetKey),
     callback: (tester) async {
-      final testWindow = tester.binding.window;
-      final viewSizeLogical =
-          testWindow.physicalSize / testWindow.devicePixelRatio;
+      final viewSize = tester.binding.renderView?.size;
+      assert(viewSize != null);
 
       final bounds =
           VisibilityDetectorController.instance.widgetBoundsFor(_testOffsetKey);
@@ -318,7 +317,7 @@ void main() {
       expect(
         bounds,
         Rect.fromCenter(
-          center: viewSizeLogical.center(Offset.zero),
+          center: viewSize.center(Offset.zero),
           width: _TestOffset.detectorWidth,
           height: _TestOffset.detectorHeight,
         ),
@@ -413,10 +412,11 @@ Future<void> _doStateChange(WidgetTester tester, VoidCallback callback) async {
 }
 
 // Simulates a screen rotation by swapping the screen width and height.
-Future<void> _simulateScreenRotation(WidgetTester tester) {
-  final oldViewSizePixels = tester.binding.window.physicalSize;
-  final newViewSizePixels =
-      Size(oldViewSizePixels.height, oldViewSizePixels.width);
+Future<void> _simulateScreenRotation(WidgetTester tester) async {
+  final oldViewSize = tester.binding.renderView?.size;
+  assert(oldViewSize != null);
+
+  final newViewSize = Size(oldViewSize.height, oldViewSize.width);
 
   // The typical way to simulate a screen rotation is to wrap the widget tree
   // in a [SizedBox] and change its dimensions.  However, empirical testing
@@ -425,10 +425,13 @@ Future<void> _simulateScreenRotation(WidgetTester tester) {
   // [VisibilityDetectorLayer.attach] without triggering
   // [VisibilityDetectorLayer.addToScene], whereas the [SizedBox] approach
   // triggers both.
-  tester.binding.window.physicalSizeTestValue = newViewSizePixels;
+  //
+  // TODO: Use TestWindow.physicalSizeTestValue.
+  await tester.binding.setSurfaceSize(newViewSize);
+  tester.binding.scheduleFrame();
 
   // Wait for the new frame.
-  return tester.pump();
+  await tester.pump();
 }
 
 /// Verifies that the specified cell of the demo app reported the expected
