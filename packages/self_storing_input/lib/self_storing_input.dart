@@ -8,5 +8,8 @@ export 'src/primitives/operation_result.dart';
 export 'src/primitives/overlay.dart';
 export 'src/primitives/saver.dart';
 export 'src/self_storing_checkbox.dart';
+export 'src/self_storing_checkbox/self_storing_checkbox_style.dart';
+export 'src/self_storing_radio_group.dart';
+export 'src/self_storing_radio_group/self_storing_radio_group_style.dart';
 export 'src/self_storing_text.dart';
 export 'src/self_storing_text/self_storing_text_style.dart';

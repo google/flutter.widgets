@@ -6,8 +6,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../primitives/message_overlay.dart';
 import '../primitives/overlay_builder.dart';
-import 'overlay_box.dart';
 import 'shared_state.dart';
 
 /// The checkbox that saves entered value and
@@ -52,7 +52,12 @@ class _CustomCheckboxState extends State<CustomCheckbox> {
 
   OverlayEntry _buildOverlay(BuildContext context) {
     return createOverlayInTheMiddle(
-      OverlayBox(widget.state),
+      MessageOverlay(
+        message: widget.state.operationResult.error,
+        style: widget.state.style.overlayStyle,
+        closeIconSize: widget.state.style.closeIconSize,
+        overlayController: widget.state.overlayController,
+      ),
       context,
       widget.state.style.overlayStyle,
     );

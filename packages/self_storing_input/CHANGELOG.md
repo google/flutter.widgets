@@ -1,3 +1,7 @@
+# 2.0.1
+
+  * Add self_storing_radio_group.
+
 # 2.0.0
 
   * Add self_storing_checkbox.
