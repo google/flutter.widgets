@@ -1,3 +1,7 @@
+# 0.1.8
+  * Set updateScheduled to false when short circuiting due to empty list.
+    To fix https://github.com/google/flutter.widgets/issues/182.
+
 # 0.1.7
   * Apply viewport dimensions in UnboundedRenderedViewport.performResize.
     To work around change in https://github.com/flutter/flutter/pull/61973 
