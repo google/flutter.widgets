@@ -527,6 +527,79 @@ void main() {
     expect(find.text('Item 0'), findsOneWidget);
     expect(find.text('Separator 0'), findsNothing);
   });
+
+  testWidgets('ItemPositions: Empty list then update to 10 items list',
+      (WidgetTester tester) async {
+    tester.binding.window.devicePixelRatioTestValue = 1.0;
+    tester.binding.window.physicalSizeTestValue =
+        const Size(screenWidth, screenHeight);
+
+    final itemScrollController = ItemScrollController();
+    final itemPositionsListener = ItemPositionsListener.create();
+    final itemCount = ValueNotifier<int>(0);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ValueListenableBuilder(
+          valueListenable: itemCount,
+          builder: (context, itemCount, child) {
+            return ScrollablePositionedList.separated(
+              initialScrollIndex: 0,
+              initialAlignment: 0,
+              itemCount: itemCount,
+              itemScrollController: itemScrollController,
+              itemPositionsListener: itemPositionsListener,
+              itemBuilder: (context, index) => SizedBox(
+                height: itemHeight,
+                child: Text('Item $index'),
+              ),
+              separatorBuilder: (context, index) => SizedBox(
+                height: separatorHeight,
+                child: Text('Separator $index'),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('Item 0'), findsNothing);
+    expect(find.text('Separator 0'), findsNothing);
+    expect(itemPositionsListener.itemPositions.value, []);
+
+    itemCount.value = 10;
+    await tester.pumpAndSettle();
+
+    expect(find.text('Item 0'), findsOneWidget);
+    expect(find.text('Separator 5'), findsOneWidget);
+    expect(find.text('Item 6'), findsOneWidget);
+    expect(find.text('Separator 6'), findsNothing);
+    expect(find.text('Item 7'), findsNothing);
+
+    expect(itemPositionsListener.itemPositions.value, isNotEmpty);
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 0)
+            .itemLeadingEdge,
+        0);
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 5)
+            .itemTrailingEdge,
+        1 - _screenProportion(numberOfItems: 1, numberOfSeparators: 1));
+
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 6)
+            .itemTrailingEdge,
+        1);
+    expect(
+        itemPositionsListener.itemPositions.value
+            .where((position) => position.index == 7),
+        isEmpty);
+  });
 }
 
 double _screenProportion({double numberOfItems, double numberOfSeparators}) =>

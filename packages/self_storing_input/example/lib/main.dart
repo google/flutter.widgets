@@ -166,7 +166,7 @@ class _DemoState extends State<Demo> {
         keyboardType: TextInputType.number,
         decoration:
             InputDecoration(labelText: 'Delay time for the save operation, ms'),
-        inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       )
     ];
   }
