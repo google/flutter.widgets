@@ -1,3 +1,8 @@
+# 2.0.2
+
+  * Add example for JSON input.
+  * Fix layout bug.
+
 # 2.0.1
 
   * Update links to demo.
