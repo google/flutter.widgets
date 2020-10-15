@@ -48,6 +48,7 @@ class _NodeWidgetState extends State<NodeWidget> {
             () => widget.state.toggleNodeExpanded(widget.treeNode.key));
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
