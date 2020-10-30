@@ -3,7 +3,7 @@ This widget visualises a tree structure, where a node can be any widget.
 
 ## Demo
 
-[http://flutter_simple_treeview.surge.sh/](http://flutter_simple_treeview.surge.sh/)
+[https://flutter_simple_treeview.surge.sh/](https://flutter_simple_treeview.surge.sh/)
 
 ## Usage
 
