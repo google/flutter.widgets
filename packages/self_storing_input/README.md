@@ -4,7 +4,7 @@ the entered value to a data store.
 
 ## Demo
 
-[https://self_storing_input_demo.surge.sh](https://self_storing_input_demo.surge.sh)
+[http://self_storing_input_demo.surge.sh](http://self_storing_input_demo.surge.sh)
 
 ## Usage
 
@@ -38,7 +38,7 @@ on tap:
 ```
 GestureDetector(
   onTap: () async {
-    _controller.closeOverlay();
+    _controller.close();
   },
   child: Scaffold(
     body: ...
