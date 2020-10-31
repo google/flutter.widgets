@@ -1,5 +1,6 @@
-# 2.0.2
-  * Replace WhitelistingTextInputFormatter with FilteringTextInputFormatter.
+# 3.0.0
+
+  * Make Saver strongly typed.
 
 # 2.0.1
 
