@@ -38,7 +38,7 @@ on tap:
 ```
 GestureDetector(
   onTap: () async {
-    _controller.closeOverlay();
+    _controller.close();
   },
   child: Scaffold(
     body: ...
