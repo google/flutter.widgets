@@ -2,6 +2,10 @@
 
   * Make Saver strongly typed.
 
+# 2.0.2
+
+  * Replace WhitelistingTextInputFormatter with FilteringTextInputFormatter.
+
 # 2.0.1
 
   * Add self_storing_radio_group.

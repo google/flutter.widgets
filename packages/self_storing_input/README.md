@@ -4,7 +4,7 @@ the entered value to a data store.
 
 ## Demo
 
-[http://self_storing_input_demo.surge.sh](http://self_storing_input_demo.surge.sh)
+[https://self_storing_input_demo.surge.sh](https://self_storing_input_demo.surge.sh)
 
 ## Usage
 
