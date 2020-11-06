@@ -45,5 +45,5 @@ class VisibilityDetectorController {
   ///
   /// Returns null if the specified [VisibilityDetector] is not visible or is
   /// not found.
-  Rect widgetBoundsFor(Key key) => VisibilityDetectorLayer.widgetBounds[key];
+  Rect? widgetBoundsFor(Key key) => VisibilityDetectorLayer.widgetBounds[key];
 }

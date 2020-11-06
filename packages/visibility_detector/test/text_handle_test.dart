@@ -46,7 +46,7 @@ void main() {
 /// 2: The [Rect] of the ending selection handle.
 Future<List<Rect>> _setUpSelectionHandles(
   WidgetTester tester,
-  Widget Function(Widget) wrapTextField,
+  Widget Function(Widget)? wrapTextField,
 ) async {
   final textController = TextEditingController()
     ..text = 'The five boxing wizards jump quickly';
@@ -71,7 +71,7 @@ Future<List<Rect>> _setUpSelectionHandles(
   await tester.pumpAndSettle();
 
   final state = tester.state<EditableTextState>(find.byType(EditableText));
-  expect(state.selectionOverlay.handlesAreVisible, true);
+  expect(state.selectionOverlay!.handlesAreVisible, true);
 
   // Find the text selection handles (via [CustomPaint] widgets within
   // [CompositedTransformFollower] parents).

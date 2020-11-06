@@ -50,7 +50,7 @@ void main() => runApp(const VisibilityDetectorDemo());
 
 /// The root widget for the demo app.
 class VisibilityDetectorDemo extends StatelessWidget {
-  const VisibilityDetectorDemo({Key key}) : super(key: key);
+  const VisibilityDetectorDemo({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +64,7 @@ class VisibilityDetectorDemo extends StatelessWidget {
 
 /// The main page [VisibilityDetectorDemo].
 class VisibilityDetectorDemoPage extends StatefulWidget {
-  const VisibilityDetectorDemoPage({Key key}) : super(key: key);
+  const VisibilityDetectorDemoPage({Key? key}) : super(key: key);
 
   @override
   VisibilityDetectorDemoPageState createState() =>
@@ -109,7 +109,7 @@ class VisibilityDetectorDemoPageState
       ),
       body: Column(
         children: <Widget>[
-          _tableShown ? Expanded(child: table) : const Spacer(),
+          _tableShown ? Expanded(child: table!) : const Spacer(),
           const VisibilityReport(title: 'Visibility'),
         ],
       ),
@@ -119,9 +119,9 @@ class VisibilityDetectorDemoPageState
 
 /// An individual row for the pseudo-table of [VisibilityDetector] widgets.
 class DemoPageRow extends StatelessWidget {
-  const DemoPageRow({Key key, this.rowIndex}) : super(key: key);
+  const DemoPageRow({Key? key, this.rowIndex}) : super(key: key);
 
-  final int rowIndex;
+  final int? rowIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +129,7 @@ class DemoPageRow extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.all(_rowPadding),
       itemBuilder: (BuildContext context, int columnIndex) {
-        return DemoPageCell(rowIndex: rowIndex, columnIndex: columnIndex);
+        return DemoPageCell(rowIndex: rowIndex!, columnIndex: columnIndex);
       },
     );
   }
@@ -137,7 +137,7 @@ class DemoPageRow extends StatelessWidget {
 
 /// An individual cell for the pseudo-table of [VisibilityDetector] widgets.
 class DemoPageCell extends StatelessWidget {
-  DemoPageCell({Key key, this.rowIndex, this.columnIndex})
+  DemoPageCell({Key? key, required this.rowIndex, required this.columnIndex})
       : _cellName = 'Item $rowIndex-$columnIndex',
         _backgroundColor = ((rowIndex + columnIndex) % 2 == 0)
             ? Colors.pink[200]
@@ -150,7 +150,7 @@ class DemoPageCell extends StatelessWidget {
   /// The text to show for the cell.
   final String _cellName;
 
-  final Color _backgroundColor;
+  final Color? _backgroundColor;
 
   /// [VisibilityDetector] callback for when the visibility of the widget
   /// changes.  Triggers the [visibilityListeners] callbacks.
@@ -182,21 +182,21 @@ class DemoPageCell extends StatelessWidget {
 /// A widget that lists the reported visibility percentages of the
 /// [VisibilityDetector] widgets on the page.
 class VisibilityReport extends StatelessWidget {
-  const VisibilityReport({Key key, this.title}) : super(key: key);
+  const VisibilityReport({Key? key, this.title}) : super(key: key);
 
   /// The text to use for the heading of the report.
-  final String title;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
     final headingTextStyle =
-        Theme.of(context).textTheme.headline6.copyWith(color: Colors.white);
+        Theme.of(context).textTheme.headline6!.copyWith(color: Colors.white);
 
     final heading = Container(
       padding: const EdgeInsets.all(_reportPadding),
       alignment: Alignment.centerLeft,
       decoration: const BoxDecoration(color: Colors.black),
-      child: Text(title, style: headingTextStyle),
+      child: Text(title!, style: headingTextStyle),
     );
 
     final grid = Container(
@@ -214,7 +214,7 @@ class VisibilityReport extends StatelessWidget {
 
 /// The portion of [VisibilityReport] that shows data.
 class VisibilityReportGrid extends StatefulWidget {
-  const VisibilityReportGrid({Key key}) : super(key: key);
+  const VisibilityReportGrid({Key? key}) : super(key: key);
 
   @override
   VisibilityReportGridState createState() => VisibilityReportGridState();
@@ -226,7 +226,7 @@ class VisibilityReportGridState extends State<VisibilityReportGrid> {
   final _visibilities = SplayTreeMap<RowColumn, double>();
 
   /// The [Text] widgets used to fill our [GridView].
-  List<Text> _reportItems;
+  List<Text>? _reportItems;
 
   /// See [State.initState].  Adds a callback to [visibilityListeners] to update
   /// the visibility report with the widget's visibility.
@@ -287,7 +287,7 @@ class VisibilityReportGridState extends State<VisibilityReportGrid> {
       crossAxisCount: 3,
       childAspectRatio: 8,
       padding: const EdgeInsets.all(5),
-      children: _reportItems,
+      children: _reportItems!,
     );
   }
 }
