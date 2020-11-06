@@ -31,21 +31,21 @@ class VisibilityDetector extends SingleChildRenderObjectWidget {
   ///
   /// `onVisibilityChanged` may be null to disable this [VisibilityDetector].
   const VisibilityDetector({
-    @required Key key,
-    @required Widget child,
-    @required this.onVisibilityChanged,
-  })  : assert(key != null),
+    required Key key,
+    required Widget child,
+    required this.onVisibilityChanged,
+  })   : assert(key != null),
         assert(child != null),
         super(key: key, child: child);
 
   /// The callback to invoke when this widget's visibility changes.
-  final VisibilityChangedCallback onVisibilityChanged;
+  final VisibilityChangedCallback? onVisibilityChanged;
 
   /// See [RenderObjectWidget.createRenderObject].
   @override
   RenderVisibilityDetector createRenderObject(BuildContext context) {
     return RenderVisibilityDetector(
-      key: key,
+      key: key!,
       onVisibilityChanged: onVisibilityChanged,
     );
   }
@@ -72,7 +72,7 @@ class VisibilityInfo {
   /// If `size` or `visibleBounds` are omitted or null, the [VisibilityInfo]
   /// will be initialized to [Offset.zero] or [Rect.zero] respectively.  This
   /// will indicate that the corresponding widget is competely hidden.
-  const VisibilityInfo({@required this.key, Size size, Rect visibleBounds})
+  const VisibilityInfo({required this.key, Size? size, Rect? visibleBounds})
       : assert(key != null),
         size = size ?? Size.zero,
         visibleBounds = visibleBounds ?? Rect.zero;
@@ -83,9 +83,9 @@ class VisibilityInfo {
   /// [widgetBounds] and [clipRect] are expected to be in the same coordinate
   /// system.
   factory VisibilityInfo.fromRects({
-    @required Key key,
-    @required Rect widgetBounds,
-    @required Rect clipRect,
+    required Key key,
+    required Rect widgetBounds,
+    required Rect clipRect,
   }) {
     assert(widgetBounds != null);
     assert(clipRect != null);

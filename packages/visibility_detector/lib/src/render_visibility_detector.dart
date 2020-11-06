@@ -17,23 +17,23 @@ import 'visibility_detector_layer.dart';
 class RenderVisibilityDetector extends RenderProxyBox {
   /// Constructor.  See the corresponding properties for parameter details.
   RenderVisibilityDetector({
-    RenderBox child,
-    @required this.key,
-    @required VisibilityChangedCallback onVisibilityChanged,
-  })  : assert(key != null),
+    RenderBox? child,
+    required this.key,
+    required VisibilityChangedCallback? onVisibilityChanged,
+  })   : assert(key != null),
         _onVisibilityChanged = onVisibilityChanged,
         super(child);
 
   /// The key for the corresponding [VisibilityDetector] widget.  Never null.
   final Key key;
 
-  VisibilityChangedCallback _onVisibilityChanged;
+  VisibilityChangedCallback? _onVisibilityChanged;
 
   /// See [VisibilityDetector.onVisibilityChanged].
-  VisibilityChangedCallback get onVisibilityChanged => _onVisibilityChanged;
+  VisibilityChangedCallback? get onVisibilityChanged => _onVisibilityChanged;
 
   /// Used by [VisibilityDetector.updateRenderObject].
-  set onVisibilityChanged(VisibilityChangedCallback value) {
+  set onVisibilityChanged(VisibilityChangedCallback? value) {
     _onVisibilityChanged = value;
     markNeedsCompositingBitsUpdate();
     markNeedsPaint();
@@ -59,7 +59,7 @@ class RenderVisibilityDetector extends RenderProxyBox {
         key: key,
         widgetSize: semanticBounds.size,
         paintOffset: offset,
-        onVisibilityChanged: onVisibilityChanged);
+        onVisibilityChanged: onVisibilityChanged!);
     context.pushLayer(layer, super.paint, offset);
   }
 }
