@@ -6,8 +6,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pedantic/pedantic.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
+import 'package:pedantic/pedantic.dart';
 
 /// This test sets up two linked, side-by-side [ListView]s, one with letter
 /// captions and one with number captions, and verifies that they stay in sync
@@ -291,7 +291,7 @@ class TestEmptyGroup extends StatefulWidget {
 }
 
 class TestEmptyGroupState extends State<TestEmptyGroup> {
-  LinkedScrollControllerGroup _controllers;
+  late LinkedScrollControllerGroup _controllers;
 
   @override
   void initState() {
@@ -311,9 +311,9 @@ class Test extends StatefulWidget {
 }
 
 class TestState extends State<Test> {
-  LinkedScrollControllerGroup _controllers;
-  ScrollController _letters;
-  ScrollController _numbers;
+  late LinkedScrollControllerGroup _controllers;
+  late ScrollController _letters;
+  late ScrollController _numbers;
 
   @override
   void initState() {
