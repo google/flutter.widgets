@@ -1,3 +1,7 @@
+# 3.0.1
+
+  * Make widgets strongly typed.
+
 # 3.0.0
 
   * Make Saver strongly typed.

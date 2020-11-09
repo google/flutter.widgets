@@ -31,17 +31,16 @@ abstract class Saver<K> {
 
 /// Trivial implementation of [Saver]. Always returns null value and
 /// successful operation result.
-class NoOpSaver implements Saver<Object> {
+class NoOpSaver<K> implements Saver<K> {
   const NoOpSaver();
 
   @override
-  Future<T> load<T>(Object itemKey) async => null;
+  Future<T> load<T>(K itemKey) async => null;
 
   @override
-  OperationResult validate<T>(Object itemKey, T value) =>
-      OperationResult.success();
+  OperationResult validate<T>(K itemKey, T value) => OperationResult.success();
 
   @override
-  Future<OperationResult> save<T>(Object itemKey, T value) async =>
+  Future<OperationResult> save<T>(K itemKey, T value) async =>
       OperationResult.success();
 }

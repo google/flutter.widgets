@@ -8,10 +8,10 @@ import 'primitives/the_progress_indicator.dart';
 import 'self_storing_radio_group/self_storing_radio_group_style.dart';
 
 /// A widget to enter and store a boolean value.
-class SelfStoringRadioGroup extends StatefulWidget {
+class SelfStoringRadioGroup<K> extends StatefulWidget {
   /// [Saver.validate] will not be invoked for [SelfStoringRadioGroup].
-  final Saver saver;
-  final Object itemKey;
+  final Saver<K> saver;
+  final K itemKey;
   final OverlayController overlayController;
   final SelfStoringRadioGroupStyle style;
 
@@ -29,13 +29,14 @@ class SelfStoringRadioGroup extends StatefulWidget {
   SelfStoringRadioGroup(
     this.itemKey, {
     Key key,
-    this.saver = const NoOpSaver(),
+    saver,
     overlayController,
     this.style = const SelfStoringRadioGroupStyle(),
     this.items,
     this.defaultValue,
     this.isUnselectable = false,
   })  : overlayController = overlayController ?? OverlayController(),
+        this.saver = saver ?? NoOpSaver<K>(),
         super(key: key);
 
   @override
