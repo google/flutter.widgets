@@ -14,9 +14,9 @@ import 'self_storing_text/self_storing_text_style.dart';
 import 'self_storing_text/shared_state.dart';
 
 /// A widget to enter and store single or multiline text.
-class SelfStoringText extends StatefulWidget {
-  final Saver saver;
-  final Object itemKey;
+class SelfStoringText<K> extends StatefulWidget {
+  final Saver<K> saver;
+  final K itemKey;
   final String emptyText;
   final OverlayController overlayController;
   final SelfStoringTextStyle style;
@@ -24,11 +24,12 @@ class SelfStoringText extends StatefulWidget {
   SelfStoringText(
     this.itemKey, {
     Key key,
-    this.saver = const NoOpSaver(),
+    saver,
     this.emptyText = '--',
     overlayController,
     this.style = const SelfStoringTextStyle(),
   })  : overlayController = overlayController ?? OverlayController(),
+        this.saver = saver ?? NoOpSaver<K>(),
         super(key: key);
 
   @override
