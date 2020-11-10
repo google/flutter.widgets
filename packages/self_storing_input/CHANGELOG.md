@@ -1,3 +1,7 @@
+# 3.1.0
+
+  * Enable null-safety.
+
 # 3.0.1
 
   * Make widgets strongly typed.

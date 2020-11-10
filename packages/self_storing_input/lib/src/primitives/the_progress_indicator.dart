@@ -14,8 +14,8 @@ class _ProgressIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 22,
-      height: 22,
+      width: 16,
+      height: 16,
       margin: EdgeInsets.all(8),
       child: Align(child: CircularProgressIndicator()),
     );

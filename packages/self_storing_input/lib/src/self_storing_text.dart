@@ -16,6 +16,8 @@ import 'self_storing_text/shared_state.dart';
 /// A widget to enter and store single or multiline text.
 class SelfStoringText<K> extends StatefulWidget {
   final Saver<K> saver;
+
+  /// Key of the item to be provided to [saver].
   final K itemKey;
   final String emptyText;
   final OverlayController overlayController;
@@ -23,7 +25,7 @@ class SelfStoringText<K> extends StatefulWidget {
 
   SelfStoringText(
     this.itemKey, {
-    Key key,
+    Key? key,
     saver,
     this.emptyText = '--',
     overlayController,
@@ -37,7 +39,7 @@ class SelfStoringText<K> extends StatefulWidget {
 }
 
 class _SelfStoringTextState extends State<SelfStoringText> {
-  SharedState _state;
+  SharedState? _state;
   bool _isLoading = true;
 
   @override
@@ -48,7 +50,7 @@ class _SelfStoringTextState extends State<SelfStoringText> {
 
   @override
   void dispose() {
-    _state.removeListener(_onSharedStateChange);
+    _state!.removeListener(_onSharedStateChange);
     super.dispose();
   }
 
@@ -73,13 +75,13 @@ class _SelfStoringTextState extends State<SelfStoringText> {
       return theProgressIndicator;
     }
 
-    var text = _state.storedValue;
+    var text = _state!.storedValue;
     if (text == null || text.isEmpty) text = widget.emptyText;
 
     return Row(
       children: [
         Flexible(child: Text(text)),
-        EditButton(_state),
+        EditButton(_state!),
       ],
     );
   }

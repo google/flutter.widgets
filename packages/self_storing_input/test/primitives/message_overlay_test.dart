@@ -17,6 +17,7 @@ void main() {
         (WidgetTester tester) async {
       var style = OverlayStyle.forMessage();
       var content = MessageOverlay(
+        message: '',
         style: style,
         overlayController: OverlayController(),
       );

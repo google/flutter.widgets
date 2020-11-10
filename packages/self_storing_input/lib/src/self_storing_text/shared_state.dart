@@ -13,14 +13,14 @@ import 'self_storing_text_style.dart';
 /// State that needs to be shared between [OverlayBox] and its
 /// parent.
 class SharedState with ChangeNotifier {
-  String _storedValue;
+  String? _storedValue;
   final OverlayController overlayController;
   final Saver saver;
   final Object itemKey;
   final SelfStoringTextStyle style;
 
-  String get storedValue => _storedValue;
-  set storedValue(String value) {
+  String? get storedValue => _storedValue;
+  set storedValue(String? value) {
     if (value == _storedValue) return;
     _storedValue = value;
     notifyListeners();
@@ -28,9 +28,9 @@ class SharedState with ChangeNotifier {
 
   SharedState({
     storedValue,
-    this.overlayController,
-    this.saver,
-    this.itemKey,
-    this.style,
+    required this.overlayController,
+    required this.saver,
+    required this.itemKey,
+    required this.style,
   }) : _storedValue = storedValue;
 }
