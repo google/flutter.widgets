@@ -17,6 +17,8 @@ import 'self_storing_checkbox/self_storing_checkbox_style.dart';
 class SelfStoringCheckbox<K> extends StatefulWidget {
   /// [Saver.validate] will not be invoked for [SelfStoringCheckbox].
   final Saver<K> saver;
+
+  /// Key of the item to be provided to [saver].
   final K itemKey;
   final OverlayController overlayController;
   final SelfStoringCheckboxStyle style;
@@ -33,13 +35,14 @@ class SelfStoringCheckbox<K> extends StatefulWidget {
 
   SelfStoringCheckbox(
     this.itemKey, {
-    Key key,
+    Key? key,
     saver,
     overlayController,
     this.tristate = true,
-    this.title,
+    Widget? title,
     this.style = const SelfStoringCheckboxStyle(),
   })  : overlayController = overlayController ?? OverlayController(),
+        this.title = title ?? Container(width: 0, height: 0),
         this.saver = saver ?? NoOpSaver<K>(),
         super(key: key);
 
@@ -49,7 +52,7 @@ class SelfStoringCheckbox<K> extends StatefulWidget {
 
 class _SelfStoringCheckboxState extends State<SelfStoringCheckbox> {
   bool _isLoading = true;
-  SharedState _state;
+  SharedState? _state;
 
   @override
   void initState() {
@@ -59,7 +62,7 @@ class _SelfStoringCheckboxState extends State<SelfStoringCheckbox> {
 
   @override
   void dispose() {
-    _state.removeListener(_onSharedStateChange);
+    _state!.removeListener(_onSharedStateChange);
     super.dispose();
   }
 
@@ -88,9 +91,9 @@ class _SelfStoringCheckboxState extends State<SelfStoringCheckbox> {
 
     return Row(
       children: [
-        CustomCheckbox(_state),
+        CustomCheckbox(_state!),
         widget.title,
-        if (_state.isSaving) theProgressIndicator,
+        if (_state!.isSaving) theProgressIndicator,
       ],
     );
   }

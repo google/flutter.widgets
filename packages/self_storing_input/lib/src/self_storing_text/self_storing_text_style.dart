@@ -12,7 +12,7 @@ import '../primitives/overlay.dart';
 /// A style for [SelfStoringText].
 class SelfStoringTextStyle {
   final OverlayStyle overlayStyle;
-  final TextInputType keyboardType;
+  final TextInputType? keyboardType;
 
   /// Maximum number of lines. Infinite if null.
   ///

@@ -17,17 +17,17 @@ class _HappyTestSaver implements Saver<String> {
   Map<String, dynamic> storage = {};
 
   @override
-  Future<T> load<T>(String itemKey) async {
+  Future<T?> load<T>(String itemKey) async {
     return storage[itemKey];
   }
 
   @override
-  OperationResult validate<T>(String itemKey, T value) {
+  OperationResult validate<T>(String itemKey, T? value) {
     return OperationResult.success();
   }
 
   @override
-  Future<OperationResult> save<T>(String itemKey, T value) async {
+  Future<OperationResult> save<T>(String itemKey, T? value) async {
     storage[itemKey] = value;
     return OperationResult.success();
   }
@@ -92,7 +92,7 @@ void main() {
       // Check the text value.
       expect(
         find.byWidgetPredicate((widget) =>
-            widget is TextFormField && widget.controller.text == value),
+            widget is TextFormField && widget.controller!.text == value),
         findsOneWidget,
       );
 

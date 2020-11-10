@@ -28,8 +28,8 @@ class _OverlayBoxState extends State<OverlayBox> {
   final TextEditingController _textController = TextEditingController();
   final FocusNode _focusNode = FocusNode()..requestFocus();
   bool _isSaving = false;
-  String _validationError;
-  String _savingError;
+  String? _validationError;
+  String? _savingError;
 
   @override
   void initState() {
@@ -64,7 +64,7 @@ class _OverlayBoxState extends State<OverlayBox> {
 
   /// This method is invoked when user clicked 'Save'.
   Future<OperationResult> _saveEnteredValue() async {
-    var value = _textController.text;
+    String? value = _textController.text;
     // We cannot differentiate empty string and null,
     // so we always save null for consistency.
     if (value == '') value = null;

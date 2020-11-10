@@ -7,7 +7,7 @@
 /// Result of value validation.
 class OperationResult {
   bool get isSuccess => error == null;
-  final String error;
+  final String? error;
 
   const OperationResult.success() : error = null;
 

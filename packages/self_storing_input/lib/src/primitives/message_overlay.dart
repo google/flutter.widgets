@@ -11,11 +11,14 @@ import 'package:self_storing_input/self_storing_input.dart';
 class MessageOverlay extends StatelessWidget {
   final String message;
   final OverlayStyle style;
-  final double closeIconSize;
-  final OverlayController overlayController;
+  final double? closeIconSize;
+  final OverlayController? overlayController;
 
   const MessageOverlay(
-      {this.message, this.style, this.closeIconSize, this.overlayController});
+      {required this.message,
+      required this.style,
+      this.closeIconSize,
+      this.overlayController});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +39,7 @@ class MessageOverlay extends StatelessWidget {
         child: IconButton(
           padding: EdgeInsets.all(0.0),
           icon: Icon(Icons.clear, size: iconSize),
-          onPressed: overlayController.close,
+          onPressed: overlayController!.close,
         ),
       ),
     );
@@ -48,7 +51,7 @@ class MessageOverlay extends StatelessWidget {
       child: SizedBox(
         height: style.height - iconSize - style.margin,
         child: SingleChildScrollView(
-          child: Text(message ?? ''),
+          child: Text(message),
         ),
       ),
     );
