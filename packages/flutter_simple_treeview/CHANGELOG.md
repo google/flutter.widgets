@@ -1,3 +1,7 @@
+# 2.1.0
+
+  * Enable null-safety.
+
 # 2.0.2
 
   * Add example for JSON input.

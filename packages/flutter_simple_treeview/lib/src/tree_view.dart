@@ -17,21 +17,21 @@ class TreeView extends StatefulWidget {
   final List<TreeNode> nodes;
 
   /// Horizontal indent between levels.
-  final double indent;
+  final double? indent;
 
   /// Size of the expand/collapse icon.
-  final double iconSize;
+  final double? iconSize;
 
   /// Tree controller to manage the tree state.
-  final TreeController treeController;
+  final TreeController? treeController;
 
   TreeView(
-      {Key key,
-      Iterable<TreeNode> nodes,
+      {Key? key,
+      required List<TreeNode> nodes,
       this.indent = 40,
       this.iconSize,
       this.treeController})
-      : this.nodes = copyTreeNodes(nodes),
+      : nodes = copyTreeNodes(nodes),
         super(key: key);
 
   @override
@@ -39,7 +39,7 @@ class TreeView extends StatefulWidget {
 }
 
 class _TreeViewState extends State<TreeView> {
-  TreeController _controller;
+  TreeController? _controller;
 
   @override
   void initState() {
@@ -50,6 +50,6 @@ class _TreeViewState extends State<TreeView> {
   @override
   Widget build(BuildContext context) {
     return buildNodes(
-        widget.nodes, widget.indent, _controller, widget.iconSize);
+        widget.nodes, widget.indent, _controller!, widget.iconSize);
   }
 }
