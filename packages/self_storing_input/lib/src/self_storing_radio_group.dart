@@ -47,7 +47,7 @@ class SelfStoringRadioGroup<K> extends StatefulWidget {
 
 class _SelfStoringRadioGroupState extends State<SelfStoringRadioGroup> {
   bool _isLoading = true;
-  SharedState? _state;
+  late SharedState _state;
 
   @override
   void initState() {
@@ -57,8 +57,8 @@ class _SelfStoringRadioGroupState extends State<SelfStoringRadioGroup> {
 
   @override
   void dispose() {
-    _state!.removeListener(_emptySetState);
-    widget.overlayController.removeListener(_state!.closeOverlay);
+    _state.removeListener(_emptySetState);
+    widget.overlayController.removeListener(_state.closeOverlay);
     super.dispose();
   }
 
@@ -79,7 +79,7 @@ class _SelfStoringRadioGroupState extends State<SelfStoringRadioGroup> {
       storedValue,
       widget.isUnselectable,
     )..addListener(_emptySetState);
-    widget.overlayController.addListener(_state!.closeOverlay);
+    widget.overlayController.addListener(_state.closeOverlay);
 
     setState(() => {});
   }
@@ -101,7 +101,7 @@ class _SelfStoringRadioGroupState extends State<SelfStoringRadioGroup> {
       children: [
         CustomRadio(_state, value),
         Flexible(child: Text(name)),
-        if (_state!.isSaving as bool && _state!.pendingValue == value)
+        if (_state.isSaving as bool && _state.pendingValue == value)
           theProgressIndicator,
       ],
     );

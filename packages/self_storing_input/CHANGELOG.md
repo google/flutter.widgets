@@ -1,3 +1,7 @@
+# 4.0.0-nullsafety.0
+
+  * Set nullsafety version
+
 # 3.1.0
 
   * Enable null-safety.

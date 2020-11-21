@@ -52,7 +52,7 @@ class SelfStoringCheckbox<K> extends StatefulWidget {
 
 class _SelfStoringCheckboxState extends State<SelfStoringCheckbox> {
   bool _isLoading = true;
-  SharedState? _state;
+  late SharedState _state;
 
   @override
   void initState() {
@@ -62,7 +62,7 @@ class _SelfStoringCheckboxState extends State<SelfStoringCheckbox> {
 
   @override
   void dispose() {
-    _state!.removeListener(_onSharedStateChange);
+    _state.removeListener(_onSharedStateChange);
     super.dispose();
   }
 
@@ -91,9 +91,9 @@ class _SelfStoringCheckboxState extends State<SelfStoringCheckbox> {
 
     return Row(
       children: [
-        CustomCheckbox(_state!),
+        CustomCheckbox(_state),
         widget.title,
-        if (_state!.isSaving) theProgressIndicator,
+        if (_state.isSaving) theProgressIndicator,
       ],
     );
   }

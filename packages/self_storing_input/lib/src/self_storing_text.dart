@@ -39,7 +39,7 @@ class SelfStoringText<K> extends StatefulWidget {
 }
 
 class _SelfStoringTextState extends State<SelfStoringText> {
-  SharedState? _state;
+  late SharedState _state;
   bool _isLoading = true;
 
   @override
@@ -50,7 +50,7 @@ class _SelfStoringTextState extends State<SelfStoringText> {
 
   @override
   void dispose() {
-    _state!.removeListener(_onSharedStateChange);
+    _state.removeListener(_onSharedStateChange);
     super.dispose();
   }
 
@@ -75,13 +75,13 @@ class _SelfStoringTextState extends State<SelfStoringText> {
       return theProgressIndicator;
     }
 
-    var text = _state!.storedValue;
+    var text = _state.storedValue;
     if (text == null || text.isEmpty) text = widget.emptyText;
 
     return Row(
       children: [
         Flexible(child: Text(text)),
-        EditButton(_state!),
+        EditButton(_state),
       ],
     );
   }
