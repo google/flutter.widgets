@@ -313,7 +313,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: () => cancelScrollCallback?.call(),
+        onPanDown: cancelScrollCallback,
         excludeFromSemantics: true,
         child: Stack(
           children: <Widget>[
@@ -544,6 +544,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                 startingListDisplay == _ListDisplay.back && opacity.value <= 0.5) {
       setState(() {
         listDisplay = _ListDisplay.back;
+        opacity.parent = const AlwaysStoppedAnimation<double>(0.0);
       });
       scrollNotificationCallback = null;
       cancelScrollCallback = null;
