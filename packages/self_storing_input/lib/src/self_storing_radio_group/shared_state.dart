@@ -52,7 +52,6 @@ class SharedState with ChangeNotifier {
   /// Tries to save the [value], showing spinning wheal near [newPendingValue]
   /// while saving.
   Future<void> select(Object value, bool selected) async {
-    assert(selected != null);
     _selectedValue = selected ? value : defaultValue;
     _pendingValue = value;
     _isSaving = true;
