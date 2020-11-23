@@ -12,13 +12,13 @@ class MessageOverlay extends StatelessWidget {
   final String message;
   final OverlayStyle style;
   final double? closeIconSize;
-  final OverlayController? overlayController;
+  final OverlayController overlayController;
 
   const MessageOverlay(
       {required this.message,
       required this.style,
       this.closeIconSize,
-      this.overlayController});
+      required this.overlayController});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class MessageOverlay extends StatelessWidget {
         child: IconButton(
           padding: EdgeInsets.all(0.0),
           icon: Icon(Icons.clear, size: iconSize),
-          onPressed: overlayController!.close,
+          onPressed: overlayController.close,
         ),
       ),
     );
