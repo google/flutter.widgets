@@ -1,11 +1,11 @@
 name: flutter_simple_treeview
-version: 2.0.2
+version: 3.0.0-nullsafety.0
 description: >
   A widget, that visualises a tree structure, where a node can be any widget.
 homepage: https://github.com/google/flutter.widgets
 
 environment:
-  sdk: ">=2.3.0 <3.0.0"
+  sdk: '>=2.12.0-0 <3.0.0'
   flutter: ^1.12.13+hotfix.5
 
 dependencies:
