@@ -8,34 +8,37 @@ import 'primitives/the_progress_indicator.dart';
 import 'self_storing_radio_group/self_storing_radio_group_style.dart';
 
 /// A widget to enter and store a boolean value.
-class SelfStoringRadioGroup extends StatefulWidget {
+class SelfStoringRadioGroup<K> extends StatefulWidget {
   /// [Saver.validate] will not be invoked for [SelfStoringRadioGroup].
-  final Saver saver;
-  final Object itemKey;
+  final Saver<K> saver;
+
+  /// Key of the item to be provided to [saver].
+  final K itemKey;
   final OverlayController overlayController;
   final SelfStoringRadioGroupStyle style;
 
   /// Value to use if the loaded value is not in the list of values or
   /// if all values are unchecked.
-  final Object defaultValue;
+  final Object? defaultValue;
 
   /// If true, the radio buttons in the group can be unselected,
   /// returning to the state when user did not enter a value yet.
   final bool isUnselectable;
 
-  // Map <value, display name>.
+  /// Map <value, display name>.
   final Map<Object, String> items;
 
   SelfStoringRadioGroup(
     this.itemKey, {
-    Key key,
-    this.saver = const NoOpSaver(),
+    Key? key,
+    saver,
     overlayController,
     this.style = const SelfStoringRadioGroupStyle(),
-    this.items,
+    required this.items,
     this.defaultValue,
     this.isUnselectable = false,
   })  : overlayController = overlayController ?? OverlayController(),
+        this.saver = saver ?? NoOpSaver<K>(),
         super(key: key);
 
   @override
@@ -44,7 +47,7 @@ class SelfStoringRadioGroup extends StatefulWidget {
 
 class _SelfStoringRadioGroupState extends State<SelfStoringRadioGroup> {
   bool _isLoading = true;
-  SharedState _state;
+  late SharedState _state;
 
   @override
   void initState() {
@@ -62,7 +65,7 @@ class _SelfStoringRadioGroupState extends State<SelfStoringRadioGroup> {
   void _emptySetState() => setState(() {});
 
   Future<void> _loadValue() async {
-    var storedValue = await widget.saver.load<Object>(widget.itemKey);
+    Object? storedValue = await widget.saver.load<Object>(widget.itemKey);
     if (!widget.items.containsKey(storedValue))
       storedValue = widget.defaultValue;
 
@@ -86,19 +89,19 @@ class _SelfStoringRadioGroupState extends State<SelfStoringRadioGroup> {
     if (_isLoading) return theProgressIndicator;
 
     List<Widget> elements = widget.items.keys
-        .map((v) => _buildRadioButton(v, widget.items[v]))
+        .map((v) => _buildRadioButton(v, widget.items[v] ?? ''))
         .toList(growable: false);
     return Column(
       children: elements,
     );
   }
 
-  Widget _buildRadioButton(Object value, Object name) {
+  Widget _buildRadioButton(Object value, String name) {
     return Row(
       children: [
         CustomRadio(_state, value),
-        Flexible(child: Text(name ?? '')),
-        if (_state.isSaving && _state.pendingValue == value)
+        Flexible(child: Text(name)),
+        if (_state.isSaving as bool && _state.pendingValue == value)
           theProgressIndicator,
       ],
     );

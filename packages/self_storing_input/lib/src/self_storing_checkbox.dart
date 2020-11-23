@@ -14,10 +14,12 @@ import 'self_storing_checkbox/custom_checkbox.dart';
 import 'self_storing_checkbox/self_storing_checkbox_style.dart';
 
 /// A widget to enter and store a boolean value.
-class SelfStoringCheckbox extends StatefulWidget {
+class SelfStoringCheckbox<K> extends StatefulWidget {
   /// [Saver.validate] will not be invoked for [SelfStoringCheckbox].
-  final Saver saver;
-  final Object itemKey;
+  final Saver<K> saver;
+
+  /// Key of the item to be provided to [saver].
+  final K itemKey;
   final OverlayController overlayController;
   final SelfStoringCheckboxStyle style;
 
@@ -33,13 +35,15 @@ class SelfStoringCheckbox extends StatefulWidget {
 
   SelfStoringCheckbox(
     this.itemKey, {
-    Key key,
-    this.saver = const NoOpSaver(),
+    Key? key,
+    saver,
     overlayController,
     this.tristate = true,
-    this.title,
+    Widget? title,
     this.style = const SelfStoringCheckboxStyle(),
   })  : overlayController = overlayController ?? OverlayController(),
+        this.title = title ?? Container(width: 0, height: 0),
+        this.saver = saver ?? NoOpSaver<K>(),
         super(key: key);
 
   @override
@@ -48,7 +52,7 @@ class SelfStoringCheckbox extends StatefulWidget {
 
 class _SelfStoringCheckboxState extends State<SelfStoringCheckbox> {
   bool _isLoading = true;
-  SharedState _state;
+  late SharedState _state;
 
   @override
   void initState() {

@@ -1,3 +1,15 @@
+# 4.0.0-nullsafety.0
+
+  * Set nullsafety version
+
+# 3.1.0
+
+  * Enable null-safety.
+
+# 3.0.1
+
+  * Make widgets strongly typed.
+
 # 3.0.0
 
   * Make Saver strongly typed.

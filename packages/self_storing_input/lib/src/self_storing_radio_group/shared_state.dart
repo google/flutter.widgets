@@ -17,24 +17,24 @@ class SharedState with ChangeNotifier {
   final Object itemKey;
   final SelfStoringRadioGroupStyle style;
   final OverlayController overlayController;
-  final Object defaultValue;
+  final Object? defaultValue;
 
   /// If true, the radio buttons in the group can be unselected,
   /// returning to the state when user did not enter value yet.
   final bool isUnselectable;
 
-  OverlayEntry overlay;
+  OverlayEntry? overlay;
   OperationResult operationResult = OperationResult.success();
-  Object storedValue;
+  Object? storedValue;
 
-  Object get selectedValue => _selectedValue;
-  Object _selectedValue;
+  Object? get selectedValue => _selectedValue;
+  Object? _selectedValue;
 
   /// Value of the radio button, that caused the change of the value and
   /// triggered the saving operation.
   /// We need it to show the spinning wheel.
-  Object get pendingValue => _pendingValue;
-  Object _pendingValue;
+  Object? get pendingValue => _pendingValue;
+  Object? _pendingValue;
 
   Object get isSaving => _isSaving;
   Object _isSaving = false;
@@ -52,7 +52,6 @@ class SharedState with ChangeNotifier {
   /// Tries to save the [value], showing spinning wheal near [newPendingValue]
   /// while saving.
   Future<void> select(Object value, bool selected) async {
-    assert(selected != null);
     _selectedValue = selected ? value : defaultValue;
     _pendingValue = value;
     _isSaving = true;

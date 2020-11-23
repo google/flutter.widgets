@@ -12,12 +12,12 @@ abstract class Saver<K> {
   ///
   /// [itemKey] identifies the data item. [itemKey] can be of any form:
   /// resource url, guid, tuple <db, table, row, column> etc.
-  Future<T> load<T>(K itemKey);
+  Future<T?> load<T>(K itemKey);
 
   /// Saves a value to the storage by [itemKey].
   ///
   /// See [load] for [itemKey].
-  Future<OperationResult> save<T>(K itemKey, T value);
+  Future<OperationResult> save<T>(K itemKey, T? value);
 
   /// Validates whether [value] is allowed to be stored for [itemKey].
   /// Disallowed values will not be passed to [save].
@@ -26,22 +26,21 @@ abstract class Saver<K> {
   /// as asynchronous validation should be done in [save].
   ///
   /// See [load] for [itemKey].
-  OperationResult validate<T>(K itemKey, T value);
+  OperationResult validate<T>(K itemKey, T? value);
 }
 
 /// Trivial implementation of [Saver]. Always returns null value and
 /// successful operation result.
-class NoOpSaver implements Saver<Object> {
+class NoOpSaver<K> implements Saver<K> {
   const NoOpSaver();
 
   @override
-  Future<T> load<T>(Object itemKey) async => null;
+  Future<T?> load<T>(K itemKey) async => null;
 
   @override
-  OperationResult validate<T>(Object itemKey, T value) =>
-      OperationResult.success();
+  OperationResult validate<T>(K itemKey, T? value) => OperationResult.success();
 
   @override
-  Future<OperationResult> save<T>(Object itemKey, T value) async =>
+  Future<OperationResult> save<T>(K itemKey, T? value) async =>
       OperationResult.success();
 }
