@@ -33,7 +33,7 @@ class _OverlayBoxState extends State<OverlayBox> {
 
   @override
   void initState() {
-    _textController.text = widget.sharedState.storedValue;
+    _textController.text = widget.sharedState.storedValue ?? '';
     _textController.addListener(_onTextChange);
     super.initState();
   }
