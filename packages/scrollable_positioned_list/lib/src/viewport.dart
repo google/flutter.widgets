@@ -89,13 +89,6 @@ class UnboundedRenderViewport extends RenderViewport {
   double _maxScrollExtent;
   bool _hasVisualOverflow = false;
 
-  /// This value is set during layout based on the [CacheExtentStyle].
-  ///
-  /// When the style is [CacheExtentStyle.viewport], it is the main axis extent
-  /// of the viewport multiplied by the requested cache extent, which is still
-  /// expressed in pixels.
-  double _calculatedCacheExtent;
-
   @override
   double get anchor => _anchor;
 
@@ -120,32 +113,6 @@ class UnboundedRenderViewport extends RenderViewport {
       case Axis.horizontal:
         offset.applyViewportDimension(size.width);
         break;
-    }
-  }
-
-  @override
-  Rect describeSemanticsClip(RenderSliver child) {
-    assert(axis != null);
-
-    if (_calculatedCacheExtent == null) {
-      return semanticBounds;
-    }
-
-    switch (axis) {
-      case Axis.vertical:
-        return Rect.fromLTRB(
-          semanticBounds.left,
-          semanticBounds.top - _calculatedCacheExtent,
-          semanticBounds.right,
-          semanticBounds.bottom + _calculatedCacheExtent,
-        );
-      default:
-        return Rect.fromLTRB(
-          semanticBounds.left - _calculatedCacheExtent,
-          semanticBounds.top,
-          semanticBounds.right + _calculatedCacheExtent,
-          semanticBounds.bottom,
-        );
     }
   }
 
@@ -235,33 +202,24 @@ class UnboundedRenderViewport extends RenderViewport {
     // centerOffset is the offset from the leading edge of the RenderViewport
     // to the zero scroll offset (the line between the forward slivers and the
     // reverse slivers).
-    final double centerOffset = mainAxisExtent * anchor - correctedOffset;
+    final centerOffset = mainAxisExtent * anchor - correctedOffset;
     final double reverseDirectionRemainingPaintExtent =
         centerOffset.clamp(0.0, mainAxisExtent);
     final double forwardDirectionRemainingPaintExtent =
         (mainAxisExtent - centerOffset).clamp(0.0, mainAxisExtent);
 
-    switch (cacheExtentStyle) {
-      case CacheExtentStyle.pixel:
-        _calculatedCacheExtent = cacheExtent;
-        break;
-      case CacheExtentStyle.viewport:
-        _calculatedCacheExtent = mainAxisExtent * cacheExtent;
-        break;
-    }
-
-    final double fullCacheExtent = mainAxisExtent + 2 * _calculatedCacheExtent;
-    final double centerCacheOffset = centerOffset + _calculatedCacheExtent;
+    final fullCacheExtent = mainAxisExtent + 2 * cacheExtent;
+    final centerCacheOffset = centerOffset + cacheExtent;
     final double reverseDirectionRemainingCacheExtent =
         centerCacheOffset.clamp(0.0, fullCacheExtent);
     final double forwardDirectionRemainingCacheExtent =
         (fullCacheExtent - centerCacheOffset).clamp(0.0, fullCacheExtent);
 
-    final RenderSliver leadingNegativeChild = childBefore(center);
+    final leadingNegativeChild = childBefore(center);
 
     if (leadingNegativeChild != null) {
       // negative scroll offsets
-      final double result = layoutChildSequence(
+      final result = layoutChildSequence(
         child: leadingNegativeChild,
         scrollOffset: math.max(mainAxisExtent, centerOffset) - mainAxisExtent,
         overlap: 0.0,
@@ -272,8 +230,7 @@ class UnboundedRenderViewport extends RenderViewport {
         growthDirection: GrowthDirection.reverse,
         advance: childBefore,
         remainingCacheExtent: reverseDirectionRemainingCacheExtent,
-        cacheOrigin:
-            (mainAxisExtent - centerOffset).clamp(-_calculatedCacheExtent, 0.0),
+        cacheOrigin: (mainAxisExtent - centerOffset).clamp(-cacheExtent, 0.0),
       );
       if (result != 0.0) return -result;
     }
@@ -293,7 +250,7 @@ class UnboundedRenderViewport extends RenderViewport {
       growthDirection: GrowthDirection.forward,
       advance: childAfter,
       remainingCacheExtent: forwardDirectionRemainingCacheExtent,
-      cacheOrigin: centerOffset.clamp(-_calculatedCacheExtent, 0.0),
+      cacheOrigin: centerOffset.clamp(-cacheExtent, 0.0),
     );
   }
 
