@@ -6,6 +6,8 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -1209,6 +1211,22 @@ void main() {
     expect(customScrollView2.semanticChildCount, defaultItemCount);
   });
 
+  testWidgets('Semantic tree contains items in cache',
+      (WidgetTester tester) async {
+    final itemPositionsListener = ItemPositionsListener.create();
+    await setUpWidgetTest(tester, itemPositionsListener: itemPositionsListener);
+
+    final root =
+        WidgetsBinding.instance.pipelineOwner.semanticsOwner.rootSemanticsNode;
+
+    final semanticNodes = <SemanticsNode>[root];
+
+    collectSemanticNodes(root, semanticNodes);
+
+    expect(semanticNodes.where((element) => element.label == 'Item 10'),
+        isNotEmpty);
+  });
+
   testWidgets('padding test - centered at top', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     await setUpWidgetTest(
@@ -2164,4 +2182,11 @@ void main() {
     expect(find.text('Item 70'), findsOneWidget);
     expect(find.text('Item 50'), findsOneWidget);
   });
+}
+
+bool collectSemanticNodes(SemanticsNode root, List<SemanticsNode> nodes) {
+  nodes.add(root);
+  if (!root.hasChildren) return true;
+  root.visitChildren((child) => collectSemanticNodes(child, nodes));
+  return true;
 }
