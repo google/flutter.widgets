@@ -313,7 +313,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onPanDown: cancelScrollCallback,
+        onPanDown: (_) => cancelScrollCallback?.call(),
         excludeFromSemantics: true,
         child: Stack(
           children: <Widget>[
