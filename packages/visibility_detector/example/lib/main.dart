@@ -119,9 +119,9 @@ class VisibilityDetectorDemoPageState
 
 /// An individual row for the pseudo-table of [VisibilityDetector] widgets.
 class DemoPageRow extends StatelessWidget {
-  const DemoPageRow({Key? key, this.rowIndex}) : super(key: key);
+  const DemoPageRow({Key? key, required this.rowIndex}) : super(key: key);
 
-  final int? rowIndex;
+  final int rowIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +129,7 @@ class DemoPageRow extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.all(_rowPadding),
       itemBuilder: (BuildContext context, int columnIndex) {
-        return DemoPageCell(rowIndex: rowIndex!, columnIndex: columnIndex);
+        return DemoPageCell(rowIndex: rowIndex, columnIndex: columnIndex);
       },
     );
   }
@@ -182,10 +182,10 @@ class DemoPageCell extends StatelessWidget {
 /// A widget that lists the reported visibility percentages of the
 /// [VisibilityDetector] widgets on the page.
 class VisibilityReport extends StatelessWidget {
-  const VisibilityReport({Key? key, this.title}) : super(key: key);
+  const VisibilityReport({Key? key, required this.title}) : super(key: key);
 
   /// The text to use for the heading of the report.
-  final String? title;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -196,7 +196,7 @@ class VisibilityReport extends StatelessWidget {
       padding: const EdgeInsets.all(_reportPadding),
       alignment: Alignment.centerLeft,
       decoration: const BoxDecoration(color: Colors.black),
-      child: Text(title!, style: headingTextStyle),
+      child: Text(title, style: headingTextStyle),
     );
 
     final grid = Container(

@@ -47,8 +47,10 @@ void main() {
       final cell = find.byKey(cellKey);
       final expectedRect = tester.getRect(cell);
 
-      final info = _positionToVisibilityInfo[demo.RowColumn(0, 0)]!;
+      var info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
+
+      info = info!;
       expect(info.size, expectedRect.size);
       expect(info.size.width, demo.cellWidth);
       expect(info.size.height, demo.cellHeight);
@@ -76,8 +78,10 @@ void main() {
       const dy = 30.0;
       await _doScroll(tester, mainList, const Offset(0, dy));
 
-      final info = _positionToVisibilityInfo[demo.RowColumn(0, 0)]!;
+      var info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
+
+      info = info!;
       expect(info.size, originalRect.size);
 
       final expectedVisibleBounds = Rect.fromLTRB(
@@ -112,8 +116,10 @@ void main() {
 
       await _doScroll(tester, cell, const Offset(dx, 0));
 
-      final info = _positionToVisibilityInfo[demo.RowColumn(2, 0)]!;
+      var info = _positionToVisibilityInfo[demo.RowColumn(2, 0)];
       expect(info, isNotNull);
+
+      info = info!;
       expect(info.size, originalRect.size);
 
       final expectedVisibleBounds = Rect.fromLTRB(
@@ -146,8 +152,10 @@ void main() {
       final dy = originalRect.bottom - viewRect.top;
       await _doScroll(tester, mainList, Offset(0, dy));
 
-      final info = _positionToVisibilityInfo[demo.RowColumn(0, 0)]!;
+      var info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
+
+      info = info!;
       expect(info.size, originalRect.size);
       expect(info.visibleBounds.size, Size.zero);
       expect(info.visibleFraction, 0.0);
@@ -173,8 +181,10 @@ void main() {
       final dy = (originalRect.bottom - viewRect.top) - 1;
       await _doScroll(tester, mainList, Offset(0, dy));
 
-      final info = _positionToVisibilityInfo[demo.RowColumn(0, 0)]!;
+      var info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
+
+      info = info!;
       expect(info.size, originalRect.size);
 
       final expectedVisibleBounds = Rect.fromLTRB(
@@ -199,8 +209,10 @@ void main() {
 
       await _clearWidgetTree(tester, notifyNow: false);
 
-      final info = _positionToVisibilityInfo[demo.RowColumn(0, 0)]!;
+      var info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
+
+      info = info!;
       expect(info.size, originalRect.size);
       expect(info.visibleBounds.size, Size.zero);
       expect(info.visibleFraction, 0.0);
@@ -436,8 +448,10 @@ Future<void> _simulateScreenRotation(WidgetTester tester) async {
 /// visibility.
 void _expectVisibility(demo.RowColumn rc, double expectedFraction,
     {double epsilon = 0.001}) {
-  final info = _positionToVisibilityInfo[rc]!;
+  var info = _positionToVisibilityInfo[rc];
   expect(info, isNotNull);
+
+  info = info!;
   expect(info.visibleFraction, closeTo(expectedFraction, epsilon));
 }
 
