@@ -126,7 +126,7 @@ class _OverlayBoxState extends State<OverlayBox> {
   }
 
   Widget _buildCancelButton() {
-    return FlatButton(
+    return TextButton(
       key: cancelButtonKey,
       onPressed: () {
         widget.sharedState.overlayController.close();
@@ -137,7 +137,7 @@ class _OverlayBoxState extends State<OverlayBox> {
   }
 
   Widget _buildOkButton() {
-    return FlatButton(
+    return TextButton(
       key: okButtonKey,
       onPressed: _validationError != null
           ? null
