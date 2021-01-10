@@ -6,7 +6,7 @@ description: >
 homepage: https://github.com/google/flutter.widgets/tree/master/packages/visibility_detector
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=2.12.0-0 <3.0.0'
   flutter: ^1.13.8
 
 dependencies:
