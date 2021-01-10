@@ -28,25 +28,25 @@ class _ControllerUsageState extends State<ControllerUsage> {
           width: 300,
           child: buildTree(),
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text("Expand All"),
           onPressed: () => setState(() {
             _controller.expandAll();
           }),
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text("Collapse All"),
           onPressed: () => setState(() {
             _controller.collapseAll();
           }),
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text("Expand node 22"),
           onPressed: () => setState(() {
             _controller.expandNode(_key);
           }),
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text("Collapse node 22"),
           onPressed: () => setState(() {
             _controller.collapseNode(_key);

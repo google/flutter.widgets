@@ -136,7 +136,7 @@ class _DemoState extends State<Demo> {
 
   List<Widget> buildDemoHeader() {
     return [
-      FlatButton(
+      TextButton(
         onPressed: () async => await launch(
             'https://github.com/google/flutter.widgets/tree/master/packages/self_storing_input/example'),
         child: Text(

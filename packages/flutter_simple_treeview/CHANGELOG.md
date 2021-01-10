@@ -1,3 +1,8 @@
+# 3.0.0-nullsafety.1
+
+  * Avoid deprecation warnings with Flutter 1.25.0-8.1.pre per
+    http://flutter.dev/go/material-button-migration-guide.
+
 # 3.0.0-nullsafety.0
 
   * Set nullsafety version
