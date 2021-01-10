@@ -4,6 +4,9 @@ analyzer:
     missing_required_param: warning
     # Allow having TODOs in the code
     todo: ignore
+    # TODO(jamesderlin): Temporarily disable unnecessary null comparisons during
+    # the transition to null-safety.
+    unnecessary_null_comparison: ignore
 
 linter:
   rules:
