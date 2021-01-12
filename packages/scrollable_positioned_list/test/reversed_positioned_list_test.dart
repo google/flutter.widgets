@@ -37,7 +37,7 @@ void main() {
             height: itemHeight,
             child: Text('Item $index'),
           ),
-          itemPositionNotifier: itemPositions,
+          itemPositionsNotifier: itemPositions,
           reverse: true,
         ),
       ),
