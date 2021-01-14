@@ -96,27 +96,20 @@ class VisibilityDetectorLayer extends ContainerLayer {
   static final _lastBounds = <Key, Rect>{};
 
   /// The key for the corresponding [VisibilityDetector] widget.
-  ///
-  /// Never null.
   final Key key;
 
   /// The size of the corresponding [VisibilityDetector] widget.
-  ///
-  /// Never null.
   final Size widgetSize;
 
-  /// Last known layer offset supplied to [addToScene].  Never null.
+  /// Last known layer offset supplied to [addToScene].
   Offset _layerOffset;
 
-  /// The offset supplied to [RenderVisibilityDetector.paint] method.  Never
-  /// null.
+  /// The offset supplied to [RenderVisibilityDetector.paint] method.
   final Offset paintOffset;
 
   /// See [VisibilityDetector.onVisibilityChanged].
   ///
   /// Do not invoke this directly; call [_fireCallback] instead.
-  ///
-  /// Never null.
   final VisibilityChangedCallback onVisibilityChanged;
 
   /// Computes the bounds for the corresponding [VisibilityDetector] widget, in
