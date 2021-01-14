@@ -6,6 +6,9 @@
 
 * Revert tests to again use `RenderView` instead of `TestWindow`.
 
+* Add `VisibilityDetectorController.scheduleNotification` to force firing a
+  visibility callback.
+
 # 0.1.5
 
 * Compatibility fixes to `demo.dart` for Flutter 1.13.8.

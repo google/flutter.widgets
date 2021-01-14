@@ -74,14 +74,19 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// Timer used by [_scheduleUpdate].
   static Timer? _timer;
 
-  /// Keeps track of [VisibilityDetectorLayer] objects that have been recently
-  /// updated and that might need to report visibility changes.
-  ///
-  /// Additionally maps [VisibilityDetector] keys to the most recently added
+  /// Maps [VisibilityDetector] keys to the most recently added
   /// [VisibilityDetectorLayer] that corresponds to it; this mapping is
   /// necessary in case a layout change causes a new layer to be instantiated
   /// for an existing key.
-  static final _updated = <Key, VisibilityDetectorLayer>{};
+  static final _activeLayers = <Key, VisibilityDetectorLayer>{};
+
+  /// Tracks keys for [VisibilityDetectorLayer]s that have been recently updated
+  /// and that might need to report visibility changes.
+  static final _updatedKeys = <Key>{};
+
+  /// Tracks keys for [VisibilityDetectorLayer]s that have pending callbacks
+  /// requested via [VisibilityDetectorController.scheduleNotification].
+  static final _forcedKeys = <Key>{};
 
   /// Keeps track of the last known visibility state of a [VisibilityDetector].
   ///
@@ -150,18 +155,23 @@ class VisibilityDetectorLayer extends ContainerLayer {
     return clipRect;
   }
 
+  /// Marks the [VisibilityDetectorLayer] as being recently updated and
+  /// schedules a timer to invoke visibility callbacks.
+  void _scheduleUpdate() {
+    _updatedKeys.add(key);
+    _scheduleCallbacks();
+  }
+
   /// Schedules a timer to invoke the visibility callbacks.  The timer is used
   /// to throttle and coalesce updates.
-  void _scheduleUpdate() {
-    final isFirstUpdate = _updated.isEmpty;
-    _updated[key] = this;
-
+  static void _scheduleCallbacks() {
     final updateInterval = VisibilityDetectorController.instance.updateInterval;
     if (updateInterval == Duration.zero) {
       // Even with [Duration.zero], we still want to defer callbacks to the end
       // of the frame so that they're processed from a consistent state.  This
       // also ensures that they don't mutate the widget tree while we're in the
       // middle of a frame.
+      final isFirstUpdate = _updatedKeys.length + _forcedKeys.length == 1;
       if (isFirstUpdate) {
         // We're about to render a frame, so a post-frame callback is guaranteed
         // to fire and will give us the better immediacy than `scheduleTask<T>`.
@@ -199,14 +209,20 @@ class VisibilityDetectorLayer extends ContainerLayer {
     _processCallbacks();
   }
 
+  /// See [VisibilityDetectorController.scheduleNotification].
+  static void scheduleNotification(Key key) {
+    _forcedKeys.add(key);
+    _scheduleCallbacks();
+  }
+
   /// Removes entries corresponding to the specified [Key] from our internal
   /// caches.
   static void forget(Key key) {
-    _updated.remove(key);
+    _updatedKeys.remove(key);
     _lastVisibility.remove(key);
     _lastBounds.remove(key);
 
-    if (_updated.isEmpty) {
+    if (_updatedKeys.isEmpty && _forcedKeys.isEmpty) {
       _timer?.cancel();
       _timer = null;
     }
@@ -215,34 +231,51 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// Executes visibility callbacks for all updated [VisibilityDetectorLayer]
   /// instances.
   static void _processCallbacks() {
-    for (final layer in _updated.values) {
-      if (!layer.attached) {
-        layer._fireCallback(VisibilityInfo(
-            key: layer.key, size: _lastVisibility[layer.key]?.size));
+    for (final key in _forcedKeys) {
+      final layer = _activeLayers[key];
+      if (layer == null) {
         continue;
       }
-
-      final widgetBounds = layer._computeWidgetBounds();
-      _lastBounds[layer.key] = widgetBounds;
-
-      final info = VisibilityInfo.fromRects(
-          key: layer.key,
-          widgetBounds: widgetBounds,
-          clipRect: layer._computeClipRect());
-      layer._fireCallback(info);
+      _updatedKeys.remove(layer.key);
+      layer._fireCallback(force: true);
     }
-    _updated.clear();
+    _forcedKeys.clear();
+
+    for (final key in _updatedKeys) {
+      final layer = _activeLayers[key]!;
+      layer._fireCallback(force: false);
+    }
+    _updatedKeys.clear();
   }
 
   /// Invokes the visibility callback if [VisibilityInfo] hasn't meaningfully
-  /// changed since the last time we invoked it.
-  void _fireCallback(VisibilityInfo info) {
-    assert(info != null);
+  /// changed since the last time we invoked it or if callback invocation is
+  /// forced.
+  void _fireCallback({required bool force}) {
+    late VisibilityInfo info;
+
+    if (!attached) {
+      _activeLayers.remove(key);
+      info = VisibilityInfo(
+        key: key,
+        size: _lastVisibility[key]?.size,
+      );
+    } else {
+      final widgetBounds = _computeWidgetBounds();
+      _lastBounds[key] = widgetBounds;
+      info = VisibilityInfo.fromRects(
+        key: key,
+        widgetBounds: widgetBounds,
+        clipRect: _computeClipRect(),
+      );
+    }
 
     final oldInfo = _lastVisibility[key];
     final visible = !info.visibleBounds.isEmpty;
 
-    if (oldInfo == null) {
+    if (force) {
+      // Don't filter it out.
+    } else if (oldInfo == null) {
       if (!visible) {
         return;
       }
@@ -272,6 +305,7 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// See [AbstractNode.attach].
   @override
   void attach(Object owner) {
+    _activeLayers[key] = this;
     super.attach(owner);
     _scheduleUpdate();
   }
