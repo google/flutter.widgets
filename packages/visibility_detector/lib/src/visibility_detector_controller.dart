@@ -19,7 +19,8 @@ class VisibilityDetectorController {
   /// callbacks.
   ///
   /// If set to [Duration.zero], callbacks instead will fire at the end of every
-  /// frame.  This is useful for automated tests.
+  /// frame.  This is useful for automated tests but is not recommended for
+  /// normal use in applications.
   ///
   /// Changing [updateInterval] will not affect any pending callbacks.  Clients
   /// should call [notifyNow] explicitly to flush them if desired.
@@ -31,8 +32,16 @@ class VisibilityDetectorController {
   /// as when switching views or when exiting the application).
   void notifyNow() => VisibilityDetectorLayer.notifyNow();
 
-  /// Forgets any pending visibility callbacks for the [VisibilityDetector] with
+  /// Forces firing the visibility callback for the [VisibilityDetector] with
   /// the given [key].
+  ///
+  /// The callback will fire at the next [updateInterval].  Clients should call
+  /// [notifyNow] to fire pending callbacks immediately if desired.
+  void scheduleNotification(Key key) =>
+      VisibilityDetectorLayer.scheduleNotification(key);
+
+  /// Forgets any pending visibility callbacks and last known bounds for the
+  /// [VisibilityDetector] with the given [key].
   ///
   /// If the widget gets attached/detached, the callback will be rescheduled.
   ///
