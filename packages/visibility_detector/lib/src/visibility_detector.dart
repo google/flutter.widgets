@@ -100,16 +100,12 @@ class VisibilityInfo {
   }
 
   /// The key for the corresponding [VisibilityDetector] widget.
-  ///
-  /// Never null.
   final Key key;
 
-  /// The size of the widget.  Never null.
+  /// The size of the widget.
   final Size size;
 
   /// The visible portion of the widget, in the widget's local coordinates.
-  ///
-  /// Never null.
   ///
   /// The bounds are reported using the widget's local coordinates to avoid
   /// expectations for the [VisibilityChangedCallback] to fire if the widget's
