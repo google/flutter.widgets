@@ -3,6 +3,9 @@
     [issue #191](https://github.com/google/flutter.widgets/issues/191).
   * Made the example runnable with `flutter run`.  Fixes
     [issue #211](https://github.com/google/flutter.widgets/issues/211).
+  * Updates to computation of semantic clip.
+  * Smoother transition between views on long scrolls.
+  * New controls over transition between views on long scrolls.
 
 # 0.1.8
   * Set updateScheduled to false when short circuiting due to empty list.
