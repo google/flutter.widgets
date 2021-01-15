@@ -11,6 +11,24 @@ const minItemHeight = 20.0;
 const maxItemHeight = 150.0;
 const scrollDuration = Duration(seconds: 2);
 
+void main() {
+  runApp(ScrollablePositionedListExample());
+}
+
+// The root widget for the example app.
+class ScrollablePositionedListExample extends StatelessWidget {
+  const ScrollablePositionedListExample({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'ScrollablePositionedList Example',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const ScrollablePositionedListPage(),
+    );
+  }
+}
+
 /// Example widget that uses [ScrollablePositionedList].
 ///
 /// Shows a [ScrollablePositionedList] along with the following controls:

@@ -7,7 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-import 'package:scrollable_positioned_list_example/scrollable_positioned_list_example.dart';
+import 'package:scrollable_positioned_list_example/main.dart';
 
 void main() {
   setUp(() {
