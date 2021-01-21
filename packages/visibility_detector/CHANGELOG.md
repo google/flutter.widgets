@@ -1,4 +1,4 @@
-# 0.1.6-nullsafety
+# 0.2.0-nullsafety.0
 
 * Update to null safety.
 
