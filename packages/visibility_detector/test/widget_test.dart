@@ -242,28 +242,6 @@ void main() {
     },
   );
 
-  _wrapTest(
-    'VisibilityDetectorController.scheduleNotification forces a callback to '
-    'fire',
-    widget: _TestPropertyChange(key: _testPropertyChangeKey),
-    callback: (tester) async {
-      final state = _testPropertyChangeKey.currentState!;
-
-      // Validate the initial state.  The visibility callback should have fired
-      // exactly once.
-      expect(state.lastVisibleFraction, 1.0);
-      expect(state.callbackCount, 1);
-
-      VisibilityDetectorController.instance
-          .scheduleNotification(_TestPropertyChange.visibilityDetectorKey);
-
-      await _waitForVisibilityDetectorCallbacks(tester);
-
-      expect(state.lastVisibleFraction, 1.0);
-      expect(state.callbackCount, 2);
-    },
-  );
-
   testWidgets(
     'Pending callback is cancelled when forget is called',
     (tester) async {
@@ -275,16 +253,7 @@ void main() {
         onVisibilityChanged: (_) {},
         child: const Placeholder(),
       ));
-
-      await _waitForVisibilityDetectorCallbacks(tester);
-
-      expect(controller.widgetBoundsFor(key), isNot(null));
-      controller.forget(key);
-      expect(controller.widgetBoundsFor(key), null);
-
       await tester.pumpWidget(const Placeholder());
-
-      // Should clear any pending [Timer]s.
       controller.forget(key);
     },
   );
@@ -329,14 +298,14 @@ void main() {
       expect(_positionToVisibilityInfo[demo.RowColumn(5, 0)], null);
 
       await _simulateScreenRotation(tester);
-      await _waitForVisibilityDetectorCallbacks(tester);
+      await tester.pump(VisibilityDetectorController.instance.updateInterval);
 
       _expectVisibility(demo.RowColumn(0, 6), 0, epsilon: 0);
       _expectVisibility(demo.RowColumn(5, 0), 1, epsilon: 0);
 
       // Rotate back to the original size.
       await _simulateScreenRotation(tester);
-      await _waitForVisibilityDetectorCallbacks(tester);
+      await tester.pump(VisibilityDetectorController.instance.updateInterval);
 
       // Re-verify the original visibilities.
       _expectVisibility(demo.RowColumn(0, 6), 0.360);
@@ -424,11 +393,6 @@ void _wrapTest(
   });
 }
 
-/// Waits sufficiently long for [VisibilityDetector] callbacks to fire.
-Future<void> _waitForVisibilityDetectorCallbacks(WidgetTester tester) async {
-  await tester.pump(VisibilityDetectorController.instance.updateInterval);
-}
-
 /// Scrolls the specified widget by the specified offset and waits sufficiently
 /// long for the [VisibilityDetector] callbacks to fire.
 Future<void> _doScroll(
@@ -442,7 +406,8 @@ Future<void> _doScroll(
   // Wait for the drag to complete.
   await tester.pumpAndSettle();
 
-  await _waitForVisibilityDetectorCallbacks(tester);
+  // Wait for callbacks to fire.
+  await tester.pump(VisibilityDetectorController.instance.updateInterval);
 }
 
 /// Invokes a callback to mutate a [State] object and waits sufficiently long
@@ -453,7 +418,8 @@ Future<void> _doStateChange(WidgetTester tester, VoidCallback callback) async {
   // Wait for the state change to rebuild the widget.
   await tester.pump();
 
-  await _waitForVisibilityDetectorCallbacks(tester);
+  // Wait for callbacks to fire.
+  await tester.pump(VisibilityDetectorController.instance.updateInterval);
 }
 
 // Simulates a screen rotation by swapping the screen width and height.
@@ -494,8 +460,6 @@ void _expectVisibility(demo.RowColumn rc, double expectedFraction,
 class _TestPropertyChange extends StatefulWidget {
   const _TestPropertyChange({Key? key}) : super(key: key);
 
-  static const visibilityDetectorKey = Key('TestPropertyChange');
-
   @override
   _TestPropertyChangeState createState() => _TestPropertyChangeState();
 }
@@ -530,7 +494,7 @@ class _TestPropertyChangeState extends State<_TestPropertyChange> {
   @override
   Widget build(BuildContext context) {
     return VisibilityDetector(
-      key: _TestPropertyChange.visibilityDetectorKey,
+      key: const Key('TestPropertyChange'),
       onVisibilityChanged:
           visibilityDetectorEnabled ? _handleVisibilityChanged : null,
       child: const Placeholder(),
