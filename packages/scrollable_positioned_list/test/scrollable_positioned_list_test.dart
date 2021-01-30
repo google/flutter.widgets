@@ -455,49 +455,44 @@ void main() {
     final itemScrollController = ItemScrollController();
     await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
+    var fadeTransitionFinder = find.descendant(
+        of: find.byType(ScrollablePositionedList),
+        matching: find.byType(FadeTransition));
+
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
     await tester.pump();
     await tester.pump();
+    expect(fadeTransitionFinder.evaluate().length, 2);
     expect(
-        tester
-            .widget<FadeTransition>(find
-                .descendant(
-                    of: find.byType(ScrollablePositionedList),
-                    matching: find.byType(FadeTransition))
-                .last)
-            .opacity
-            .value,
-        closeTo(1, 0.01));
+      tester.widget<FadeTransition>(fadeTransitionFinder.last).opacity.value,
+      closeTo(0, 0.01),
+    );
 
     await tester.pump(scrollDuration ~/ 2);
 
     expect(tester.getTopLeft(find.text('Item 10')).dy, 0);
     expect(tester.getBottomLeft(find.text('Item 19')).dy, screenHeight);
+    expect(fadeTransitionFinder.evaluate().length, 2);
     expect(
-        tester
-            .widget<FadeTransition>(find
-                .descendant(
-                    of: find.byType(ScrollablePositionedList),
-                    matching: find.byType(FadeTransition))
-                .last)
-            .opacity
-            .value,
-        closeTo(0.5, 0.01));
+      tester.widget<FadeTransition>(fadeTransitionFinder.last).opacity.value,
+      closeTo(0.5, 0.01),
+    );
 
-    await tester.pump(scrollDuration ~/ 2);
+    await tester.pump(scrollDuration ~/ 2 - scrollDurationTolerance);
+    expect(fadeTransitionFinder.evaluate().length, 2);
     expect(
-        tester
-            .widget<FadeTransition>(find
-                .descendant(
-                    of: find.byType(ScrollablePositionedList),
-                    matching: find.byType(FadeTransition))
-                .last)
-            .opacity
-            .value,
-        closeTo(0, 0.01));
+      tester.widget<FadeTransition>(fadeTransitionFinder.last).opacity.value,
+      closeTo(1, 0.01),
+    );
 
     await tester.pumpAndSettle();
+
+    expect(fadeTransitionFinder.evaluate().length, 1);
+    expect(
+      tester.widget<FadeTransition>(fadeTransitionFinder.last).opacity.value,
+      closeTo(1, 0.01),
+    );
   });
 
   testWidgets('Scroll to 100 (not already on screen) back scroll view',
