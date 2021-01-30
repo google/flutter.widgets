@@ -256,8 +256,8 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   double backAlignment = 0;
   int frontTarget;
   double frontAlignment;
-  Function cancelScrollCallback;
-  Function endScrollCallback;
+  void Function() cancelScrollCallback;
+  void Function() endScrollCallback;
   _ListDisplay Function() scrollNotificationCallback;
   _ListDisplay listDisplay = _ListDisplay.front;
   void Function() startAnimationCallback = () {};
@@ -279,9 +279,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     frontTarget = initialPosition?.index ?? widget.initialScrollIndex;
     frontAlignment =
         initialPosition?.itemLeadingEdge ?? widget.initialAlignment;
-    if (widget.itemCount != null &&
-        widget.itemCount > 0 &&
-        frontTarget > widget.itemCount - 1) {
+    if (widget.itemCount > 0 && frontTarget > widget.itemCount - 1) {
       frontTarget = widget.itemCount - 1;
     }
     widget.itemScrollController?._attach(this);
@@ -312,23 +310,22 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       widget.itemScrollController?._detach();
       widget.itemScrollController?._attach(this);
     }
-    if (widget.itemCount != null) {
-      if (widget.itemCount == 0) {
+
+    if (widget.itemCount == 0) {
+      setState(() {
+        frontTarget = 0;
+        backTarget = 0;
+      });
+    } else {
+      if (frontTarget > widget.itemCount - 1) {
         setState(() {
-          frontTarget = 0;
-          backTarget = 0;
+          frontTarget = widget.itemCount - 1;
         });
-      } else {
-        if (frontTarget > widget.itemCount - 1) {
-          setState(() {
-            frontTarget = widget.itemCount - 1;
-          });
-        }
-        if (backTarget > widget.itemCount - 1) {
-          setState(() {
-            backTarget = widget.itemCount - 1;
-          });
-        }
+      }
+      if (backTarget > widget.itemCount - 1) {
+        setState(() {
+          backTarget = widget.itemCount - 1;
+        });
       }
     }
   }
@@ -411,13 +408,10 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
         ),
       );
 
-  double _cacheExtent(BoxConstraints constraints) =>
-      widget.minCacheExtent == null
-          ? constraints.maxHeight * _screenScrollCount
-          : max(
-              constraints.maxHeight * _screenScrollCount,
-              widget.minCacheExtent,
-            );
+  double _cacheExtent(BoxConstraints constraints) => max(
+        constraints.maxHeight * _screenScrollCount,
+        widget.minCacheExtent ?? 0,
+      );
 
   void _jumpTo({@required int index, double alignment}) {
     cancelScrollCallback?.call();
@@ -543,11 +537,8 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
         cancelScrollCallback = null;
         endScrollCallback = null;
       };
-      return Future.wait<void>(
-              <Future<void>>[startCompleter.future, endCompleter.future])
-          .then((_) async {
-        endScrollCallback?.call();
-      });
+      await Future.wait<void>([startCompleter.future, endCompleter.future]);
+      endScrollCallback?.call();
     }
   }
 

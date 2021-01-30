@@ -127,13 +127,6 @@ class PositionedList extends StatefulWidget {
 class _PositionedListState extends State<PositionedList> {
   final Key _centerKey = UniqueKey();
 
-  Iterable<ItemPosition> topPositions = [];
-  Iterable<ItemPosition> middlePositions = [];
-  Iterable<ItemPosition> bottomPositions = [];
-  double topSliverPosition = 0;
-  double middleSliverPosition = 0;
-  double bottomSliverPosition = 0;
-
   final registeredElements = ValueNotifier<Set<Element>>(null);
   ScrollController scrollController;
 
