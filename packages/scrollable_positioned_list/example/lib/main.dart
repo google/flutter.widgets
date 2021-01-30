@@ -11,6 +11,8 @@ const minItemHeight = 20.0;
 const maxItemHeight = 150.0;
 const scrollDuration = Duration(seconds: 2);
 
+const randomMax = 1 << 32;
+
 void main() {
   runApp(ScrollablePositionedListExample());
 }
@@ -73,10 +75,8 @@ class _ScrollablePositionedListPageState
         (int _) =>
             heightGenerator.nextDouble() * (maxItemHeight - minItemHeight) +
             minItemHeight);
-    itemColors = List<Color>.generate(
-        numberOfItems,
-        (int _) =>
-            Color(colorGenerator.nextInt(pow(2, 32) - 1)).withOpacity(1));
+    itemColors = List<Color>.generate(numberOfItems,
+        (int _) => Color(colorGenerator.nextInt(randomMax)).withOpacity(1));
   }
 
   @override
@@ -110,9 +110,15 @@ class _ScrollablePositionedListPageState
           const Text('Alignment: '),
           SizedBox(
             width: 200,
-            child: Slider(
-              value: alignment,
-              onChanged: (double value) => setState(() => alignment = value),
+            child: SliderTheme(
+              data: SliderThemeData(
+                showValueIndicator: ShowValueIndicator.always,
+              ),
+              child: Slider(
+                value: alignment,
+                label: alignment.toStringAsFixed(2),
+                onChanged: (double value) => setState(() => alignment = value),
+              ),
             ),
           ),
         ],
