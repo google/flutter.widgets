@@ -1,3 +1,7 @@
+# 0.1.10
+  * Update the home page URL to fix
+    [issue #190](https://github.com/google/flutter.widgets/issues/190).
+
 # 0.1.9
   * Fixed the example in `README.md`.  Fixes
     [issue #191](https://github.com/google/flutter.widgets/issues/191).
