@@ -4,6 +4,8 @@
   * Miscellaneous tweaks to the example.
   * Added documentation to address
     [issue #96](https://github.com/google/flutter.widgets/issues/96).
+  * Miscellaneous other cleanup.
+  * 
 
 # 0.1.9
   * Fixed the example in `README.md`.  Fixes
