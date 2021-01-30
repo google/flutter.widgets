@@ -331,24 +331,27 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   }
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-        onPanDown: (_) => cancelScrollCallback?.call(),
-        excludeFromSemantics: true,
-        child: Stack(
-          children: <Widget>[
-            if (_showBackList)
-              PostMountCallback(
-                key: const ValueKey<String>('Back'),
-                callback: startAnimationCallback,
-                child: FadeTransition(
-                  opacity: ReverseAnimation(opacity),
-                  child: NotificationListener<ScrollNotification>(
-                    onNotification: (_) {
-                      return scrollNotificationCallback?.call() ==
-                          _ListDisplay.back;
-                    },
-                    child: LayoutBuilder(
-                      builder: (context, constraints) => PositionedList(
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final cacheExtent = _cacheExtent(constraints);
+        return GestureDetector(
+          onPanDown: (_) => cancelScrollCallback?.call(),
+          excludeFromSemantics: true,
+          child: Stack(
+            children: <Widget>[
+              if (_showBackList)
+                PostMountCallback(
+                  key: const ValueKey<String>('Back'),
+                  callback: startAnimationCallback,
+                  child: FadeTransition(
+                    opacity: ReverseAnimation(opacity),
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: (_) {
+                        return scrollNotificationCallback?.call() ==
+                            _ListDisplay.back;
+                      },
+                      child: PositionedList(
                         itemBuilder: widget.itemBuilder,
                         separatorBuilder: widget.separatorBuilder,
                         itemCount: widget.itemCount,
@@ -357,7 +360,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                         itemPositionsNotifier: backItemPositionsNotifier,
                         scrollDirection: widget.scrollDirection,
                         reverse: widget.reverse,
-                        cacheExtent: _cacheExtent(constraints),
+                        cacheExtent: cacheExtent,
                         alignment: backAlignment,
                         physics: widget.physics,
                         addSemanticIndexes: widget.addSemanticIndexes,
@@ -369,20 +372,18 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                     ),
                   ),
                 ),
-              ),
-            if (_showFrontList)
-              PostMountCallback(
-                key: const ValueKey<String>('Front'),
-                callback: startAnimationCallback,
-                child: FadeTransition(
-                  opacity: opacity,
-                  child: NotificationListener<ScrollNotification>(
-                    onNotification: (_) {
-                      return scrollNotificationCallback?.call() ==
-                          _ListDisplay.front;
-                    },
-                    child: LayoutBuilder(
-                      builder: (context, constraints) => PositionedList(
+              if (_showFrontList)
+                PostMountCallback(
+                  key: const ValueKey<String>('Front'),
+                  callback: startAnimationCallback,
+                  child: FadeTransition(
+                    opacity: opacity,
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: (_) {
+                        return scrollNotificationCallback?.call() ==
+                            _ListDisplay.front;
+                      },
+                      child: PositionedList(
                         itemBuilder: widget.itemBuilder,
                         separatorBuilder: widget.separatorBuilder,
                         itemCount: widget.itemCount,
@@ -391,7 +392,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                         controller: frontScrollController,
                         scrollDirection: widget.scrollDirection,
                         reverse: widget.reverse,
-                        cacheExtent: _cacheExtent(constraints),
+                        cacheExtent: cacheExtent,
                         alignment: frontAlignment,
                         physics: widget.physics,
                         addSemanticIndexes: widget.addSemanticIndexes,
@@ -403,10 +404,12 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                     ),
                   ),
                 ),
-              ),
-          ],
-        ),
-      );
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   double _cacheExtent(BoxConstraints constraints) => max(
         constraints.maxHeight * _screenScrollCount,
