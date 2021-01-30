@@ -246,40 +246,32 @@ class ItemScrollController {
 
 class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     with TickerProviderStateMixin {
-  final front = _ListDisplayDetails();
-  final back = _ListDisplayDetails();
+  /// Details for the primary (active) [ListView].
+  var primary = _ListDisplayDetails(const ValueKey('Ping'));
 
-  final opacity = ProxyAnimation(const AlwaysStoppedAnimation<double>(1.0));
+  /// Details for the secondary (transitional) [ListView] that is temporarily
+  /// shown when scrolling a long distance.
+  var secondary = _ListDisplayDetails(const ValueKey('Pong'));
 
-  void Function() cancelScrollCallback;
-  void Function() endScrollCallback;
-  _ListDisplay Function() scrollNotificationCallback;
-  _ListDisplay listDisplay = _ListDisplay.front;
+  final opacity = ProxyAnimation(const AlwaysStoppedAnimation<double>(0));
+
   void Function() startAnimationCallback = () {};
 
-  bool get _showBackList =>
-      listDisplay == _ListDisplay.back || listDisplay == _ListDisplay.both;
-  bool get _showFrontList =>
-      listDisplay == _ListDisplay.front || listDisplay == _ListDisplay.both;
-
-  ScrollController get scrollController =>
-      _showFrontList ? front.scrollController : back.scrollController;
-  ItemPositionsNotifier get itemPositionsNotifier =>
-      _showFrontList ? front.itemPositionsNotifier : back.itemPositionsNotifier;
+  bool _isTransitioning = false;
 
   @override
   void initState() {
     super.initState();
     ItemPosition initialPosition = PageStorage.of(context).readState(context);
-    front.target = initialPosition?.index ?? widget.initialScrollIndex;
-    front.alignment =
+    primary.target = initialPosition?.index ?? widget.initialScrollIndex;
+    primary.alignment =
         initialPosition?.itemLeadingEdge ?? widget.initialAlignment;
-    if (widget.itemCount > 0 && front.target > widget.itemCount - 1) {
-      front.target = widget.itemCount - 1;
+    if (widget.itemCount > 0 && primary.target > widget.itemCount - 1) {
+      primary.target = widget.itemCount - 1;
     }
     widget.itemScrollController?._attach(this);
-    front.itemPositionsNotifier.itemPositions.addListener(_updatePositions);
-    back.itemPositionsNotifier.itemPositions.addListener(_updatePositions);
+    primary.itemPositionsNotifier.itemPositions.addListener(_updatePositions);
+    secondary.itemPositionsNotifier.itemPositions.addListener(_updatePositions);
   }
 
   @override
@@ -290,8 +282,10 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
 
   @override
   void dispose() {
-    front.itemPositionsNotifier.itemPositions.removeListener(_updatePositions);
-    back.itemPositionsNotifier.itemPositions.removeListener(_updatePositions);
+    primary.itemPositionsNotifier.itemPositions
+        .removeListener(_updatePositions);
+    secondary.itemPositionsNotifier.itemPositions
+        .removeListener(_updatePositions);
     super.dispose();
   }
 
@@ -308,18 +302,18 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
 
     if (widget.itemCount == 0) {
       setState(() {
-        front.target = 0;
-        back.target = 0;
+        primary.target = 0;
+        secondary.target = 0;
       });
     } else {
-      if (front.target > widget.itemCount - 1) {
+      if (primary.target > widget.itemCount - 1) {
         setState(() {
-          front.target = widget.itemCount - 1;
+          primary.target = widget.itemCount - 1;
         });
       }
-      if (back.target > widget.itemCount - 1) {
+      if (secondary.target > widget.itemCount - 1) {
         setState(() {
-          back.target = widget.itemCount - 1;
+          secondary.target = widget.itemCount - 1;
         });
       }
     }
@@ -331,64 +325,57 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       builder: (context, constraints) {
         final cacheExtent = _cacheExtent(constraints);
         return GestureDetector(
-          onPanDown: (_) => cancelScrollCallback?.call(),
+          onPanDown: (_) => _stopScroll(canceled: true),
           excludeFromSemantics: true,
           child: Stack(
             children: <Widget>[
-              if (_showBackList)
-                PostMountCallback(
-                  key: const ValueKey<String>('Back'),
-                  callback: startAnimationCallback,
-                  child: FadeTransition(
-                    opacity: ReverseAnimation(opacity),
-                    child: NotificationListener<ScrollNotification>(
-                      onNotification: (_) {
-                        return scrollNotificationCallback?.call() ==
-                            _ListDisplay.back;
-                      },
-                      child: PositionedList(
-                        itemBuilder: widget.itemBuilder,
-                        separatorBuilder: widget.separatorBuilder,
-                        itemCount: widget.itemCount,
-                        positionedIndex: back.target,
-                        controller: back.scrollController,
-                        itemPositionsNotifier: back.itemPositionsNotifier,
-                        scrollDirection: widget.scrollDirection,
-                        reverse: widget.reverse,
-                        cacheExtent: cacheExtent,
-                        alignment: back.alignment,
-                        physics: widget.physics,
-                        addSemanticIndexes: widget.addSemanticIndexes,
-                        semanticChildCount: widget.semanticChildCount,
-                        padding: widget.padding,
-                        addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-                        addRepaintBoundaries: widget.addRepaintBoundaries,
-                      ),
+              PostMountCallback(
+                key: primary.key,
+                callback: startAnimationCallback,
+                child: FadeTransition(
+                  opacity: ReverseAnimation(opacity),
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (_) => _isTransitioning,
+                    child: PositionedList(
+                      itemBuilder: widget.itemBuilder,
+                      separatorBuilder: widget.separatorBuilder,
+                      itemCount: widget.itemCount,
+                      positionedIndex: primary.target,
+                      controller: primary.scrollController,
+                      itemPositionsNotifier: primary.itemPositionsNotifier,
+                      scrollDirection: widget.scrollDirection,
+                      reverse: widget.reverse,
+                      cacheExtent: cacheExtent,
+                      alignment: primary.alignment,
+                      physics: widget.physics,
+                      addSemanticIndexes: widget.addSemanticIndexes,
+                      semanticChildCount: widget.semanticChildCount,
+                      padding: widget.padding,
+                      addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+                      addRepaintBoundaries: widget.addRepaintBoundaries,
                     ),
                   ),
                 ),
-              if (_showFrontList)
+              ),
+              if (_isTransitioning)
                 PostMountCallback(
-                  key: const ValueKey<String>('Front'),
+                  key: secondary.key,
                   callback: startAnimationCallback,
                   child: FadeTransition(
                     opacity: opacity,
                     child: NotificationListener<ScrollNotification>(
-                      onNotification: (_) {
-                        return scrollNotificationCallback?.call() ==
-                            _ListDisplay.front;
-                      },
+                      onNotification: (_) => false,
                       child: PositionedList(
                         itemBuilder: widget.itemBuilder,
                         separatorBuilder: widget.separatorBuilder,
                         itemCount: widget.itemCount,
-                        itemPositionsNotifier: front.itemPositionsNotifier,
-                        positionedIndex: front.target,
-                        controller: front.scrollController,
+                        itemPositionsNotifier: secondary.itemPositionsNotifier,
+                        positionedIndex: secondary.target,
+                        controller: secondary.scrollController,
                         scrollDirection: widget.scrollDirection,
                         reverse: widget.reverse,
                         cacheExtent: cacheExtent,
-                        alignment: front.alignment,
+                        alignment: secondary.alignment,
                         physics: widget.physics,
                         addSemanticIndexes: widget.addSemanticIndexes,
                         semanticChildCount: widget.semanticChildCount,
@@ -412,23 +399,15 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       );
 
   void _jumpTo({@required int index, double alignment}) {
-    cancelScrollCallback?.call();
+    _stopScroll(canceled: true);
     if (index > widget.itemCount - 1) {
       index = widget.itemCount - 1;
     }
-    if (_showFrontList) {
-      front.scrollController.jumpTo(0);
-      setState(() {
-        front.target = index;
-        front.alignment = alignment;
-      });
-    } else {
-      back.scrollController.jumpTo(0);
-      setState(() {
-        back.target = index;
-        back.alignment = alignment;
-      });
-    }
+    setState(() {
+      primary.scrollController.jumpTo(0);
+      primary.target = index;
+      primary.alignment = alignment;
+    });
   }
 
   Future<void> _scrollTo({
@@ -441,8 +420,8 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     if (index > widget.itemCount - 1) {
       index = widget.itemCount - 1;
     }
-    if (cancelScrollCallback != null) {
-      cancelScrollCallback();
+    if (_isTransitioning) {
+      _stopScroll(canceled: true);
       SchedulerBinding.instance.addPostFrameCallback((_) {
         _startScroll(
           index: index,
@@ -470,107 +449,84 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     Curve curve = Curves.linear,
     @required List<double> opacityAnimationWeights,
   }) async {
-    final lastTarget = _showFrontList ? front.target : back.target;
-    final direction = index > lastTarget ? 1 : -1;
-    final startingListDisplay = listDisplay;
-    final startingScrollController = scrollController;
-    final itemPosition = itemPositionsNotifier.itemPositions.value.firstWhere(
-        (ItemPosition itemPosition) => itemPosition.index == index,
-        orElse: () => null);
+    final direction = index > primary.target ? 1 : -1;
+    final itemPosition = primary.itemPositionsNotifier.itemPositions.value
+        .firstWhere((ItemPosition itemPosition) => itemPosition.index == index,
+            orElse: () => null);
     if (itemPosition != null) {
+      // Scroll directly.
       final localScrollAmount = itemPosition.itemLeadingEdge *
-          startingScrollController.position.viewportDimension;
-      await startingScrollController.animateTo(
-          startingScrollController.offset +
+          primary.scrollController.position.viewportDimension;
+      await primary.scrollController.animateTo(
+          primary.scrollController.offset +
               localScrollAmount -
-              alignment * startingScrollController.position.viewportDimension,
+              alignment * primary.scrollController.position.viewportDimension,
           duration: duration,
           curve: curve);
     } else {
       final scrollAmount = _screenScrollCount *
-          startingScrollController.position.viewportDimension;
-      final endingScrollController =
-          _showFrontList ? back.scrollController : front.scrollController;
+          primary.scrollController.position.viewportDimension;
       final startCompleter = Completer<void>();
       final endCompleter = Completer<void>();
       startAnimationCallback = () {
         SchedulerBinding.instance.addPostFrameCallback((_) async {
-          opacity.parent =
-              _opacityAnimation(startingListDisplay, opacityAnimationWeights)
-                  .animate(AnimationController(vsync: this, duration: duration)
-                    ..forward());
+          opacity.parent = _opacityAnimation(opacityAnimationWeights).animate(
+              AnimationController(vsync: this, duration: duration)..forward());
           startAnimationCallback = () {};
-          endingScrollController.jumpTo(-direction *
+          secondary.scrollController.jumpTo(-direction *
               (_screenScrollCount *
-                      startingScrollController.position.viewportDimension -
+                      primary.scrollController.position.viewportDimension -
                   alignment *
-                      endingScrollController.position.viewportDimension));
+                      secondary.scrollController.position.viewportDimension));
 
-          startCompleter.complete(startingScrollController.animateTo(
-              startingScrollController.offset + direction * scrollAmount,
+          startCompleter.complete(primary.scrollController.animateTo(
+              primary.scrollController.offset + direction * scrollAmount,
               duration: duration,
               curve: curve));
-          endCompleter.complete(endingScrollController.animateTo(
-              -alignment * endingScrollController.position.viewportDimension,
+          endCompleter.complete(secondary.scrollController.animateTo(
+              -alignment *
+                  secondary.scrollController.position.viewportDimension,
               duration: duration,
               curve: curve));
-
-          scrollNotificationCallback = () => startingListDisplay;
-          cancelScrollCallback = () => _cancelScroll(startingListDisplay);
         });
       };
       setState(() {
-        if (_showFrontList) {
-          back.target = index;
-        } else {
-          front.target = index;
-        }
-        listDisplay = _ListDisplay.both;
+        // TODO: _startScroll can be re-entrant, which invalidates this assert.
+        // assert(!_isTransitioning);
+        secondary.target = index;
+        _isTransitioning = true;
       });
-      endScrollCallback = () {
-        setState(() {
-          listDisplay = startingListDisplay == _ListDisplay.front
-              ? _ListDisplay.back
-              : _ListDisplay.front;
-        });
-        scrollNotificationCallback = null;
-        cancelScrollCallback = null;
-        endScrollCallback = null;
-      };
       await Future.wait<void>([startCompleter.future, endCompleter.future]);
-      endScrollCallback?.call();
+      _stopScroll();
     }
   }
 
-  void _cancelScroll(_ListDisplay startingListDisplay) {
-    front.scrollController.jumpTo(front.scrollController.offset);
-    back.scrollController.jumpTo(back.scrollController.offset);
-    if (startingListDisplay == _ListDisplay.front && opacity.value >= 0.5 ||
-        startingListDisplay == _ListDisplay.back && opacity.value > 0.5) {
-      setState(() {
-        listDisplay = _ListDisplay.front;
-        opacity.parent = const AlwaysStoppedAnimation<double>(1.0);
-      });
-      scrollNotificationCallback = null;
-      cancelScrollCallback = null;
-      endScrollCallback = null;
-    } else if (startingListDisplay == _ListDisplay.front &&
-            opacity.value < 0.5 ||
-        startingListDisplay == _ListDisplay.back && opacity.value <= 0.5) {
-      setState(() {
-        listDisplay = _ListDisplay.back;
-        opacity.parent = const AlwaysStoppedAnimation<double>(0.0);
-      });
-      scrollNotificationCallback = null;
-      cancelScrollCallback = null;
-      endScrollCallback = null;
+  void _stopScroll({bool canceled = false}) {
+    if (!_isTransitioning) {
+      return;
     }
+
+    if (canceled) {
+      primary.scrollController.jumpTo(primary.scrollController.offset);
+      secondary.scrollController.jumpTo(secondary.scrollController.offset);
+    }
+
+    setState(() {
+      if (opacity.value >= 0.5) {
+        // Secondary [ListView] is more visible than the primary; make it the
+        // new primary.
+        var temp = primary;
+        primary = secondary;
+        secondary = temp;
+      }
+      _isTransitioning = false;
+      opacity.parent = const AlwaysStoppedAnimation<double>(0);
+    });
   }
 
-  Animatable<double> _opacityAnimation(
-      _ListDisplay startListDisplay, List<double> opacityAnimationWeights) {
-    final startOpacity = startListDisplay == _ListDisplay.front ? 1.0 : 0.0;
-    final endOpacity = 1 - startOpacity;
+  Animatable<double> _opacityAnimation(List<double> opacityAnimationWeights) {
+    final startOpacity = 0.0;
+    final endOpacity = 1.0;
     return TweenSequence<double>(<TweenSequenceItem<double>>[
       TweenSequenceItem<double>(
           tween: ConstantTween<double>(startOpacity),
@@ -585,8 +541,8 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   }
 
   void _updatePositions() {
-    final itemPositions = itemPositionsNotifier.itemPositions.value.where(
-        (ItemPosition position) =>
+    final itemPositions = primary.itemPositionsNotifier.itemPositions.value
+        .where((ItemPosition position) =>
             position.itemLeadingEdge < 1 && position.itemTrailingEdge > 0);
     if (itemPositions.isNotEmpty) {
       PageStorage.of(context).writeState(
@@ -600,9 +556,9 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   }
 }
 
-enum _ListDisplay { back, front, both }
-
 class _ListDisplayDetails {
+  _ListDisplayDetails(this.key);
+
   final itemPositionsNotifier = ItemPositionsNotifier();
   final scrollController = ScrollController(keepScrollOffset: false);
 
@@ -613,4 +569,6 @@ class _ListDisplayDetails {
   ///
   /// See [ItemScrollController.jumpTo] for an explanation of alignment.
   double alignment = 0;
+
+  final Key key;
 }

@@ -5,7 +5,7 @@
   * Added documentation to address
     [issue #96](https://github.com/google/flutter.widgets/issues/96).
   * Miscellaneous other cleanup.
-  * 
+  * Restructured `_ScrollablePositionedListState` to try to simplify logic.
 
 # 0.1.9
   * Fixed the example in `README.md`.  Fixes
