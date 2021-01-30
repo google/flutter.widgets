@@ -1,7 +1,7 @@
 # 0.1.10
   * Update the home page URL to fix
     [issue #190](https://github.com/google/flutter.widgets/issues/190).
-  * Make the example report the selected alignment.
+  * Miscellaneous tweaks to the example.
 
 # 0.1.9
   * Fixed the example in `README.md`.  Fixes

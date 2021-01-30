@@ -93,6 +93,7 @@ class _ScrollablePositionedListPageState
                   Column(
                     children: <Widget>[
                       scrollControlButtons,
+                      const SizedBox(height: 10),
                       jumpControlButtons,
                       alignmentControl,
                     ],
@@ -201,20 +202,26 @@ class _ScrollablePositionedListPageState
         ],
       );
 
-  Widget scrollButton(int value) => GestureDetector(
+  final _scrollButtonStyle = ButtonStyle(
+    padding: MaterialStateProperty.all(
+      const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+    ),
+    minimumSize: MaterialStateProperty.all(Size.zero),
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+  );
+
+  Widget scrollButton(int value) => TextButton(
         key: ValueKey<String>('Scroll$value'),
-        onTap: () => scrollTo(value),
-        child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Text('$value')),
+        onPressed: () => scrollTo(value),
+        child: Text('$value'),
+        style: _scrollButtonStyle,
       );
 
-  Widget jumpButton(int value) => GestureDetector(
+  Widget jumpButton(int value) => TextButton(
         key: ValueKey<String>('Jump$value'),
-        onTap: () => jumpTo(value),
-        child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Text('$value')),
+        onPressed: () => jumpTo(value),
+        child: Text('$value'),
+        style: _scrollButtonStyle,
       );
 
   void scrollTo(int index) => itemScrollController.scrollTo(
