@@ -6,6 +6,9 @@
     [issue #96](https://github.com/google/flutter.widgets/issues/96).
   * Miscellaneous other cleanup.
   * Restructured `_ScrollablePositionedListState` to try to simplify logic.
+  * Fixed an issue with `ItemScrollController.scrollTo` where it could scroll to
+    the wrong item if a non-zero `alignment` was specified and if the list was
+    manually scrolled by dragging.
 
 # 0.1.9
   * Fixed the example in `README.md`.  Fixes

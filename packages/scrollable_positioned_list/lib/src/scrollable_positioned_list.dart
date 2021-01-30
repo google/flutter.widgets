@@ -469,10 +469,11 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       final startCompleter = Completer<void>();
       final endCompleter = Completer<void>();
       startAnimationCallback = () {
-        SchedulerBinding.instance.addPostFrameCallback((_) async {
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          startAnimationCallback = () {};
+
           opacity.parent = _opacityAnimation(opacityAnimationWeights).animate(
               AnimationController(vsync: this, duration: duration)..forward());
-          startAnimationCallback = () {};
           secondary.scrollController.jumpTo(-direction *
               (_screenScrollCount *
                       primary.scrollController.position.viewportDimension -
@@ -483,17 +484,15 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
               primary.scrollController.offset + direction * scrollAmount,
               duration: duration,
               curve: curve));
-          endCompleter.complete(secondary.scrollController.animateTo(
-              -alignment *
-                  secondary.scrollController.position.viewportDimension,
-              duration: duration,
-              curve: curve));
+          endCompleter.complete(secondary.scrollController
+              .animateTo(0, duration: duration, curve: curve));
         });
       };
       setState(() {
         // TODO: _startScroll can be re-entrant, which invalidates this assert.
         // assert(!_isTransitioning);
         secondary.target = index;
+        secondary.alignment = alignment;
         _isTransitioning = true;
       });
       await Future.wait<void>([startCompleter.future, endCompleter.future]);
