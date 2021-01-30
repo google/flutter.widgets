@@ -1096,6 +1096,36 @@ void main() {
     expect(find.text('Item 100'), findsNothing);
   });
 
+  testWidgets(
+      'Jump to 400 at bottom, manually scroll, scroll to 100 at bottom and back',
+      (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    final itemPositionsListener = ItemPositionsListener.create();
+    await setUpWidgetTest(tester,
+        itemScrollController: itemScrollController,
+        itemPositionsListener: itemPositionsListener);
+
+    itemScrollController.jumpTo(index: 400, alignment: 1);
+    await tester.pumpAndSettle();
+
+    final listFinder = find.byType(ScrollablePositionedList);
+
+    await tester.drag(listFinder, const Offset(0, -screenHeight));
+    await tester.pumpAndSettle();
+
+    unawaited(itemScrollController.scrollTo(
+        index: 100, alignment: 1, duration: scrollDuration));
+    await tester.pumpAndSettle();
+
+    unawaited(itemScrollController.scrollTo(
+        index: 400, alignment: 1, duration: scrollDuration));
+    await tester.pumpAndSettle();
+
+    var itemFinder = find.text('Item 399');
+    expect(itemFinder, findsOneWidget);
+    expect(tester.getBottomLeft(itemFinder).dy, screenHeight);
+  });
+
   testWidgets('physics', (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     await setUpWidgetTest(tester,
