@@ -18,10 +18,9 @@ import 'scroll_view.dart';
 ///
 /// [PositionedList] lays out children in the same way as [ListView].
 ///
-/// The list can be displayed with the item at [initialScrollIndex] positioned
-/// at a particular [initialAlignment], where [initialAlignment] positions the
-/// leading edge of the item with [initialScrollIndex] at [initialAlignment] *
-/// height of the viewport from the leading edge of the viewport.
+/// The list can be displayed with the item at [positionIndex] positioned at a
+/// particular [alignment].  See [ItemScrollController.jumpTo] for an
+/// explanation of alignment.
 ///
 /// All other parameters are the same as specified in [ListView].
 class PositionedList extends StatefulWidget {
@@ -72,8 +71,7 @@ class PositionedList extends StatefulWidget {
   /// Determines where the leading edge of the item at [positionedIndex]
   /// should be placed.
   ///
-  /// Is a value between '0' and '1' that is a proportion of the main axis
-  /// length of viewport from its leading edge.
+  /// See [ItemScrollController.jumpTo] for an explanation of alignment.
   final double alignment;
 
   /// The axis along which the scroll view scrolls.

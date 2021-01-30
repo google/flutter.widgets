@@ -2,6 +2,8 @@
   * Update the home page URL to fix
     [issue #190](https://github.com/google/flutter.widgets/issues/190).
   * Miscellaneous tweaks to the example.
+  * Added documentation to address
+    [issue #96](https://github.com/google/flutter.widgets/issues/96).
 
 # 0.1.9
   * Fixed the example in `README.md`.  Fixes

@@ -23,9 +23,7 @@ const int _screenScrollCount = 2;
 /// [ScrollablePositionedList] lays out children in the same way as [ListView].
 ///
 /// The list can be displayed with the item at [initialScrollIndex] positioned
-/// at a particular [initialAlignment], where [initialAlignment] positions the
-/// leading edge of the item with [initialScrollIndex] at [initialAlignment] *
-/// height of the viewport from the leading edge of the viewport.
+/// at a particular [initialAlignment].
 ///
 /// The [itemScrollController] can be used to scroll or jump to particular items
 /// in the list.  The [itemPositionsNotifier] can be used to get a list of items
@@ -106,6 +104,8 @@ class ScrollablePositionedList extends StatefulWidget {
 
   /// Determines where the leading edge of the item at [initialScrollIndex]
   /// should be placed.
+  ///
+  /// See [ItemScrollController.jumpTo] for an explanation of alignment.
   final double initialAlignment;
 
   /// The axis along which the scroll view scrolls.
@@ -174,14 +174,29 @@ class ItemScrollController {
 
   _ScrollablePositionedListState _scrollableListState;
 
-  /// Immediately, without animation, reconfigure the list so that item at
+  /// Immediately, without animation, reconfigure the list so that the item at
   /// [index]'s leading edge is at the given [alignment].
+  ///
+  /// The [alignment] specifies the desired position for the leading edge of the
+  /// item.  The [alignment] is expected to be a value in the range \[0.0, 1.0\]
+  /// and represents a proportion along the main axis of the viewport.
+  ///
+  /// For a vertically scrolling view that is not reversed:
+  /// * 0 aligns the top edge of the item with the top edge of the view.
+  /// * 1 aligns the top edge of the item with the bottom of the view.
+  /// * 0.5 aligns the top edge of the item with the center of the view.
+  ///
+  /// For a horizontally scrolling view that is not reversed:
+  /// * 0 aligns the left edge of the item with the left edge of the view
+  /// * 1 aligns the left edge of the item with the right edge of the view.
+  /// * 0.5 aligns the left edge of the item with the center of the view.
   void jumpTo({@required int index, double alignment = 0}) {
     _scrollableListState._jumpTo(index: index, alignment: alignment);
   }
 
-  /// Animation the list over [duration] using the given [curve] such that the
-  /// item at [index] ends up with its leading edge the given alignment.
+  /// Animate the list over [duration] using the given [curve] such that the
+  /// item at [index] ends up with its leading edge at the given [alignment].
+  /// See [jumpTo] for an explanation of alignment.
   ///
   /// The [duration] must be greater than 0; otherwise, use [jumpTo].
   ///
@@ -209,6 +224,7 @@ class ItemScrollController {
   }) {
     assert(_scrollableListState != null);
     assert(opacityAnimationWeights.length == 3);
+    assert(duration > Duration.zero);
     return _scrollableListState._scrollTo(
       index: index,
       alignment: alignment,
