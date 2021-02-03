@@ -144,13 +144,27 @@ class _LinkedScrollController extends ScrollController {
   @override
   _LinkedScrollPosition createScrollPosition(ScrollPhysics physics,
       ScrollContext context, ScrollPosition oldPosition) {
-    return _LinkedScrollPosition(
+    final newPosition = _LinkedScrollPosition(
       this,
       physics: physics,
       context: context,
       initialPixels: initialScrollOffset,
       oldPosition: oldPosition,
     );
+
+    if (oldPosition == null && _controllers._attachedControllers.isNotEmpty) {
+      final position = _controllers._attachedControllers.first.position;
+      if (newPosition.minScrollExtent == null &&
+          newPosition.maxScrollExtent == null &&
+          position.minScrollExtent != null &&
+          position.maxScrollExtent != null) {
+        newPosition.applyContentDimensions(
+            position.minScrollExtent, position.maxScrollExtent);
+      }
+      newPosition.forcePixels(position.pixels);
+    }
+
+    return newPosition;
   }
 
   @override

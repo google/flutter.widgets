@@ -282,6 +282,35 @@ void main() {
       expect(state._letters.position.pixels, 50.0);
       expect(state._numbers.position.pixels, 50.0);
     });
+
+    testWidgets('check position after tile is remounted', (tester) async {
+      await tester.pumpWidget(RemountTest());
+
+      await tester.fling(
+          find.text('ListView-A 1'), const Offset(0.0, -1000.0), 1000.0);
+      await tester.pumpAndSettle();
+
+      // ListView-A has been unmounted.
+      await tester.fling(
+          find.text('ListView-D 1'), const Offset(-50.0, 0.0), 500.0);
+      await tester.pumpAndSettle();
+
+      // ListView-A will be mounted.
+      await tester.fling(
+          find.text('ListView-D 2'), const Offset(0.0, 1000.0), 1000.0);
+      await tester.pumpAndSettle();
+
+      final state = tester.state<_RemountTestState>(find.byType(RemountTest));
+      final offset = state._controllers.offset;
+
+      tester.allStates.where((state) {
+        return (state is ScrollableState) &&
+            (state.widget.axis == Axis.horizontal);
+      }).forEach((state) {
+        final pixels = (state as ScrollableState).position.pixels;
+        expect(pixels, equals(offset));
+      });
+    });
   });
 }
 
@@ -350,6 +379,99 @@ class TestState extends State<Test> {
                 Tile('Hello 3'),
                 Tile('Hello 4'),
                 Tile('Hello 5'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class RemountTest extends StatefulWidget {
+  @override
+  _RemountTestState createState() => _RemountTestState();
+}
+
+class _RemountTestState extends State<RemountTest> {
+  LinkedScrollControllerGroup _controllers;
+
+  ScrollController _controllerA;
+  ScrollController _controllerB;
+  ScrollController _controllerC;
+  ScrollController _controllerD;
+
+  @override
+  void initState() {
+    super.initState();
+    _controllers = LinkedScrollControllerGroup();
+    _controllerA = _controllers.addAndGet();
+    _controllerB = _controllers.addAndGet();
+    _controllerC = _controllers.addAndGet();
+    _controllerD = _controllers.addAndGet();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final height = 400.0;
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: ListView(
+        scrollDirection: Axis.vertical,
+        children: [
+          SizedBox(
+            height: height,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              controller: _controllerA,
+              children: [
+                Tile('ListView-A 1'),
+                Tile('ListView-A 2'),
+                Tile('ListView-A 3'),
+                Tile('ListView-A 4'),
+                Tile('ListView-A 5'),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: height,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              controller: _controllerB,
+              children: [
+                Tile('ListView-B 1'),
+                Tile('ListView-B 2'),
+                Tile('ListView-B 3'),
+                Tile('ListView-B 4'),
+                Tile('ListView-B 5'),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: height,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              controller: _controllerC,
+              children: [
+                Tile('ListView-C 1'),
+                Tile('ListView-C 2'),
+                Tile('ListView-C 3'),
+                Tile('ListView-C 4'),
+                Tile('ListView-C 5'),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: height,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              controller: _controllerD,
+              children: [
+                Tile('ListView-D 1'),
+                Tile('ListView-D 2'),
+                Tile('ListView-D 3'),
+                Tile('ListView-D 4'),
+                Tile('ListView-D 5'),
               ],
             ),
           ),
