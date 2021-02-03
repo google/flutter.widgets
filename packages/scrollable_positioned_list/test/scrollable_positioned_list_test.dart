@@ -37,6 +37,7 @@ void main() {
     bool addRepaintBoundaries = true,
     bool addAutomaticKeepAlives = true,
     double minCacheExtent,
+    bool variableHeight = false,
   }) async {
     tester.binding.window.devicePixelRatioTestValue = 1.0;
     tester.binding.window.physicalSizeTestValue =
@@ -51,7 +52,8 @@ void main() {
           itemBuilder: (context, index) {
             assert(index >= 0 && index <= itemCount - 1);
             return SizedBox(
-              height: itemHeight,
+              height:
+                  variableHeight ? (itemHeight + (index % 13) * 5) : itemHeight,
               child: Text('Item $index'),
             );
           },
@@ -724,6 +726,28 @@ void main() {
             .itemLeadingEdge,
         0.5);
   });
+
+  testWidgets('Manually scroll a significant distance, jump to 100',
+      (WidgetTester tester) async {
+    // Test for https://github.com/google/flutter.widgets/issues/144.
+    final itemScrollController = ItemScrollController();
+    final itemPositionsListener = ItemPositionsListener.create();
+    await setUpWidgetTest(tester,
+        itemScrollController: itemScrollController,
+        itemPositionsListener: itemPositionsListener,
+        variableHeight: true);
+
+    final listFinder = find.byType(ScrollablePositionedList);
+    for (var i = 0; i < 5; i += 1) {
+      await tester.drag(listFinder, const Offset(0, -screenHeight));
+      await tester.pumpAndSettle();
+    }
+
+    itemScrollController.jumpTo(index: 100);
+    await tester.pumpAndSettle();
+
+    expect(tester.getTopLeft(find.text('Item 100')).dy, 0);
+  }, skip: true);
 
   testWidgets('Scroll to 100 and position at bottom',
       (WidgetTester tester) async {
