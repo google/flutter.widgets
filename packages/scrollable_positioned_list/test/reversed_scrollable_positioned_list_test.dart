@@ -18,9 +18,9 @@ const scrollDuration = Duration(seconds: 1);
 void main() {
   Future<void> setUpWidgetTest(
     WidgetTester tester, {
-    ItemScrollController itemScrollController,
-    ItemPositionsListener itemPositionsListener,
-    EdgeInsets padding,
+    ItemScrollController? itemScrollController,
+    ItemPositionsListener? itemPositionsListener,
+    EdgeInsets? padding,
     int initialIndex = 0,
   }) async {
     tester.binding.window.devicePixelRatioTestValue = 1.0;

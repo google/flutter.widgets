@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
@@ -34,11 +35,11 @@ class ScrollablePositionedList extends StatefulWidget {
   /// Create a [ScrollablePositionedList] whose items are provided by
   /// [itemBuilder].
   const ScrollablePositionedList.builder({
-    @required this.itemCount,
-    @required this.itemBuilder,
-    Key key,
+    required this.itemCount,
+    required this.itemBuilder,
+    Key? key,
     this.itemScrollController,
-    ItemPositionsListener itemPositionsListener,
+    ItemPositionsListener? itemPositionsListener,
     this.initialScrollIndex = 0,
     this.initialAlignment = 0,
     this.scrollDirection = Axis.vertical,
@@ -52,19 +53,19 @@ class ScrollablePositionedList extends StatefulWidget {
     this.minCacheExtent,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
-        itemPositionsNotifier = itemPositionsListener,
+        itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
         separatorBuilder = null,
         super(key: key);
 
   /// Create a [ScrollablePositionedList] whose items are provided by
   /// [itemBuilder] and separators provided by [separatorBuilder].
   const ScrollablePositionedList.separated({
-    @required this.itemCount,
-    @required this.itemBuilder,
-    @required this.separatorBuilder,
-    Key key,
+    required this.itemCount,
+    required this.itemBuilder,
+    required this.separatorBuilder,
+    Key? key,
     this.itemScrollController,
-    ItemPositionsListener itemPositionsListener,
+    ItemPositionsListener? itemPositionsListener,
     this.initialScrollIndex = 0,
     this.initialAlignment = 0,
     this.scrollDirection = Axis.vertical,
@@ -79,7 +80,7 @@ class ScrollablePositionedList extends StatefulWidget {
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         assert(separatorBuilder != null),
-        itemPositionsNotifier = itemPositionsListener,
+        itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
         super(key: key);
 
   /// Number of items the [itemBuilder] can produce.
@@ -91,13 +92,13 @@ class ScrollablePositionedList extends StatefulWidget {
 
   /// Called to build separators for between each item in the list.
   /// Called with 0 <= index < itemCount - 1.
-  final IndexedWidgetBuilder separatorBuilder;
+  final IndexedWidgetBuilder? separatorBuilder;
 
   /// Controller for jumping or scrolling to an item.
-  final ItemScrollController itemScrollController;
+  final ItemScrollController? itemScrollController;
 
   /// Notifier that reports the items laid out in the list after each frame.
-  final ItemPositionsNotifier itemPositionsNotifier;
+  final ItemPositionsNotifier? itemPositionsNotifier;
 
   /// Index of an item to initially align within the viewport.
   final int initialScrollIndex;
@@ -126,15 +127,15 @@ class ScrollablePositionedList extends StatefulWidget {
   /// user stops dragging the scroll view.
   ///
   /// See [ScrollView.physics].
-  final ScrollPhysics physics;
+  final ScrollPhysics? physics;
 
   /// The number of children that will contribute semantic information.
   ///
   /// See [ScrollView.semanticChildCount] for more information.
-  final int semanticChildCount;
+  final int? semanticChildCount;
 
   /// The amount of space by which to inset the children.
-  final EdgeInsets padding;
+  final EdgeInsets? padding;
 
   /// Whether to wrap each child in an [IndexedSemantics].
   ///
@@ -158,7 +159,7 @@ class ScrollablePositionedList extends StatefulWidget {
   /// scrolls, so using the [ScrollController.scrollTo] method may result
   /// in builds of widgets that would otherwise already be built in the
   /// cache extent.
-  final double minCacheExtent;
+  final double? minCacheExtent;
 
   @override
   State<StatefulWidget> createState() => _ScrollablePositionedListState();
@@ -172,7 +173,7 @@ class ItemScrollController {
   /// If `false`, then [jumpTo] and [scrollTo] must not be called.
   bool get isAttached => _scrollableListState != null;
 
-  _ScrollablePositionedListState _scrollableListState;
+  _ScrollablePositionedListState? _scrollableListState;
 
   /// Immediately, without animation, reconfigure the list so that the item at
   /// [index]'s leading edge is at the given [alignment].
@@ -190,8 +191,8 @@ class ItemScrollController {
   /// * 0 aligns the left edge of the item with the left edge of the view
   /// * 1 aligns the left edge of the item with the right edge of the view.
   /// * 0.5 aligns the left edge of the item with the center of the view.
-  void jumpTo({@required int index, double alignment = 0}) {
-    _scrollableListState._jumpTo(index: index, alignment: alignment);
+  void jumpTo({required int index, double alignment = 0}) {
+    _scrollableListState!._jumpTo(index: index, alignment: alignment);
   }
 
   /// Animate the list over [duration] using the given [curve] such that the
@@ -216,16 +217,16 @@ class ItemScrollController {
   ///
   /// See [TweenSequenceItem.weight] for more info.
   Future<void> scrollTo({
-    @required int index,
+    required int index,
     double alignment = 0,
-    @required Duration duration,
+    required Duration duration,
     Curve curve = Curves.linear,
     List<double> opacityAnimationWeights = const [40, 20, 40],
   }) {
     assert(_scrollableListState != null);
     assert(opacityAnimationWeights.length == 3);
     assert(duration > Duration.zero);
-    return _scrollableListState._scrollTo(
+    return _scrollableListState!._scrollTo(
       index: index,
       alignment: alignment,
       duration: duration,
@@ -262,7 +263,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   @override
   void initState() {
     super.initState();
-    ItemPosition initialPosition = PageStorage.of(context).readState(context);
+    ItemPosition? initialPosition = PageStorage.of(context)!.readState(context);
     primary.target = initialPosition?.index ?? widget.initialScrollIndex;
     primary.alignment =
         initialPosition?.itemLeadingEdge ?? widget.initialAlignment;
@@ -398,7 +399,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
         widget.minCacheExtent ?? 0,
       );
 
-  void _jumpTo({@required int index, double alignment}) {
+  void _jumpTo({required int index, required double alignment}) {
     _stopScroll(canceled: true);
     if (index > widget.itemCount - 1) {
       index = widget.itemCount - 1;
@@ -411,18 +412,18 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   }
 
   Future<void> _scrollTo({
-    @required int index,
-    double alignment,
-    @required Duration duration,
+    required int index,
+    required double alignment,
+    required Duration duration,
     Curve curve = Curves.linear,
-    @required List<double> opacityAnimationWeights,
+    required List<double> opacityAnimationWeights,
   }) async {
     if (index > widget.itemCount - 1) {
       index = widget.itemCount - 1;
     }
     if (_isTransitioning) {
       _stopScroll(canceled: true);
-      SchedulerBinding.instance.addPostFrameCallback((_) {
+      SchedulerBinding.instance!.addPostFrameCallback((_) {
         _startScroll(
           index: index,
           alignment: alignment,
@@ -443,16 +444,16 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   }
 
   Future<void> _startScroll({
-    @required int index,
-    double alignment,
-    @required Duration duration,
+    required int index,
+    required double alignment,
+    required Duration duration,
     Curve curve = Curves.linear,
-    @required List<double> opacityAnimationWeights,
+    required List<double> opacityAnimationWeights,
   }) async {
     final direction = index > primary.target ? 1 : -1;
     final itemPosition = primary.itemPositionsNotifier.itemPositions.value
-        .firstWhere((ItemPosition itemPosition) => itemPosition.index == index,
-            orElse: () => null);
+        .firstWhereOrNull(
+            (ItemPosition itemPosition) => itemPosition.index == index);
     if (itemPosition != null) {
       // Scroll directly.
       final localScrollAmount = itemPosition.itemLeadingEdge *
@@ -469,7 +470,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       final startCompleter = Completer<void>();
       final endCompleter = Completer<void>();
       startAnimationCallback = () {
-        SchedulerBinding.instance.addPostFrameCallback((_) {
+        SchedulerBinding.instance!.addPostFrameCallback((_) {
           startAnimationCallback = () {};
 
           opacity.parent = _opacityAnimation(opacityAnimationWeights).animate(
@@ -548,14 +549,14 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
         .where((ItemPosition position) =>
             position.itemLeadingEdge < 1 && position.itemTrailingEdge > 0);
     if (itemPositions.isNotEmpty) {
-      PageStorage.of(context).writeState(
+      PageStorage.of(context)!.writeState(
           context,
           itemPositions.reduce((value, element) =>
               value.itemLeadingEdge < element.itemLeadingEdge
                   ? value
                   : element));
     }
-    widget.itemPositionsNotifier?.itemPositions?.value = itemPositions;
+    widget.itemPositionsNotifier?.itemPositions.value = itemPositions;
   }
 }
 

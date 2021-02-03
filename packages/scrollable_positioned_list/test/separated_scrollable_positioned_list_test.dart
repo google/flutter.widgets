@@ -22,16 +22,16 @@ const tolerance = 1e-3;
 void main() {
   Future<void> setUpWidgetTest(
     WidgetTester tester, {
-    Key key,
-    ItemScrollController itemScrollController,
-    ItemPositionsListener itemPositionsListener,
+    Key? key,
+    ItemScrollController? itemScrollController,
+    ItemPositionsListener? itemPositionsListener,
     int initialIndex = 0,
     double initialAlignment = 0.0,
-    int itemCount,
-    ScrollPhysics physics,
+    int? itemCount,
+    ScrollPhysics? physics,
     bool addSemanticIndexes = true,
-    int semanticChildCount,
-    EdgeInsets padding,
+    int? semanticChildCount,
+    EdgeInsets? padding,
     bool addRepaintBoundaries = true,
     bool addAutomaticKeepAlives = true,
   }) async {
@@ -496,7 +496,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: ValueListenableBuilder(
+        home: ValueListenableBuilder<int>(
           valueListenable: itemCount,
           builder: (context, itemCount, child) {
             return ScrollablePositionedList.separated(
@@ -540,7 +540,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: ValueListenableBuilder(
+        home: ValueListenableBuilder<int>(
           valueListenable: itemCount,
           builder: (context, itemCount, child) {
             return ScrollablePositionedList.separated(
@@ -602,6 +602,7 @@ void main() {
   });
 }
 
-double _screenProportion({double numberOfItems, double numberOfSeparators}) =>
+double _screenProportion(
+        {required double numberOfItems, required double numberOfSeparators}) =>
     (numberOfItems * itemHeight + numberOfSeparators * separatorHeight) /
     screenHeight;
