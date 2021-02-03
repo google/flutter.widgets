@@ -19,7 +19,7 @@ void main() {
 
 // The root widget for the example app.
 class ScrollablePositionedListExample extends StatelessWidget {
-  const ScrollablePositionedListExample({Key key}) : super(key: key);
+  const ScrollablePositionedListExample({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class ScrollablePositionedListExample extends StatelessWidget {
 /// will be vertically scrollable, and if the device is in landscape mode, the
 /// list will be horizontally scrollable.
 class ScrollablePositionedListPage extends StatefulWidget {
-  const ScrollablePositionedListPage({Key key}) : super(key: key);
+  const ScrollablePositionedListPage({Key? key}) : super(key: key);
 
   @override
   _ScrollablePositionedListPageState createState() =>
@@ -58,8 +58,8 @@ class _ScrollablePositionedListPageState
   /// Listener that reports the position of items when the list is scrolled.
   final ItemPositionsListener itemPositionsListener =
       ItemPositionsListener.create();
-  List<double> itemHeights;
-  List<Color> itemColors;
+  late List<double> itemHeights;
+  late List<Color> itemColors;
   bool reversed = false;
 
   /// The alignment to be used next time the user scrolls or jumps to an item.
@@ -139,8 +139,8 @@ class _ScrollablePositionedListPageState
   Widget get positionsView => ValueListenableBuilder<Iterable<ItemPosition>>(
         valueListenable: itemPositionsListener.itemPositions,
         builder: (context, positions, child) {
-          int min;
-          int max;
+          int? min;
+          int? max;
           if (positions.isNotEmpty) {
             // Determine the first visible item by finding the item with the
             // smallest trailing edge that is greater than 0.  i.e. the first
@@ -170,8 +170,8 @@ class _ScrollablePositionedListPageState
               const Text('Reversed: '),
               Checkbox(
                   value: reversed,
-                  onChanged: (bool value) => setState(() {
-                        reversed = value;
+                  onChanged: (bool? value) => setState(() {
+                        reversed = value!;
                       }))
             ],
           );

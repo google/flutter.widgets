@@ -1,3 +1,6 @@
+# 0.2.0-nullsafety.0
+  * Update to null safety.
+
 # 0.1.10
   * Update the home page URL to fix
     [issue #190](https://github.com/google/flutter.widgets/issues/190).

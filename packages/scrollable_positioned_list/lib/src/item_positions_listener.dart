@@ -22,9 +22,9 @@ abstract class ItemPositionsListener {
 class ItemPosition {
   /// Create an [ItemPosition].
   const ItemPosition(
-      {@required this.index,
-      @required this.itemLeadingEdge,
-      @required this.itemTrailingEdge});
+      {required this.index,
+      required this.itemLeadingEdge,
+      required this.itemTrailingEdge});
 
   /// Index of the item.
   final int index;
