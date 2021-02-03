@@ -1121,6 +1121,29 @@ void main() {
   });
 
   testWidgets(
+      'Scroll to 100, scroll to 200, then scroll to 300 without waiting',
+      (WidgetTester tester) async {
+    // Possibly https://github.com/google/flutter.widgets/issues/171.
+    final itemScrollController = ItemScrollController();
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
+
+    unawaited(
+        itemScrollController.scrollTo(index: 100, duration: scrollDuration));
+    unawaited(
+        itemScrollController.scrollTo(index: 200, duration: scrollDuration));
+    unawaited(
+        itemScrollController.scrollTo(index: 300, duration: scrollDuration));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Item 100'), findsNothing);
+    expect(find.text('Item 200'), findsNothing);
+
+    var itemFinder = find.text('Item 300');
+    expect(itemFinder, findsOneWidget);
+    expect(tester.getTopLeft(itemFinder).dy, 0);
+  }, skip: true);
+
+  testWidgets(
       'Jump to 400 at bottom, manually scroll, scroll to 100 at bottom and back',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();

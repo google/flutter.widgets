@@ -506,8 +506,12 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     }
 
     if (canceled) {
-      primary.scrollController.jumpTo(primary.scrollController.offset);
-      secondary.scrollController.jumpTo(secondary.scrollController.offset);
+      if (primary.scrollController.hasClients) {
+        primary.scrollController.jumpTo(primary.scrollController.offset);
+      }
+      if (secondary.scrollController.hasClients) {
+        secondary.scrollController.jumpTo(secondary.scrollController.offset);
+      }
     }
 
     setState(() {
