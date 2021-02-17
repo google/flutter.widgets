@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:scrollable_positioned_list/src/item_positions_notifier.dart';
 import 'package:scrollable_positioned_list/src/positioned_list.dart';
 
 const screenHeight = 400.0;
@@ -20,7 +21,7 @@ void main() {
   Future<void> setUpWidgetTest(
     WidgetTester tester, {
     int topItem = 0,
-    ScrollController scrollController,
+    ScrollController? scrollController,
     double anchor = 0,
     int itemCount = defaultItemCount,
   }) async {
@@ -43,7 +44,7 @@ void main() {
             height: separatorHeight,
             child: Text('Separator $index'),
           ),
-          itemPositionsNotifier: itemPositionsNotifier,
+          itemPositionsNotifier: itemPositionsNotifier as ItemPositionsNotifier?,
           cacheExtent: cacheExtent,
         ),
       ),
@@ -254,6 +255,6 @@ void main() {
   });
 }
 
-double _screenProportion({double numberOfItems, double numberOfSeparators}) =>
+double _screenProportion({required double numberOfItems, required double numberOfSeparators}) =>
     (numberOfItems * itemHeight + numberOfSeparators * separatorHeight) /
     screenHeight;

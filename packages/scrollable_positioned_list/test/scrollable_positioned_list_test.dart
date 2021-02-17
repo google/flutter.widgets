@@ -24,19 +24,19 @@ const tolerance = 1e-3;
 void main() {
   Future<void> setUpWidgetTest(
     WidgetTester tester, {
-    Key key,
-    ItemScrollController itemScrollController,
-    ItemPositionsListener itemPositionsListener,
+    Key? key,
+    ItemScrollController? itemScrollController,
+    ItemPositionsListener? itemPositionsListener,
     int initialIndex = 0,
     double initialAlignment = 0.0,
     int itemCount = defaultItemCount,
-    ScrollPhysics physics,
+    ScrollPhysics? physics,
     bool addSemanticIndexes = true,
-    int semanticChildCount,
-    EdgeInsets padding,
+    int? semanticChildCount,
+    EdgeInsets? padding,
     bool addRepaintBoundaries = true,
     bool addAutomaticKeepAlives = true,
-    double minCacheExtent,
+    double? minCacheExtent,
   }) async {
     tester.binding.window.devicePixelRatioTestValue = 1.0;
     tester.binding.window.physicalSizeTestValue =
@@ -1246,7 +1246,7 @@ void main() {
     await setUpWidgetTest(tester, itemPositionsListener: itemPositionsListener);
 
     final root =
-        WidgetsBinding.instance.pipelineOwner.semanticsOwner.rootSemanticsNode;
+        WidgetsBinding.instance!.pipelineOwner.semanticsOwner!.rootSemanticsNode!;
 
     final semanticNodes = <SemanticsNode>[root];
 
@@ -1678,7 +1678,7 @@ void main() {
       MaterialApp(
         home: ValueListenableBuilder(
           valueListenable: itemCount,
-          builder: (context, itemCount, child) {
+          builder: (context, dynamic itemCount, child) {
             return ScrollablePositionedList.builder(
               initialScrollIndex: min(100, itemCount),
               initialAlignment: 0,
@@ -1723,7 +1723,7 @@ void main() {
       MaterialApp(
         home: ValueListenableBuilder(
           valueListenable: itemCount,
-          builder: (context, itemCount, child) {
+          builder: (context, dynamic itemCount, child) {
             return ScrollablePositionedList.builder(
               initialScrollIndex: min(100, itemCount - 1),
               initialAlignment: 0,
@@ -1763,7 +1763,7 @@ void main() {
       MaterialApp(
         home: ValueListenableBuilder(
           valueListenable: itemCount,
-          builder: (context, itemCount, child) {
+          builder: (context, dynamic itemCount, child) {
             return ScrollablePositionedList.builder(
               initialScrollIndex: itemCount - 1,
               itemCount: itemCount,
@@ -1895,7 +1895,7 @@ void main() {
       MaterialApp(
         home: ValueListenableBuilder(
           valueListenable: key,
-          builder: (context, key, child) {
+          builder: (context, dynamic key, child) {
             return Container(
               key: key,
               child: ScrollablePositionedList.builder(
@@ -1940,9 +1940,9 @@ void main() {
       MaterialApp(
         home: ValueListenableBuilder(
           valueListenable: outerKey,
-          builder: (context, outerKey, child) => ValueListenableBuilder(
+          builder: (context, dynamic outerKey, child) => ValueListenableBuilder(
             valueListenable: listKey,
-            builder: (context, listKey, child) => Container(
+            builder: (context, dynamic listKey, child) => Container(
               key: outerKey,
               child: Builder(
                 builder: (context) => Container(
@@ -1988,7 +1988,7 @@ void main() {
       MaterialApp(
         home: ValueListenableBuilder(
           valueListenable: key,
-          builder: (context, key, child) {
+          builder: (context, dynamic key, child) {
             return ScrollablePositionedList.builder(
               key: key,
               itemCount: 10,
@@ -2022,7 +2022,7 @@ void main() {
       MaterialApp(
         home: ValueListenableBuilder(
           valueListenable: key,
-          builder: (context, key, child) {
+          builder: (context, dynamic key, child) {
             return Container(
               key: key,
               child: ScrollablePositionedList.builder(
@@ -2066,7 +2066,7 @@ void main() {
       MaterialApp(
         home: ValueListenableBuilder(
           valueListenable: containerKey,
-          builder: (context, key, child) {
+          builder: (context, dynamic key, child) {
             return Container(
               key: key,
               child: ScrollablePositionedList.builder(
@@ -2112,7 +2112,7 @@ void main() {
       MaterialApp(
         home: ValueListenableBuilder(
           valueListenable: itemScrollControllerListenable,
-          builder: (context, itemScrollController, child) {
+          builder: (context, dynamic itemScrollController, child) {
             return ScrollablePositionedList.builder(
               itemCount: 100,
               itemScrollController: itemScrollController,
@@ -2164,7 +2164,7 @@ void main() {
           Expanded(
             child: ValueListenableBuilder(
               valueListenable: topItemScrollControllerListenable,
-              builder: (context, itemScrollController, child) {
+              builder: (context, dynamic itemScrollController, child) {
                 return ScrollablePositionedList.builder(
                   itemCount: 100,
                   itemScrollController: itemScrollController,
@@ -2181,7 +2181,7 @@ void main() {
           Expanded(
             child: ValueListenableBuilder(
               valueListenable: bottomItemScrollControllerListenable,
-              builder: (context, itemScrollController, child) {
+              builder: (context, dynamic itemScrollController, child) {
                 return ScrollablePositionedList.builder(
                   itemCount: 100,
                   itemScrollController: itemScrollController,

@@ -20,10 +20,10 @@ const tolerance = 10e-5;
 void main() {
   Future<void> setUpWidgetTest(
     WidgetTester tester, {
-    ItemScrollController itemScrollController,
-    ItemPositionsListener itemPositionsListener,
+    ItemScrollController? itemScrollController,
+    ItemPositionsListener? itemPositionsListener,
     bool reverse = false,
-    EdgeInsets padding,
+    EdgeInsets? padding,
     int initialScrollIndex = 0,
   }) async {
     tester.binding.window.devicePixelRatioTestValue = 1.0;
@@ -214,6 +214,6 @@ void main() {
   });
 }
 
-double _screenProportion({double numberOfItems, double numberOfSeparators}) =>
+double _screenProportion({required double numberOfItems, required double numberOfSeparators}) =>
     (numberOfItems * itemWidth + numberOfSeparators * separatorWidth) /
     screenHeight;
