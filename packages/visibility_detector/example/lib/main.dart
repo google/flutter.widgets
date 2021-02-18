@@ -76,11 +76,21 @@ class VisibilityDetectorDemoPageState
   /// Whether the pseudo-table should be shown.
   bool _tableShown = true;
 
+  /// Whether to use slivers.
+  bool _useSlivers = false;
+
   /// Toggles the visibility of the pseudo-table of [VisibilityDetector]
   /// widgets.
   void _toggleTable() {
     setState(() {
       _tableShown = !_tableShown;
+    });
+  }
+
+  /// Toggles between RenderBox and RenderSliver widgets.
+  void _toggleSlivers() {
+    setState(() {
+      _useSlivers = !_useSlivers;
     });
   }
 
@@ -96,21 +106,36 @@ class VisibilityDetectorDemoPageState
             scrollDirection: Axis.vertical,
             itemExtent: _rowHeight,
             itemBuilder: (BuildContext context, int rowIndex) {
-              return DemoPageRow(rowIndex: rowIndex);
+              return DemoPageRow(rowIndex: rowIndex, useSlivers: _useSlivers);
             },
           );
 
     return Scaffold(
       appBar: AppBar(title: const Text(title)),
-      floatingActionButton: FloatingActionButton(
-        shape: const Border(),
-        onPressed: _toggleTable,
-        child: _tableShown ? const Text('Hide') : const Text('Show'),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            shape: const Border(),
+            onPressed: _toggleSlivers,
+            child: _useSlivers
+                ? const Text('RenderBox')
+                : const Text('RenderSliver'),
+          ),
+          const SizedBox(width: 8),
+          FloatingActionButton(
+            shape: const Border(),
+            onPressed: _toggleTable,
+            child: _tableShown ? const Text('Hide') : const Text('Show'),
+          ),
+        ],
       ),
       body: Column(
         children: <Widget>[
           _tableShown ? Expanded(child: table!) : const Spacer(),
-          const VisibilityReport(title: 'Visibility'),
+          VisibilityReport(
+              title:
+                  'Visibility (${_useSlivers ? "RenderSliver" : "RenderBox"})'),
         ],
       ),
     );
@@ -119,17 +144,33 @@ class VisibilityDetectorDemoPageState
 
 /// An individual row for the pseudo-table of [VisibilityDetector] widgets.
 class DemoPageRow extends StatelessWidget {
-  const DemoPageRow({Key? key, required this.rowIndex}) : super(key: key);
+  const DemoPageRow(
+      {Key? key, required this.rowIndex, required this.useSlivers})
+      : super(key: key);
 
   final int rowIndex;
+  final bool useSlivers;
 
   @override
   Widget build(BuildContext context) {
+    if (useSlivers) {
+      return CustomScrollView(scrollDirection: Axis.horizontal, slivers: [
+        for (var columnIndex = 0; columnIndex < 20; columnIndex++)
+          SliverPadding(
+            padding: const EdgeInsets.all(_rowPadding),
+            sliver: SliverToBoxAdapter(
+              child: DemoPageCell(rowIndex: rowIndex, columnIndex: columnIndex),
+            ),
+          ),
+      ]);
+    }
     return ListView.builder(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.all(_rowPadding),
       itemBuilder: (BuildContext context, int columnIndex) {
-        return DemoPageCell(rowIndex: rowIndex, columnIndex: columnIndex);
+        return Padding(
+          padding: const EdgeInsets.all(_rowPadding),
+          child: DemoPageCell(rowIndex: rowIndex, columnIndex: columnIndex),
+        );
       },
     );
   }

@@ -9,6 +9,7 @@ import 'dart:math' show max;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
+import 'render_sliver_visibility_detector.dart';
 import 'render_visibility_detector.dart';
 
 /// A [VisibilityDetector] widget fires a specified callback when the widget
@@ -54,6 +55,46 @@ class VisibilityDetector extends SingleChildRenderObjectWidget {
   @override
   void updateRenderObject(
       BuildContext context, RenderVisibilityDetector renderObject) {
+    assert(renderObject.key == key);
+    renderObject.onVisibilityChanged = onVisibilityChanged;
+  }
+}
+
+/// Sliver version of [VisibilityDetector].
+class SliverVisibilityDetector extends SingleChildRenderObjectWidget {
+  /// Constructor.
+  ///
+  /// `key` is required to properly identify this widget; it must be unique
+  /// among all [VisibilityDetector] and [SliverVisibilityDetector] widgets.
+  ///
+  /// `child` must not be null.
+  ///
+  /// `onVisibilityChanged` may be null to disable this
+  /// [SliverVisibilityDetector].
+  const SliverVisibilityDetector({
+    required Key key,
+    required Widget sliver,
+    required this.onVisibilityChanged,
+  })   : assert(key != null),
+        assert(sliver != null),
+        super(key: key, child: sliver);
+
+  /// The callback to invoke when this widget's visibility changes.
+  final VisibilityChangedCallback? onVisibilityChanged;
+
+  /// See [RenderObjectWidget.createRenderObject].
+  @override
+  RenderSliverVisibilityDetector createRenderObject(BuildContext context) {
+    return RenderSliverVisibilityDetector(
+      key: key!,
+      onVisibilityChanged: onVisibilityChanged,
+    );
+  }
+
+  /// See [RenderObjectWidget.updateRenderObject].
+  @override
+  void updateRenderObject(
+      BuildContext context, RenderSliverVisibilityDetector renderObject) {
     assert(renderObject.key == key);
     renderObject.onVisibilityChanged = onVisibilityChanged;
   }
