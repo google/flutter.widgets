@@ -10,19 +10,19 @@ import 'package:flutter/rendering.dart';
 import 'visibility_detector.dart';
 import 'visibility_detector_layer.dart';
 
-/// The [RenderObject] corresponding to the [VisibilityDetector] widget.
+/// The [RenderObject] corresponding to the [SliverVisibilityDetector] widget.
 ///
-/// [RenderVisibilityDetector] is a bridge between [VisibilityDetector] and
-/// [VisibilityDetectorLayer].
-class RenderVisibilityDetector extends RenderProxyBox {
+/// [RenderSliverVisibilityDetector] is a bridge between [VisibilityDetector]
+/// and [VisibilityDetectorLayer] for sliver widgets.
+class RenderSliverVisibilityDetector extends RenderProxySliver {
   /// Constructor.  See the corresponding properties for parameter details.
-  RenderVisibilityDetector({
-    RenderBox? child,
+  RenderSliverVisibilityDetector({
+    RenderSliver? sliver,
     required this.key,
     required VisibilityChangedCallback? onVisibilityChanged,
   })   : assert(key != null),
         _onVisibilityChanged = onVisibilityChanged,
-        super(child);
+        super(sliver);
 
   /// The key for the corresponding [VisibilityDetector] widget.
   final Key key;
