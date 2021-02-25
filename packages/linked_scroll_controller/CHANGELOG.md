@@ -1,3 +1,10 @@
+# 0.2.0-nullsafety.0
+
+  * Update to null safety.
+
+  * Make `ScrollView`s rebuild at the group's offset instead of their last
+    known offset.
+
 # 0.1.2
 
   * Add `LinkedScrollControllerGroup.animateTo` and
