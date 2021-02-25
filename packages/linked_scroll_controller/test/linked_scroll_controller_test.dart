@@ -282,6 +282,34 @@ void main() {
       expect(state._letters.position.pixels, 50.0);
       expect(state._numbers.position.pixels, 50.0);
     });
+
+    testWidgets('rebuilt scrollable has linked group offset', (tester) async {
+      await tester.pumpWidget(Test());
+
+      final state = tester.state<TestState>(find.byType(Test));
+      expect(state._controllers.offset, equals(0.0));
+
+      // Hide the 'numbers' [ListView].
+      state.showNumbers = false;
+      await tester.pump();
+      expect(find.text('Hello 2'), findsNothing);
+
+      // Drag to new position.
+      await tester.drag(find.text('Hello B'), const Offset(0.0, -300.0));
+      await tester.pumpAndSettle();
+      expect(state._controllers.offset, equals(300.0));
+      expect(state._controllers.offset, equals(state._letters.offset));
+
+      // Show the 'numbers' [ListView].
+      state.showNumbers = true;
+      await tester.pump();
+      expect(find.text('Hello 2'), findsOneWidget);
+
+      // Test that both controllers are in sync.
+      expect(state._controllers.offset, equals(300.0));
+      expect(state._controllers.offset, equals(state._letters.offset));
+      expect(state._controllers.offset, equals(state._numbers.offset));
+    });
   });
 }
 
@@ -314,6 +342,7 @@ class TestState extends State<Test> {
   late LinkedScrollControllerGroup _controllers;
   late ScrollController _letters;
   late ScrollController _numbers;
+  bool _showNumbers = true;
 
   @override
   void initState() {
@@ -322,6 +351,9 @@ class TestState extends State<Test> {
     _letters = _controllers.addAndGet();
     _numbers = _controllers.addAndGet();
   }
+
+  set showNumbers(bool showNumbers) =>
+      setState(() => _showNumbers = showNumbers);
 
   @override
   Widget build(BuildContext context) {
@@ -341,18 +373,19 @@ class TestState extends State<Test> {
               ],
             ),
           ),
-          Expanded(
-            child: ListView(
-              controller: _numbers,
-              children: <Widget>[
-                Tile('Hello 1'),
-                Tile('Hello 2'),
-                Tile('Hello 3'),
-                Tile('Hello 4'),
-                Tile('Hello 5'),
-              ],
+          if (_showNumbers)
+            Expanded(
+              child: ListView(
+                controller: _numbers,
+                children: <Widget>[
+                  Tile('Hello 1'),
+                  Tile('Hello 2'),
+                  Tile('Hello 3'),
+                  Tile('Hello 4'),
+                  Tile('Hello 5'),
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );

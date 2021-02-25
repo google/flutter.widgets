@@ -122,7 +122,8 @@ class _LinkedScrollController extends ScrollController {
 
   _LinkedScrollController(this._controllers,
       {required double initialScrollOffset})
-      : super(initialScrollOffset: initialScrollOffset);
+      : super(
+            initialScrollOffset: initialScrollOffset, keepScrollOffset: false);
 
   @override
   void dispose() {
@@ -154,6 +155,11 @@ class _LinkedScrollController extends ScrollController {
       oldPosition: oldPosition,
     );
   }
+
+  @override
+  double get initialScrollOffset => _controllers._attachedControllers.isEmpty
+      ? super.initialScrollOffset
+      : _controllers.offset;
 
   @override
   _LinkedScrollPosition get position => super.position as _LinkedScrollPosition;
