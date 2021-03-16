@@ -256,10 +256,7 @@ class SliverDemoPageSecondaryAxis extends StatelessWidget {
         scrollDirection: secondaryAxis,
         reverse: reverse,
         slivers: [
-          // NEW no padding left and right
-          //SliverPadding(padding: EdgeInsets.only(left: externalCellPadding)),
           SliverToBoxAdapter(child: SizedBox(width: 5)),
-
           // Sliver version renders up to 20 columns.
           for (var secondaryIndex = 0; secondaryIndex < 20; secondaryIndex++)
             DemoPageCell(
@@ -267,9 +264,7 @@ class SliverDemoPageSecondaryAxis extends StatelessWidget {
               secondaryIndex: secondaryIndex,
               useSlivers: true,
             ),
-                    SliverToBoxAdapter(child: SizedBox(width: 5)),
-
-     //     SliverPadding(padding: EdgeInsets.only(right: externalCellPadding)),
+          SliverToBoxAdapter(child: SizedBox(width: 5)),
         ],
       ),
     );
