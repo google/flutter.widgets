@@ -60,7 +60,6 @@ class VisibilityDetector extends SingleChildRenderObjectWidget {
   }
 }
 
-/// Sliver version of [VisibilityDetector].
 class SliverVisibilityDetector extends SingleChildRenderObjectWidget {
   /// Constructor.
   ///
@@ -191,6 +190,11 @@ class VisibilityInfo {
     // if other properties are added.
     assert(info != null);
     return size == info.size && visibleBounds == info.visibleBounds;
+  }
+
+  @override
+  String toString() {
+    return 'VisibilityInfo(size: $size visibleBounds: $visibleBounds)';
   }
 }
 

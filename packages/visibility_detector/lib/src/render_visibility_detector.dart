@@ -57,7 +57,7 @@ class RenderVisibilityDetector extends RenderProxyBox {
 
     final layer = VisibilityDetectorLayer(
         key: key,
-        widgetSize: semanticBounds.size,
+        widgetRect: Offset.zero & semanticBounds.size,
         paintOffset: offset,
         onVisibilityChanged: onVisibilityChanged!);
     context.pushLayer(layer, super.paint, offset);

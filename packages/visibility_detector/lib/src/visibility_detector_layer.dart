@@ -62,12 +62,12 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// Constructor.  See the corresponding properties for parameter details.
   VisibilityDetectorLayer(
       {required this.key,
-      required this.widgetSize,
+      required this.widgetRect,
       required this.paintOffset,
       required this.onVisibilityChanged})
       : assert(key != null),
         assert(paintOffset != null),
-        assert(widgetSize != null),
+        assert(widgetRect != null),
         assert(onVisibilityChanged != null),
         _layerOffset = Offset.zero;
 
@@ -98,8 +98,8 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// The key for the corresponding [VisibilityDetector] widget.
   final Key key;
 
-  /// The size of the corresponding [VisibilityDetector] widget.
-  final Size widgetSize;
+  /// The bounds of the corresponding [VisibilityDetector] widget.
+  final Rect widgetRect;
 
   /// Last known layer offset supplied to [addToScene].
   Offset _layerOffset;
@@ -115,7 +115,7 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// Computes the bounds for the corresponding [VisibilityDetector] widget, in
   /// global coordinates.
   Rect _computeWidgetBounds() {
-    final r = _localRectToGlobal(this, Offset.zero & widgetSize);
+    final r = _localRectToGlobal(this, widgetRect);
     return r.shift(paintOffset + _layerOffset);
   }
 

@@ -4,6 +4,8 @@
 // license that can be found in the LICENSE file or at
 // https://developers.google.com/open-source/licenses/bsd
 
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
@@ -12,16 +14,15 @@ import 'visibility_detector_layer.dart';
 
 /// The [RenderObject] corresponding to the [SliverVisibilityDetector] widget.
 ///
-/// [RenderSliverVisibilityDetector] is a bridge between [VisibilityDetector]
-/// and [VisibilityDetectorLayer] for sliver widgets.
+/// [RenderSliverVisibilityDetector] is a bridge between
+/// [SliverVisibilityDetector] and [VisibilityDetectorLayer].
 class RenderSliverVisibilityDetector extends RenderProxySliver {
   /// Constructor.  See the corresponding properties for parameter details.
   RenderSliverVisibilityDetector({
     RenderSliver? sliver,
     required this.key,
     required VisibilityChangedCallback? onVisibilityChanged,
-  })   : assert(key != null),
-        _onVisibilityChanged = onVisibilityChanged,
+  })   : _onVisibilityChanged = onVisibilityChanged,
         super(sliver);
 
   /// The key for the corresponding [VisibilityDetector] widget.
@@ -55,9 +56,38 @@ class RenderSliverVisibilityDetector extends RenderProxySliver {
       return;
     }
 
+    Rect widgetRect;
+    switch (applyGrowthDirectionToAxisDirection(
+      constraints.axisDirection,
+      constraints.growthDirection,
+    )) {
+      case AxisDirection.down:
+        widgetRect = Offset(0, -constraints.scrollOffset) &
+            Size(constraints.crossAxisExtent, geometry!.scrollExtent);
+        break;
+      case AxisDirection.up:
+        final startOffset = geometry!.paintExtent +
+            constraints.scrollOffset -
+            geometry!.scrollExtent;
+        widgetRect = Offset(0, min(startOffset, 0)) &
+            Size(constraints.crossAxisExtent, geometry!.scrollExtent);
+        break;
+      case AxisDirection.right:
+        widgetRect = Offset(-constraints.scrollOffset, 0) &
+            Size(geometry!.scrollExtent, constraints.crossAxisExtent);
+        break;
+      case AxisDirection.left:
+        final startOffset = geometry!.paintExtent +
+            constraints.scrollOffset -
+            geometry!.scrollExtent;
+        widgetRect = Offset(min(startOffset, 0), 0) &
+            Size(geometry!.scrollExtent, constraints.crossAxisExtent);
+        break;
+    }
+
     final layer = VisibilityDetectorLayer(
         key: key,
-        widgetSize: semanticBounds.size,
+        widgetRect: widgetRect,
         paintOffset: offset,
         onVisibilityChanged: onVisibilityChanged!);
     context.pushLayer(layer, super.paint, offset);

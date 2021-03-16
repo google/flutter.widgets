@@ -15,14 +15,10 @@ const String title = 'VisibilityDetector Demo';
 const double cellWidth = 125;
 
 //// The height of each cell of our pseudo-table.
-const double cellHeight = _rowHeight - 2 * _rowPadding;
+const double cellHeight = 65;
 
-/// The height of each row of the pseudo-table.  This includes [_rowPadding] on
-/// top and bottom.
-const double _rowHeight = 75;
-
-/// The external padding around each row of the pseudo-table.
-const double _rowPadding = 5;
+/// The external padding around the primary row/column of the pseudo-table.
+const double externalCellPadding = 5;
 
 /// The internal padding for each cell of the pseudo-table.
 const double _cellPadding = 10;
@@ -36,9 +32,14 @@ const double _reportHeight = 200;
 /// The [Key] to the main [ListView] widget.
 const mainListKey = Key('MainList');
 
+Key secondaryScrollableKey(int primaryIndex) =>
+    ValueKey('secondary-$primaryIndex');
+
 /// Returns the [Key] to the [VisibilityDetector] widget in each cell of the
 /// pseudo-table.
 Key cellKey(int row, int col) => Key('Cell-$row-$col');
+
+Key cellContentKey(int row, int col) => Key('Content-$row-$col');
 
 /// A callback to be invoked by the [VisibilityDetector.onVisibilityChanged]
 /// callback.  We use the extra level of indirection to allow widget tests to
@@ -48,23 +49,40 @@ final visibilityListeners =
 
 void main() => runApp(const VisibilityDetectorDemo());
 
+/// Axis and growth direction of the table.
+class Layout {
+  const Layout(this.mainAxis, this.secondaryAxis, this.reverse);
+
+  final Axis mainAxis;
+  final Axis secondaryAxis;
+
+  /// Reverse direction of the secondary axis.
+  final bool reverse;
+}
+
 /// The root widget for the demo app.
 class VisibilityDetectorDemo extends StatelessWidget {
-  const VisibilityDetectorDemo({Key? key}) : super(key: key);
+  const VisibilityDetectorDemo({Key? key, this.useSlivers = false})
+      : super(key: key);
+
+  final bool useSlivers;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: title,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const VisibilityDetectorDemoPage(),
+      home: VisibilityDetectorDemoPage(key: key, useSlivers: useSlivers),
     );
   }
 }
 
 /// The main page [VisibilityDetectorDemo].
 class VisibilityDetectorDemoPage extends StatefulWidget {
-  const VisibilityDetectorDemoPage({Key? key}) : super(key: key);
+  VisibilityDetectorDemoPage({Key? key, this.useSlivers = false})
+      : super(key: key);
+
+  final bool useSlivers;
 
   @override
   VisibilityDetectorDemoPageState createState() =>
@@ -73,17 +91,43 @@ class VisibilityDetectorDemoPage extends StatefulWidget {
 
 class VisibilityDetectorDemoPageState
     extends State<VisibilityDetectorDemoPage> {
+  VisibilityDetectorDemoPageState();
+
+  var _layoutIndex = 0;
+
   /// Whether the pseudo-table should be shown.
   bool _tableShown = true;
 
   /// Whether to use slivers.
   bool _useSlivers = false;
 
+  static const _layouts = [
+    Layout(Axis.vertical, Axis.horizontal, false),
+    Layout(Axis.vertical, Axis.horizontal, true),
+    Layout(Axis.horizontal, Axis.vertical, false),
+    Layout(Axis.horizontal, Axis.vertical, true),
+  ];
+
+  Layout get _layout => _layouts[_layoutIndex];
+
+  @override
+  void initState() {
+    super.initState();
+    _useSlivers = widget.useSlivers;
+  }
+
   /// Toggles the visibility of the pseudo-table of [VisibilityDetector]
   /// widgets.
   void _toggleTable() {
     setState(() {
       _tableShown = !_tableShown;
+    });
+  }
+
+  /// Toggles between the layouts.
+  void _toggleLayout() {
+    setState(() {
+      _layoutIndex = (_layoutIndex + 1) % _layouts.length;
     });
   }
 
@@ -103,10 +147,24 @@ class VisibilityDetectorDemoPageState
         ? null
         : ListView.builder(
             key: mainListKey,
-            scrollDirection: Axis.vertical,
-            itemExtent: _rowHeight,
-            itemBuilder: (BuildContext context, int rowIndex) {
-              return DemoPageRow(rowIndex: rowIndex, useSlivers: _useSlivers);
+            scrollDirection: _layout.mainAxis,
+            itemExtent:
+                (_layout.mainAxis == Axis.vertical ? cellHeight : cellWidth) +
+                    2 * externalCellPadding,
+            itemBuilder: (BuildContext context, int primaryIndex) {
+              return _useSlivers
+                  ? SliverDemoPageSecondaryAxis(
+                      key: secondaryScrollableKey(primaryIndex),
+                      primaryIndex: primaryIndex,
+                      secondaryAxis: _layout.secondaryAxis,
+                      reverse: _layout.reverse,
+                    )
+                  : DemoPageSecondaryAxis(
+                      key: secondaryScrollableKey(primaryIndex),
+                      primaryIndex: primaryIndex,
+                      secondaryAxis: _layout.secondaryAxis,
+                      reverse: _layout.reverse,
+                    );
             },
           );
 
@@ -115,6 +173,12 @@ class VisibilityDetectorDemoPageState
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
+          FloatingActionButton(
+            shape: const Border(),
+            onPressed: _toggleLayout,
+            child: Text('Layout'),
+          ),
+          const SizedBox(width: 8),
           FloatingActionButton(
             shape: const Border(),
             onPressed: _toggleSlivers,
@@ -143,50 +207,91 @@ class VisibilityDetectorDemoPageState
 }
 
 /// An individual row for the pseudo-table of [VisibilityDetector] widgets.
-class DemoPageRow extends StatelessWidget {
-  const DemoPageRow(
-      {Key? key, required this.rowIndex, required this.useSlivers})
-      : super(key: key);
+class DemoPageSecondaryAxis extends StatelessWidget {
+  const DemoPageSecondaryAxis({
+    Key? key,
+    required this.primaryIndex,
+    required this.secondaryAxis,
+    required this.reverse,
+  }) : super(key: key);
 
-  final int rowIndex;
-  final bool useSlivers;
+  final Axis secondaryAxis;
+  final int primaryIndex;
+  final bool reverse;
 
   @override
   Widget build(BuildContext context) {
-    if (useSlivers) {
-      return CustomScrollView(scrollDirection: Axis.horizontal, slivers: [
-        for (var columnIndex = 0; columnIndex < 20; columnIndex++)
-          SliverPadding(
-            padding: const EdgeInsets.all(_rowPadding),
-            sliver: SliverToBoxAdapter(
-              child: DemoPageCell(rowIndex: rowIndex, columnIndex: columnIndex),
-            ),
-          ),
-      ]);
-    }
     return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemBuilder: (BuildContext context, int columnIndex) {
-        return Padding(
-          padding: const EdgeInsets.all(_rowPadding),
-          child: DemoPageCell(rowIndex: rowIndex, columnIndex: columnIndex),
+      scrollDirection: secondaryAxis,
+      reverse: reverse,
+      padding: const EdgeInsets.all(externalCellPadding),
+      itemBuilder: (BuildContext context, int secondaryIndex) {
+        return DemoPageCell(
+          primaryIndex: primaryIndex,
+          secondaryIndex: secondaryIndex,
+          useSlivers: false,
         );
       },
     );
   }
 }
 
+class SliverDemoPageSecondaryAxis extends StatelessWidget {
+  const SliverDemoPageSecondaryAxis({
+    Key? key,
+    required this.primaryIndex,
+    required this.secondaryAxis,
+    required this.reverse,
+  }) : super(key: key);
+
+  final Axis secondaryAxis;
+  final int primaryIndex;
+  final bool reverse;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: externalCellPadding),
+      child: CustomScrollView(
+        scrollDirection: secondaryAxis,
+        reverse: reverse,
+        slivers: [
+          // NEW no padding left and right
+          //SliverPadding(padding: EdgeInsets.only(left: externalCellPadding)),
+          SliverToBoxAdapter(child: SizedBox(width: 5)),
+
+          // Sliver version renders up to 20 columns.
+          for (var secondaryIndex = 0; secondaryIndex < 20; secondaryIndex++)
+            DemoPageCell(
+              primaryIndex: primaryIndex,
+              secondaryIndex: secondaryIndex,
+              useSlivers: true,
+            ),
+                    SliverToBoxAdapter(child: SizedBox(width: 5)),
+
+     //     SliverPadding(padding: EdgeInsets.only(right: externalCellPadding)),
+        ],
+      ),
+    );
+  }
+}
+
 /// An individual cell for the pseudo-table of [VisibilityDetector] widgets.
 class DemoPageCell extends StatelessWidget {
-  DemoPageCell({Key? key, required this.rowIndex, required this.columnIndex})
-      : _cellName = 'Item $rowIndex-$columnIndex',
-        _backgroundColor = ((rowIndex + columnIndex) % 2 == 0)
+  DemoPageCell({
+    Key? key,
+    required this.primaryIndex,
+    required this.secondaryIndex,
+    required this.useSlivers,
+  })   : _cellName = 'Item $primaryIndex-$secondaryIndex',
+        _backgroundColor = ((primaryIndex + secondaryIndex) % 2 == 0)
             ? Colors.pink[200]
             : Colors.yellow[200],
         super(key: key);
 
-  final int rowIndex;
-  final int columnIndex;
+  final int primaryIndex;
+  final int secondaryIndex;
+  final bool useSlivers;
 
   /// The text to show for the cell.
   final String _cellName;
@@ -197,25 +302,36 @@ class DemoPageCell extends StatelessWidget {
   /// changes.  Triggers the [visibilityListeners] callbacks.
   void _handleVisibilityChanged(VisibilityInfo info) {
     for (final listener in visibilityListeners) {
-      listener(RowColumn(rowIndex, columnIndex), info);
+      listener(RowColumn(primaryIndex, secondaryIndex), info);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return VisibilityDetector(
-      key: cellKey(rowIndex, columnIndex),
-      onVisibilityChanged: _handleVisibilityChanged,
-      child: Container(
-        width: cellWidth,
-        decoration: BoxDecoration(color: _backgroundColor),
-        padding: const EdgeInsets.all(_cellPadding),
-        alignment: Alignment.center,
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(_cellName, style: Theme.of(context).textTheme.headline4),
-        ),
+    final container = Container(
+      key: cellContentKey(primaryIndex, secondaryIndex),
+      width: cellWidth,
+      decoration: BoxDecoration(color: _backgroundColor),
+      padding: const EdgeInsets.all(_cellPadding),
+      alignment: Alignment.center,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(_cellName, style: Theme.of(context).textTheme.headline4),
       ),
+    );
+
+    if (useSlivers) {
+      return SliverVisibilityDetector(
+        key: cellKey(primaryIndex, secondaryIndex),
+        onVisibilityChanged: _handleVisibilityChanged,
+        sliver: SliverToBoxAdapter(child: container),
+      );
+    }
+
+    return VisibilityDetector(
+      key: cellKey(primaryIndex, secondaryIndex),
+      onVisibilityChanged: _handleVisibilityChanged,
+      child: container,
     );
   }
 }
