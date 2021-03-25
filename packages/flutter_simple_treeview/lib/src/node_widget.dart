@@ -52,8 +52,9 @@ class _NodeWidgetState extends State<NodeWidget> {
             key: Key('NodeWidget.IconButton'),
             iconSize: widgetSize,
             icon: Icon(icon),
-            onPressed: () =>
-                widget.state.toggleNodeExpanded(widget.treeNode.key!),
+            onPressed: () => setState(
+              () => widget.state.toggleNodeExpanded(widget.treeNode.key!),
+            ),
           );
   }
 
