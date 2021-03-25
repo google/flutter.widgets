@@ -54,6 +54,28 @@ void main() {
       }
     });
 
+    testWidgets(
+        'renders one IconButton and one Spacer when a root with one child exists.',
+        (WidgetTester tester) async {
+      var widget = TreeView(
+        nodes: [
+          TreeNode(
+            content: Text('root'),
+            children: [
+              TreeNode(content: Text('child')),
+            ],
+          ),
+        ],
+      );
+
+      await _wrapAndPump(tester, widget);
+
+      var iconButtonFinder = find.byKey(Key('NodeWidget.IconButton'));
+      var spacerFinder = find.byKey(Key('NodeWidget.IconButton'));
+      expect(iconButtonFinder, findsOneWidget);
+      expect(spacerFinder, findsOneWidget);
+    });
+
     test('generates unique key if the key is null.', () {
       var tree = TreeView(nodes: [
         TreeNode(),
