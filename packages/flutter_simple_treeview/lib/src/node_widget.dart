@@ -42,20 +42,24 @@ class _NodeWidgetState extends State<NodeWidget> {
   Widget buildButtonOrPlaceholder() {
     var icon = _isExpanded ? Icons.expand_more : Icons.chevron_right;
     double defaultSize = 24;
-    double widgetSize = widget.iconSize ?? defaultSize;
+    double iconSize = widget.iconSize ?? defaultSize;
+
+    IconButton iconButton = IconButton(
+      key: Key('NodeWidget.IconButton'),
+      iconSize: iconSize,
+      icon: Icon(icon),
+      onPressed: () => setState(
+        () => widget.state.toggleNodeExpanded(widget.treeNode.key!),
+      ),
+    );
+    double spacerSize = iconSize + iconButton.padding.horizontal;
+
     return _isLeaf
         ? SizedBox(
             key: Key('NodeWidget.Spacer'),
-            width: widgetSize,
+            width: spacerSize,
           )
-        : IconButton(
-            key: Key('NodeWidget.IconButton'),
-            iconSize: widgetSize,
-            icon: Icon(icon),
-            onPressed: () => setState(
-              () => widget.state.toggleNodeExpanded(widget.treeNode.key!),
-            ),
-          );
+        : iconButton;
   }
 
   @override
