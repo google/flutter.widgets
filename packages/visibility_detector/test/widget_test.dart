@@ -44,9 +44,8 @@ void main() {
     'VisibilityDetector reports initial visibility',
     callback: (tester) async {
       final cellKey = demo.cellKey(0, 0);
-      final cell = find.byKey(cellKey);
-      final expectedRect = tester.getRect(cell);
-
+      final expectedRect =
+          tester.getRect(find.byKey(demo.cellContentKey(0, 0)));
       var info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
 
@@ -72,11 +71,12 @@ void main() {
       final viewRect = tester.getRect(mainList);
 
       final cellKey = demo.cellKey(0, 0);
-      final cell = find.byKey(cellKey);
-      final originalRect = tester.getRect(cell);
+      final originalRect =
+          tester.getRect(find.byKey(demo.cellContentKey(0, 0)));
 
       const dy = 30.0;
-      await _doScroll(tester, mainList, const Offset(0, dy));
+      await _doScroll(tester, find.byKey(demo.secondaryScrollableKey(0)),
+          const Offset(0, dy));
 
       var info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
@@ -107,14 +107,13 @@ void main() {
       final viewRect = tester.getRect(mainList);
 
       final cellKey = demo.cellKey(2, 0);
-      final cell = find.byKey(cellKey);
-      expect(cell, findsOneWidget);
-      final originalRect = tester.getRect(cell);
-
+      final originalRect =
+          tester.getRect(find.byKey(demo.cellContentKey(2, 0)));
       const dx = 30.0;
       expect(dx < originalRect.width, true);
 
-      await _doScroll(tester, cell, const Offset(dx, 0));
+      final row = find.byKey(demo.secondaryScrollableKey(2));
+      await _doScroll(tester, row, const Offset(dx, 0));
 
       var info = _positionToVisibilityInfo[demo.RowColumn(2, 0)];
       expect(info, isNotNull);
@@ -146,8 +145,8 @@ void main() {
       final viewRect = tester.getRect(mainList);
 
       final cellKey = demo.cellKey(0, 0);
-      final cell = find.byKey(cellKey);
-      final originalRect = tester.getRect(cell);
+      final originalRect =
+          tester.getRect(find.byKey(demo.cellContentKey(0, 0)));
 
       final dy = originalRect.bottom - viewRect.top;
       await _doScroll(tester, mainList, Offset(0, dy));
@@ -175,11 +174,13 @@ void main() {
       final viewRect = tester.getRect(mainList);
 
       final cellKey = demo.cellKey(0, 0);
-      final cell = find.byKey(cellKey);
-      final originalRect = tester.getRect(cell);
+      final originalRect =
+          tester.getRect(find.byKey(demo.cellContentKey(0, 0)));
 
       final dy = (originalRect.bottom - viewRect.top) - 1;
-      await _doScroll(tester, mainList, Offset(0, dy));
+
+      await _doScroll(
+          tester, find.byKey(demo.secondaryScrollableKey(0)), Offset(0, dy));
 
       var info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
@@ -204,8 +205,8 @@ void main() {
     'tree',
     callback: (tester) async {
       final cellKey = demo.cellKey(0, 0);
-      final cell = find.byKey(cellKey);
-      final originalRect = tester.getRect(cell);
+      final originalRect =
+          tester.getRect(find.byKey(demo.cellContentKey(0, 0)));
 
       await _clearWidgetTree(tester, notifyNow: false);
 
@@ -377,7 +378,9 @@ void _wrapTest(
     // widget tree is destroyed, which is too late for our purposes. (See
     // details below.)
     await _initWidgetTree(
-        widget ?? const demo.VisibilityDetectorDemo(), tester);
+      widget ?? demo.VisibilityDetectorDemo(useSlivers: false),
+      tester,
+    );
     await callback(tester);
 
     /// When the test destroys the widget tree with [VisibilityDetector] widgets
@@ -389,6 +392,16 @@ void _wrapTest(
     /// flush those [Timer] objects. (See https://github.com/flutter/flutter/issues/24166.)
     /// Instead we must explicitly clear the widget tree ourselves and wait for
     /// callbacks to fire before ending the test.
+    await _clearWidgetTree(tester);
+  });
+
+  // Test one more time using slivers version of the demo.
+  testWidgets(description, (tester) async {
+    await _initWidgetTree(
+      widget ?? demo.VisibilityDetectorDemo(useSlivers: true),
+      tester,
+    );
+    await callback(tester);
     await _clearWidgetTree(tester);
   });
 }

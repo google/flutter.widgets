@@ -62,6 +62,7 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// Constructor.  See the corresponding properties for parameter details.
   VisibilityDetectorLayer(
       {required this.key,
+      required this.widgetOffset,
       required this.widgetSize,
       required this.paintOffset,
       required this.onVisibilityChanged})
@@ -98,6 +99,12 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// The key for the corresponding [VisibilityDetector] widget.
   final Key key;
 
+  /// Offset to the start of the widget, in local coordinates.
+  ///
+  /// This is zero for box widgets. For sliver widget, this offset points to
+  /// the start of the widget which may be outside the viewport.
+  final Offset widgetOffset;
+
   /// The size of the corresponding [VisibilityDetector] widget.
   final Size widgetSize;
 
@@ -115,7 +122,7 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// Computes the bounds for the corresponding [VisibilityDetector] widget, in
   /// global coordinates.
   Rect _computeWidgetBounds() {
-    final r = _localRectToGlobal(this, Offset.zero & widgetSize);
+    final r = _localRectToGlobal(this, widgetOffset & widgetSize);
     return r.shift(paintOffset + _layerOffset);
   }
 
