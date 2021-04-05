@@ -449,7 +449,7 @@ Future<void> _simulateScreenRotation(WidgetTester tester) async {
   // [VisibilityDetectorLayer.addToScene], whereas the [SizedBox] approach
   // triggers both.
   //
-  // TODO: Use TestWindow.physicalSizeTestValue.
+  // TODO(https://github.com/flutter/flutter/issues/62451): Use TestWindow.physicalSizeTestValue.
   await tester.binding.setSurfaceSize(newViewSize);
   tester.binding.scheduleFrame();
 
