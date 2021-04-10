@@ -520,7 +520,6 @@ Iterable<T> collate<T>(Iterable<Iterable<T>> iterables) sync* {
     return;
   }
 
-  // ignore: literal_only_boolean_expressions, https://github.com/dart-lang/linter/issues/453
   while (true) {
     var exhaustedCount = 0;
     for (final i in iterators) {
