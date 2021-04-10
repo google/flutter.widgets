@@ -5,15 +5,9 @@ set -e
 
 shopt -s globstar nullglob
 
-# Make sure dartfmt is run on everything
-echo "Checking dartfmt..."
-NEEDS_DARTFMT="$(dartfmt -n packages tool)"
-if [[ "${NEEDS_DARTFMT}" != "" ]]
-then
-  echo "FAILED"
-  echo "${NEEDS_DARTFMT}"
-  exit 1
-fi
+# Make sure the formatter is run on everything
+echo "Checking formatting..."
+flutter format --dry-run --set-exit-if-changed packages tool
 echo "PASSED"
 echo
 
