@@ -125,7 +125,6 @@ class CustomRenderShrinkWrappingViewport extends CustomRenderViewport {
           children: children,
         );
 
-  @override
   double _anchor;
 
   @override
@@ -143,11 +142,7 @@ class CustomRenderShrinkWrappingViewport extends CustomRenderViewport {
     markNeedsLayout();
   }
 
-  // Out-of-band data computed during layout.
-  late double _minScrollExtent;
-  late double _maxScrollExtent;
   late double _shrinkWrapExtent;
-  bool _hasVisualOverflow = false;
 
   /// This value is set during layout based on the [CacheExtentStyle].
   ///
@@ -663,7 +658,6 @@ abstract class CustomRenderViewport
         assert(cacheExtentStyle != CacheExtentStyle.viewport ||
             cacheExtent != null),
         assert(clipBehavior != null),
-        _anchor = anchor,
         _center = center,
         super(
           axisDirection: axisDirection,
@@ -727,16 +721,9 @@ abstract class CustomRenderViewport
   /// vertically centered within the viewport. If the [anchor] is 1.0, and the
   /// [axisDirection] is [AxisDirection.right], then the zero scroll offset is
   /// on the left edge of the viewport.
-  double get anchor => _anchor;
-  double _anchor;
+  double get anchor;
 
-  set anchor(double value) {
-    assert(value != null);
-    assert(value >= 0.0 && value <= 1.0);
-    if (value == _anchor) return;
-    _anchor = value;
-    markNeedsLayout();
-  }
+  set anchor(double value);
 
   /// The first child in the [GrowthDirection.forward] growth direction.
   ///
@@ -825,8 +812,6 @@ abstract class CustomRenderViewport
     }());
     return constraints.biggest;
   }
-
-  static const int _maxLayoutCycles = 10;
 
   // Out-of-band data computed during layout.
   late double _minScrollExtent;
