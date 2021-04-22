@@ -207,8 +207,6 @@ class CustomRenderShrinkWrappingViewport extends CustomRenderViewport {
     do {
       correction = _attemptLayout(mainAxisExtent, crossAxisExtent,
           offset.pixels + centerOffsetAdjustment);
-      // print(
-      //     'perform layout extent:($mainAxisExtent, $crossAxisExtent) pixels:(${offset.pixels}) center:($centerOffsetAdjustment) correction:$correction');
       if (correction != 0.0) {
         offset.correctBy(correction);
       } else {
@@ -227,9 +225,6 @@ class CustomRenderShrinkWrappingViewport extends CustomRenderViewport {
         final maxScrollOffset = math.max(math.min(0.0, top), bottom);
         final minScrollOffset = math.min(top, maxScrollOffset);
 
-        final position = (offset as ScrollPosition).pixels;
-        print(
-            'min:($minScrollOffset, $_minScrollExtent) max:{$maxScrollOffset, $_maxScrollExtent} main:$mainAxisExtent pos:$position');
         final bool didAcceptViewportDimension =
             offset.applyViewportDimension(effectiveExtent);
         final bool didAcceptContentDimension =
@@ -289,9 +284,6 @@ class CustomRenderShrinkWrappingViewport extends CustomRenderViewport {
         (fullCacheExtent - centerCacheOffset).clamp(0.0, fullCacheExtent);
 
     final leadingNegativeChild = childBefore(center!);
-
-    // print(
-    //     'layout child: center:$centerOffset, reverse:($reverseDirectionRemainingCacheExtent, $reverseDirectionRemainingPaintExtent), forward:($forwardDirectionRemainingCacheExtent, $forwardDirectionRemainingPaintExtent), cache:$cacheExtent, calCache:$_calculatedCacheExtent, fullCache:$fullCacheExtent, centerCache:$centerCacheOffset');
 
     if (leadingNegativeChild != null) {
       // negative scroll offsets
