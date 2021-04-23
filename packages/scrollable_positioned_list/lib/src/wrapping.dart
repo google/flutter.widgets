@@ -74,6 +74,18 @@ class CustomShrinkWrappingViewport extends CustomViewport {
       cacheExtent: cacheExtent,
     );
   }
+
+  @override
+  void updateRenderObject(BuildContext context, CustomRenderShrinkWrappingViewport renderObject) {
+    renderObject
+      ..axisDirection = axisDirection
+      ..crossAxisDirection = crossAxisDirection ?? Viewport.getDefaultCrossAxisDirection(context, axisDirection)
+      ..anchor = anchor
+      ..offset = offset
+      ..cacheExtent = cacheExtent
+      ..cacheExtentStyle = cacheExtentStyle
+      ..clipBehavior = clipBehavior;
+  }
 }
 
 /// A render object that is bigger on the inside and shrink wraps its children
@@ -505,10 +517,6 @@ abstract class CustomViewport extends MultiChildRenderObjectWidget {
 
   @override
   CustomRenderViewport createRenderObject(BuildContext context);
-
-  @override
-  void updateRenderObject(
-      BuildContext context, CustomRenderViewport renderObject);
 
   @override
   _ViewportElement createElement() => _ViewportElement(this);
