@@ -28,7 +28,8 @@ class UnboundedCustomScrollView extends CustomScrollView {
     List<Widget> slivers = const <Widget>[],
     int? semanticChildCount,
     DragStartBehavior dragStartBehavior = DragStartBehavior.start,
-  })  : _shrinkWrap = shrinkWrap, _anchor = anchor,
+  })  : _shrinkWrap = shrinkWrap,
+        _anchor = anchor,
         super(
           key: key,
           scrollDirection: scrollDirection,

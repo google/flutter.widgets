@@ -76,10 +76,12 @@ class CustomShrinkWrappingViewport extends CustomViewport {
   }
 
   @override
-  void updateRenderObject(BuildContext context, CustomRenderShrinkWrappingViewport renderObject) {
+  void updateRenderObject(
+      BuildContext context, CustomRenderShrinkWrappingViewport renderObject) {
     renderObject
       ..axisDirection = axisDirection
-      ..crossAxisDirection = crossAxisDirection ?? Viewport.getDefaultCrossAxisDirection(context, axisDirection)
+      ..crossAxisDirection = crossAxisDirection ??
+          Viewport.getDefaultCrossAxisDirection(context, axisDirection)
       ..anchor = anchor
       ..offset = offset
       ..cacheExtent = cacheExtent
