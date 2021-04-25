@@ -22,7 +22,7 @@ class RenderSliverVisibilityDetector extends RenderProxySliver {
     RenderSliver? sliver,
     required this.key,
     required VisibilityChangedCallback? onVisibilityChanged,
-  })   : _onVisibilityChanged = onVisibilityChanged,
+  })  : _onVisibilityChanged = onVisibilityChanged,
         super(sliver);
 
   /// The key for the corresponding [VisibilityDetector] widget.

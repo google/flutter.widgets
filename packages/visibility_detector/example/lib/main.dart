@@ -296,7 +296,7 @@ class DemoPageCell extends StatelessWidget {
     required this.primaryIndex,
     required this.secondaryIndex,
     required this.useSlivers,
-  })   : _cellName = 'Item $primaryIndex-$secondaryIndex',
+  })  : _cellName = 'Item $primaryIndex-$secondaryIndex',
         _backgroundColor = ((primaryIndex + secondaryIndex) % 2 == 0)
             ? Colors.pink[200]
             : Colors.yellow[200],
