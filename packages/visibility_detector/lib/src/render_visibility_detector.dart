@@ -20,7 +20,7 @@ class RenderVisibilityDetector extends RenderProxyBox {
     RenderBox? child,
     required this.key,
     required VisibilityChangedCallback? onVisibilityChanged,
-  })   : assert(key != null),
+  })  : assert(key != null),
         _onVisibilityChanged = onVisibilityChanged,
         super(child);
 

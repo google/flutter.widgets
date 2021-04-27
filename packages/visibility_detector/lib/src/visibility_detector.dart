@@ -33,7 +33,7 @@ class VisibilityDetector extends SingleChildRenderObjectWidget {
     required Key key,
     required Widget child,
     required this.onVisibilityChanged,
-  })   : assert(key != null),
+  })  : assert(key != null),
         assert(child != null),
         super(key: key, child: child);
 
@@ -70,7 +70,7 @@ class SliverVisibilityDetector extends SingleChildRenderObjectWidget {
     required Key key,
     required Widget sliver,
     required this.onVisibilityChanged,
-  })   : assert(key != null),
+  })  : assert(key != null),
         assert(sliver != null),
         super(key: key, child: sliver);
 
