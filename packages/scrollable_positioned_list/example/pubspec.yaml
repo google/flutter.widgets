@@ -1,5 +1,7 @@
 name: scrollable_positioned_list_example
 
+publish_to: 'none'
+
 environment:
   sdk: '>=2.12.0-0 <3.0.0'
   flutter: '>=1.13.8'
