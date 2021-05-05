@@ -1,6 +1,6 @@
 # 0.2.0
 
-  * Version change.
+  * Stable release for null safety.
 
 # 0.2.0-nullsafety.0
 
