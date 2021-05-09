@@ -20,11 +20,15 @@ import 'package:flutter/rendering.dart';
 /// Without the keys, Flutter may reuse a controller after it has been disposed,
 /// which can cause the controller offsets to fall out of sync.
 class LinkedScrollControllerGroup {
-  LinkedScrollControllerGroup() {
+  LinkedScrollControllerGroup({double? initialScrollOffset}) {
+    _initialScrollOffset =
+        initialScrollOffset == null ? 0.0 : initialScrollOffset;
     _offsetNotifier = _LinkedScrollControllerGroupOffsetNotifier(this);
   }
 
   final _allControllers = <_LinkedScrollController>[];
+
+  late double _initialScrollOffset;
 
   late _LinkedScrollControllerGroupOffsetNotifier _offsetNotifier;
 
@@ -41,7 +45,7 @@ class LinkedScrollControllerGroup {
   /// Creates a new controller that is linked to any existing ones.
   ScrollController addAndGet() {
     final initialScrollOffset = _attachedControllers.isEmpty
-        ? 0.0
+        ? _initialScrollOffset
         : _attachedControllers.first.position.pixels;
     final controller =
         _LinkedScrollController(this, initialScrollOffset: initialScrollOffset);

@@ -310,6 +310,33 @@ void main() {
       expect(state._controllers.offset, equals(state._letters.offset));
       expect(state._controllers.offset, equals(state._numbers.offset));
     });
+
+    testWidgets('should have 0 offset by default', (tester) async {
+      await tester.pumpWidget(Test());
+      final state = tester.state<TestState>(find.byType(Test));
+
+      expect(state._letters.position.pixels, 0.0);
+      expect(state._numbers.position.pixels, 0.0);
+    });
+
+    testWidgets('should have 0 offset when initialScrollOffset is null',
+        (tester) async {
+      await tester.pumpWidget(Test(initialScrollOffset: null));
+      final state = tester.state<TestState>(find.byType(Test));
+
+      expect(state._letters.position.pixels, 0.0);
+      expect(state._numbers.position.pixels, 0.0);
+    });
+
+    testWidgets(
+        'should have specified offset when initialScrollOffset is given',
+        (tester) async {
+      await tester.pumpWidget(Test(initialScrollOffset: 20));
+      final state = tester.state<TestState>(find.byType(Test));
+
+      expect(state._letters.position.pixels, 20.0);
+      expect(state._numbers.position.pixels, 20.0);
+    });
   });
 }
 
@@ -334,6 +361,12 @@ class TestEmptyGroupState extends State<TestEmptyGroup> {
 }
 
 class Test extends StatefulWidget {
+  late final double? _initialScrollOffset;
+
+  Test({double? initialScrollOffset = -1}) {
+    _initialScrollOffset = initialScrollOffset;
+  }
+
   @override
   TestState createState() => TestState();
 }
@@ -347,7 +380,10 @@ class TestState extends State<Test> {
   @override
   void initState() {
     super.initState();
-    _controllers = LinkedScrollControllerGroup();
+    _controllers = widget._initialScrollOffset == -1
+        ? LinkedScrollControllerGroup()
+        : LinkedScrollControllerGroup(
+            initialScrollOffset: widget._initialScrollOffset);
     _letters = _controllers.addAndGet();
     _numbers = _controllers.addAndGet();
   }
