@@ -66,6 +66,9 @@ class UnboundedCustomScrollView extends CustomScrollView {
         axisDirection: axisDirection,
         offset: offset,
         slivers: slivers,
+        cacheExtent: cacheExtent,
+        center: center,
+        anchor: anchor,
       );
     }
     return UnboundedViewport(

@@ -165,7 +165,10 @@ class CustomRenderShrinkWrappingViewport extends CustomRenderViewport {
   /// expressed in pixels.
   double? _calculatedCacheExtent;
 
-  //
+  /// While List in a wrapping container, eg. ListView，the mainAxisExtent will
+  /// be infinite. This time need to change mainAxisExtent to this value.
+  final double _maxMainAxisExtent = double.maxFinite;
+
   @override
   void performLayout() {
     if (center == null) {
@@ -199,7 +202,7 @@ class CustomRenderShrinkWrappingViewport extends CustomRenderViewport {
       return;
     }
 
-    final double mainAxisExtent;
+    double mainAxisExtent;
     final double crossAxisExtent;
     switch (axis) {
       case Axis.vertical:
@@ -212,6 +215,10 @@ class CustomRenderShrinkWrappingViewport extends CustomRenderViewport {
         mainAxisExtent = constraints.maxWidth;
         crossAxisExtent = constraints.maxHeight;
         break;
+    }
+
+    if (mainAxisExtent.isInfinite) {
+      mainAxisExtent = _maxMainAxisExtent;
     }
 
     final centerOffsetAdjustment = center!.centerOffsetAdjustment;
