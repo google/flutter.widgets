@@ -25,7 +25,7 @@ class Demo extends StatelessWidget {
           appBar: AppBar(
             title: Text('flutter_simple_treeview Demo'),
             actions: [
-              FlatButton(
+              TextButton(
                   child: Text(
                     "Source Code",
                     style: TextStyle(color: Colors.white),

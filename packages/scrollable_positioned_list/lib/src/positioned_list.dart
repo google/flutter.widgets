@@ -18,20 +18,19 @@ import 'scroll_view.dart';
 ///
 /// [PositionedList] lays out children in the same way as [ListView].
 ///
-/// The list can be displayed with the item at [initialScrollIndex] positioned
-/// at a particular [initialAlignment], where [initialAlignment] positions the
-/// leading edge of the item with [initialScrollIndex] at [initialAlignment] *
-/// height of the viewport from the leading edge of the viewport.
+/// The list can be displayed with the item at [positionIndex] positioned at a
+/// particular [alignment].  See [ItemScrollController.jumpTo] for an
+/// explanation of alignment.
 ///
 /// All other parameters are the same as specified in [ListView].
 class PositionedList extends StatefulWidget {
   /// Create a [PositionedList].
   const PositionedList({
-    @required this.itemCount,
-    @required this.itemBuilder,
+    required this.itemCount,
+    required this.itemBuilder,
     this.separatorBuilder,
     this.controller,
-    this.itemPositionNotifier,
+    this.itemPositionsNotifier,
     this.positionedIndex = 0,
     this.alignment = 0,
     this.scrollDirection = Axis.vertical,
@@ -56,14 +55,14 @@ class PositionedList extends StatefulWidget {
 
   /// If not null, called to build separators for between each item in the list.
   /// Called with 0 <= index < itemCount - 1.
-  final IndexedWidgetBuilder separatorBuilder;
+  final IndexedWidgetBuilder? separatorBuilder;
 
   /// An object that can be used to control the position to which this scroll
   /// view is scrolled.
-  final ScrollController controller;
+  final ScrollController? controller;
 
   /// Notifier that reports the items laid out in the list after each frame.
-  final ItemPositionsNotifier itemPositionNotifier;
+  final ItemPositionsNotifier? itemPositionsNotifier;
 
   /// Index of an item to initially align to a position within the viewport
   /// defined by [alignment].
@@ -72,8 +71,7 @@ class PositionedList extends StatefulWidget {
   /// Determines where the leading edge of the item at [positionedIndex]
   /// should be placed.
   ///
-  /// Is a value between '0' and '1' that is a proportion of the main axis
-  /// length of viewport from its leading edge.
+  /// See [ItemScrollController.jumpTo] for an explanation of alignment.
   final double alignment;
 
   /// The axis along which the scroll view scrolls.
@@ -94,15 +92,15 @@ class PositionedList extends StatefulWidget {
   /// user stops dragging the scroll view.
   ///
   /// See [ScrollView.physics].
-  final ScrollPhysics physics;
+  final ScrollPhysics? physics;
 
   /// {@macro flutter.widgets.scrollable.cacheExtent}
-  final double cacheExtent;
+  final double? cacheExtent;
 
   /// The number of children that will contribute semantic information.
   ///
   /// See [ScrollView.semanticChildCount] for more information.
-  final int semanticChildCount;
+  final int? semanticChildCount;
 
   /// Whether to wrap each child in an [IndexedSemantics].
   ///
@@ -110,7 +108,7 @@ class PositionedList extends StatefulWidget {
   final bool addSemanticIndexes;
 
   /// The amount of space by which to inset the children.
-  final EdgeInsets padding;
+  final EdgeInsets? padding;
 
   /// Whether to wrap each child in a [RepaintBoundary].
   ///
@@ -129,15 +127,8 @@ class PositionedList extends StatefulWidget {
 class _PositionedListState extends State<PositionedList> {
   final Key _centerKey = UniqueKey();
 
-  Iterable<ItemPosition> topPositions = [];
-  Iterable<ItemPosition> middlePositions = [];
-  Iterable<ItemPosition> bottomPositions = [];
-  double topSliverPosition = 0;
-  double middleSliverPosition = 0;
-  double bottomSliverPosition = 0;
-
-  final registeredElements = ValueNotifier<Set<Element>>(null);
-  ScrollController scrollController;
+  final registeredElements = ValueNotifier<Set<Element>?>(null);
+  late final ScrollController scrollController;
 
   bool updateScheduled = false;
 
@@ -235,7 +226,7 @@ class _PositionedListState extends State<PositionedList> {
     if (index.isEven) {
       return _buildItem(index ~/ 2);
     } else {
-      return widget.separatorBuilder(context, index ~/ 2);
+      return widget.separatorBuilder!(context, index ~/ 2);
     }
   }
 
@@ -263,30 +254,31 @@ class _PositionedListState extends State<PositionedList> {
       ? widget.reverse
           ? widget.padding?.copyWith(
                   top: widget.positionedIndex == widget.itemCount - 1
-                      ? widget.padding.top
+                      ? widget.padding!.top
                       : 0,
                   bottom: widget.positionedIndex == 0
-                      ? widget.padding.bottom
+                      ? widget.padding!.bottom
                       : 0) ??
               EdgeInsets.all(0)
           : widget.padding?.copyWith(
-                  top: widget.positionedIndex == 0 ? widget.padding.top : 0,
+                  top: widget.positionedIndex == 0 ? widget.padding!.top : 0,
                   bottom: widget.positionedIndex == widget.itemCount - 1
-                      ? widget.padding.bottom
+                      ? widget.padding!.bottom
                       : 0) ??
               EdgeInsets.all(0)
       : widget.reverse
           ? widget.padding?.copyWith(
                   left: widget.positionedIndex == widget.itemCount - 1
-                      ? widget.padding.left
+                      ? widget.padding!.left
                       : 0,
-                  right:
-                      widget.positionedIndex == 0 ? widget.padding.right : 0) ??
+                  right: widget.positionedIndex == 0
+                      ? widget.padding!.right
+                      : 0) ??
               EdgeInsets.all(0)
           : widget.padding?.copyWith(
-                left: widget.positionedIndex == 0 ? widget.padding.left : 0,
+                left: widget.positionedIndex == 0 ? widget.padding!.left : 0,
                 right: widget.positionedIndex == widget.itemCount - 1
-                    ? widget.padding.right
+                    ? widget.padding!.right
                     : 0,
               ) ??
               EdgeInsets.all(0);
@@ -303,19 +295,19 @@ class _PositionedListState extends State<PositionedList> {
   void _schedulePositionNotificationUpdate() {
     if (!updateScheduled) {
       updateScheduled = true;
-      SchedulerBinding.instance.addPostFrameCallback((_) {
+      SchedulerBinding.instance!.addPostFrameCallback((_) {
         if (registeredElements.value == null) {
           updateScheduled = false;
           return;
         }
         final positions = <ItemPosition>[];
-        RenderViewport viewport;
-        for (var element in registeredElements.value) {
-          final RenderBox box = element.renderObject;
-          viewport ??= RenderAbstractViewport.of(box);
-          final ValueKey<int> key = element.widget.key;
+        RenderViewport? viewport;
+        for (var element in registeredElements.value!) {
+          final RenderBox box = element.renderObject as RenderBox;
+          viewport ??= RenderAbstractViewport.of(box) as RenderViewport?;
+          final ValueKey<int> key = element.widget.key as ValueKey<int>;
           if (widget.scrollDirection == Axis.vertical) {
-            final reveal = viewport.getOffsetToReveal(box, 0).offset;
+            final reveal = viewport!.getOffsetToReveal(box, 0).offset;
             final itemOffset = reveal -
                 viewport.offset.pixels +
                 viewport.anchor * viewport.size.height;
@@ -344,7 +336,7 @@ class _PositionedListState extends State<PositionedList> {
                     scrollController.position.viewportDimension));
           }
         }
-        widget.itemPositionNotifier?.itemPositions?.value = positions;
+        widget.itemPositionsNotifier?.itemPositions.value = positions;
         updateScheduled = false;
       });
     }

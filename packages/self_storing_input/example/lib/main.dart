@@ -18,20 +18,20 @@ class Fields {
   static const String radioGroup = 'radioGroup';
 }
 
-class _DemoSaver with ChangeNotifier implements Saver {
+class _DemoSaver with ChangeNotifier implements Saver<String> {
   Map<String, dynamic> storage = {};
   bool failSaving = false;
   Duration delay = const Duration(milliseconds: 100);
 
   @override
-  Future<T> load<T>(Object itemKey) async {
+  Future<T> load<T>(String itemKey) async {
     // This delay is for demo purposes.
     await Future.delayed(delay);
     return storage[itemKey];
   }
 
   @override
-  OperationResult validate<T>(Object itemKey, T value) {
+  OperationResult validate<T>(String itemKey, T value) {
     if (itemKey == Fields.phrase && (value?.toString()?.length ?? 0) % 2 == 1) {
       return OperationResult.error('Value should have even number of letters.');
     }
@@ -39,7 +39,7 @@ class _DemoSaver with ChangeNotifier implements Saver {
   }
 
   @override
-  Future<OperationResult> save<T>(Object itemKey, T value) async {
+  Future<OperationResult> save<T>(String itemKey, T value) async {
     // This delay is for demo purposes.
     await Future.delayed(delay);
     if (failSaving) {
@@ -136,7 +136,7 @@ class _DemoState extends State<Demo> {
 
   List<Widget> buildDemoHeader() {
     return [
-      FlatButton(
+      TextButton(
         onPressed: () async => await launch(
             'https://github.com/google/flutter.widgets/tree/master/packages/self_storing_input/example'),
         child: Text(

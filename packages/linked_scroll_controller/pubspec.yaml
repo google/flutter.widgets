@@ -1,18 +1,18 @@
 name: linked_scroll_controller
-version: 0.1.2
+version: 0.2.0
 description: >
   A scroll controller that allows two or more scroll views to be in sync.
 homepage: https://github.com/google/flutter.widgets
 
 environment:
-  sdk: ">=2.3.0 <3.0.0"
-  flutter: ^1.12.13+hotfix.5
+  sdk: '>=2.12.0-0 <3.0.0'
+  flutter: '>=1.13.8'
 
 dependencies:
   flutter:
     sdk: flutter
 
 dev_dependencies:
-  pedantic: ^1.8.0
+  pedantic: ^1.10.0-0
   flutter_test:
     sdk: flutter

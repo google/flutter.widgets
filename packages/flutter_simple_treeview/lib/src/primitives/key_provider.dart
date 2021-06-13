@@ -17,7 +17,7 @@ class KeyProvider {
 
   /// If [originalKey] is null, generates new key, otherwise verifies the key
   /// was not met before.
-  Key key(Key originalKey) {
+  Key key(Key? originalKey) {
     if (originalKey == null) {
       return _TreeNodeKey(_nextIndex++);
     }

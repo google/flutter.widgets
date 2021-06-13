@@ -18,7 +18,7 @@ import 'visibility_detector_controller.dart';
 /// ancestors.  The returned sequence is in [parent, child] order.
 Iterable<Layer> _getLayerChain(Layer start) {
   final layerChain = <Layer>[];
-  for (var layer = start; layer != null; layer = layer.parent) {
+  for (Layer? layer = start; layer != null; layer = layer.parent) {
     layerChain.add(layer);
   }
   return layerChain.reversed;
@@ -61,10 +61,11 @@ Rect _localRectToGlobal(Layer layer, Rect localRect) {
 class VisibilityDetectorLayer extends ContainerLayer {
   /// Constructor.  See the corresponding properties for parameter details.
   VisibilityDetectorLayer(
-      {@required this.key,
-      @required this.widgetSize,
-      @required this.paintOffset,
-      @required this.onVisibilityChanged})
+      {required this.key,
+      required this.widgetOffset,
+      required this.widgetSize,
+      required this.paintOffset,
+      required this.onVisibilityChanged})
       : assert(key != null),
         assert(paintOffset != null),
         assert(widgetSize != null),
@@ -72,7 +73,7 @@ class VisibilityDetectorLayer extends ContainerLayer {
         _layerOffset = Offset.zero;
 
   /// Timer used by [_scheduleUpdate].
-  static Timer _timer;
+  static Timer? _timer;
 
   /// Keeps track of [VisibilityDetectorLayer] objects that have been recently
   /// updated and that might need to report visibility changes.
@@ -96,50 +97,49 @@ class VisibilityDetectorLayer extends ContainerLayer {
   static final _lastBounds = <Key, Rect>{};
 
   /// The key for the corresponding [VisibilityDetector] widget.
-  ///
-  /// Never null.
   final Key key;
 
-  /// The size of the corresponding [VisibilityDetector] widget.
+  /// Offset to the start of the widget, in local coordinates.
   ///
-  /// Never null.
+  /// This is zero for box widgets. For sliver widget, this offset points to
+  /// the start of the widget which may be outside the viewport.
+  final Offset widgetOffset;
+
+  /// The size of the corresponding [VisibilityDetector] widget.
   final Size widgetSize;
 
-  /// Last known layer offset supplied to [addToScene].  Never null.
+  /// Last known layer offset supplied to [addToScene].
   Offset _layerOffset;
 
-  /// The offset supplied to [RenderVisibilityDetector.paint] method.  Never
-  /// null.
+  /// The offset supplied to [RenderVisibilityDetector.paint] method.
   final Offset paintOffset;
 
   /// See [VisibilityDetector.onVisibilityChanged].
   ///
   /// Do not invoke this directly; call [_fireCallback] instead.
-  ///
-  /// Never null.
   final VisibilityChangedCallback onVisibilityChanged;
 
   /// Computes the bounds for the corresponding [VisibilityDetector] widget, in
   /// global coordinates.
   Rect _computeWidgetBounds() {
-    final r = _localRectToGlobal(this, Offset.zero & widgetSize);
+    final r = _localRectToGlobal(this, widgetOffset & widgetSize);
     return r.shift(paintOffset + _layerOffset);
   }
 
   /// Computes the accumulated clipping bounds, in global coordinates.
   Rect _computeClipRect() {
     assert(RendererBinding.instance?.renderView != null);
-    var clipRect = Offset.zero & RendererBinding.instance.renderView.size;
+    var clipRect = Offset.zero & RendererBinding.instance!.renderView.size;
 
     var parentLayer = parent;
     while (parentLayer != null) {
-      Rect curClipRect;
+      Rect? curClipRect;
       if (parentLayer is ClipRectLayer) {
         curClipRect = parentLayer.clipRect;
       } else if (parentLayer is ClipRRectLayer) {
-        curClipRect = parentLayer.clipRRect.outerRect;
+        curClipRect = parentLayer.clipRRect!.outerRect;
       } else if (parentLayer is ClipPathLayer) {
-        curClipRect = parentLayer.clipPath.getBounds();
+        curClipRect = parentLayer.clipPath!.getBounds();
       }
 
       if (curClipRect != null) {
@@ -172,7 +172,7 @@ class VisibilityDetectorLayer extends ContainerLayer {
       if (isFirstUpdate) {
         // We're about to render a frame, so a post-frame callback is guaranteed
         // to fire and will give us the better immediacy than `scheduleTask<T>`.
-        SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+        SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
           _processCallbacks();
         });
       }
@@ -181,7 +181,7 @@ class VisibilityDetectorLayer extends ContainerLayer {
       // to the update duration will be picked up automatically.
       _timer = Timer(updateInterval, _handleTimer);
     } else {
-      assert(_timer.isActive);
+      assert(_timer!.isActive);
     }
   }
 
@@ -195,7 +195,7 @@ class VisibilityDetectorLayer extends ContainerLayer {
     // of `addPostFrameCallback` or `scheduleFrameCallback` so that work will
     // be done even if a new frame isn't scheduled and without unnecessarily
     // scheduling a new frame.
-    SchedulerBinding.instance
+    SchedulerBinding.instance!
         .scheduleTask<void>(_processCallbacks, Priority.touch);
   }
 

@@ -28,12 +28,12 @@ class _OverlayBoxState extends State<OverlayBox> {
   final TextEditingController _textController = TextEditingController();
   final FocusNode _focusNode = FocusNode()..requestFocus();
   bool _isSaving = false;
-  String _validationError;
-  String _savingError;
+  String? _validationError;
+  String? _savingError;
 
   @override
   void initState() {
-    _textController.text = widget.sharedState.storedValue;
+    _textController.text = widget.sharedState.storedValue ?? '';
     _textController.addListener(_onTextChange);
     super.initState();
   }
@@ -64,7 +64,7 @@ class _OverlayBoxState extends State<OverlayBox> {
 
   /// This method is invoked when user clicked 'Save'.
   Future<OperationResult> _saveEnteredValue() async {
-    var value = _textController.text;
+    String? value = _textController.text;
     // We cannot differentiate empty string and null,
     // so we always save null for consistency.
     if (value == '') value = null;
@@ -126,7 +126,7 @@ class _OverlayBoxState extends State<OverlayBox> {
   }
 
   Widget _buildCancelButton() {
-    return FlatButton(
+    return TextButton(
       key: cancelButtonKey,
       onPressed: () {
         widget.sharedState.overlayController.close();
@@ -137,7 +137,7 @@ class _OverlayBoxState extends State<OverlayBox> {
   }
 
   Widget _buildOkButton() {
-    return FlatButton(
+    return TextButton(
       key: okButtonKey,
       onPressed: _validationError != null
           ? null

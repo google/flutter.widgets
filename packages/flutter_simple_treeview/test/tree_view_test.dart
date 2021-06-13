@@ -65,7 +65,7 @@ void main() {
 
       expect(tree.nodes[0].key, isNotNull);
       expect(tree.nodes[1].key, ValueKey(1));
-      expect(tree.nodes[0].key == tree.nodes[1].children[0].key, false);
+      expect(tree.nodes[0].key == tree.nodes[1].children![0].key, false);
     });
 
     test('throws if the key is duplicate.', () {
@@ -80,8 +80,10 @@ void main() {
       } catch (e) {
         print(e.runtimeType);
       }
-      expect(() => TreeView(nodes: []).nodes.add(TreeNode()),
-          throwsA(predicate((e) => e.toString().contains('unmodifiable'))));
+      expect(
+          () => TreeView(nodes: []).nodes.add(TreeNode()),
+          throwsA(
+              predicate((dynamic e) => e.toString().contains('unmodifiable'))));
     });
   });
 }

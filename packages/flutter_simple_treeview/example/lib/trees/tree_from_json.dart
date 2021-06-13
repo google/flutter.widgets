@@ -5,7 +5,6 @@
 // https://developers.google.com/open-source/licenses/bsd
 
 import 'dart:convert';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_simple_treeview/flutter_simple_treeview.dart';

@@ -43,7 +43,7 @@ itemScrollController.jumpTo(index: 150);
 One can monitor what items are visible on screen with:
 
 ```dart
-itemPositionsListener.positions.addListener((positions) => ...);
+itemPositionsListener.itemPositions.addListener(() => ...);
 ```
 
 A full example can be found in the example folder.

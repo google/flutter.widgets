@@ -13,12 +13,16 @@ import 'primitives/tree_node.dart';
 /// Widget that displays one [TreeNode] and its children.
 class NodeWidget extends StatefulWidget {
   final TreeNode treeNode;
-  final double indent;
-  final double iconSize;
+  final double? indent;
+  final double? iconSize;
   final TreeController state;
 
   const NodeWidget(
-      {Key key, this.treeNode, this.indent, this.state, this.iconSize})
+      {Key? key,
+      required this.treeNode,
+      this.indent,
+      required this.state,
+      this.iconSize})
       : super(key: key);
 
   @override
@@ -27,11 +31,12 @@ class NodeWidget extends StatefulWidget {
 
 class _NodeWidgetState extends State<NodeWidget> {
   bool get _isLeaf {
-    return widget.treeNode.children == null || widget.treeNode.children.isEmpty;
+    return widget.treeNode.children == null ||
+        widget.treeNode.children!.isEmpty;
   }
 
   bool get _isExpanded {
-    return widget.state.isNodeExpanded(widget.treeNode.key);
+    return widget.state.isNodeExpanded(widget.treeNode.key!);
   }
 
   @override
@@ -45,7 +50,7 @@ class _NodeWidgetState extends State<NodeWidget> {
     var onIconPressed = _isLeaf
         ? null
         : () => setState(
-            () => widget.state.toggleNodeExpanded(widget.treeNode.key));
+            () => widget.state.toggleNodeExpanded(widget.treeNode.key!));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,8 +67,8 @@ class _NodeWidgetState extends State<NodeWidget> {
         ),
         if (_isExpanded && !_isLeaf)
           Padding(
-            padding: EdgeInsets.only(left: widget.indent),
-            child: buildNodes(widget.treeNode.children, widget.indent,
+            padding: EdgeInsets.only(left: widget.indent!),
+            child: buildNodes(widget.treeNode.children!, widget.indent,
                 widget.state, widget.iconSize),
           )
       ],

@@ -19,7 +19,7 @@ class SharedState with ChangeNotifier {
   final SelfStoringCheckboxStyle style;
   final bool tristate;
 
-  bool storedValue;
+  bool? storedValue;
   OperationResult operationResult = OperationResult.success();
 
   bool _isSaving = false;
@@ -30,11 +30,11 @@ class SharedState with ChangeNotifier {
   }
 
   SharedState({
-    this.saver,
-    this.itemKey,
-    this.overlayController,
-    this.style,
-    this.tristate,
+    required this.saver,
+    required this.itemKey,
+    required this.overlayController,
+    required this.style,
+    this.tristate = false,
     this.storedValue,
   });
 }

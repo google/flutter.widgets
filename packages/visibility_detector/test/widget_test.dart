@@ -44,11 +44,12 @@ void main() {
     'VisibilityDetector reports initial visibility',
     callback: (tester) async {
       final cellKey = demo.cellKey(0, 0);
-      final cell = find.byKey(cellKey);
-      final expectedRect = tester.getRect(cell);
-
-      final info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      final expectedRect =
+          tester.getRect(find.byKey(demo.cellContentKey(0, 0)));
+      var info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
+
+      info = info!;
       expect(info.size, expectedRect.size);
       expect(info.size.width, demo.cellWidth);
       expect(info.size.height, demo.cellHeight);
@@ -70,14 +71,17 @@ void main() {
       final viewRect = tester.getRect(mainList);
 
       final cellKey = demo.cellKey(0, 0);
-      final cell = find.byKey(cellKey);
-      final originalRect = tester.getRect(cell);
+      final originalRect =
+          tester.getRect(find.byKey(demo.cellContentKey(0, 0)));
 
       const dy = 30.0;
-      await _doScroll(tester, mainList, const Offset(0, dy));
+      await _doScroll(tester, find.byKey(demo.secondaryScrollableKey(0)),
+          const Offset(0, dy));
 
-      final info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      var info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
+
+      info = info!;
       expect(info.size, originalRect.size);
 
       final expectedVisibleBounds = Rect.fromLTRB(
@@ -103,17 +107,18 @@ void main() {
       final viewRect = tester.getRect(mainList);
 
       final cellKey = demo.cellKey(2, 0);
-      final cell = find.byKey(cellKey);
-      expect(cell, findsOneWidget);
-      final originalRect = tester.getRect(cell);
-
+      final originalRect =
+          tester.getRect(find.byKey(demo.cellContentKey(2, 0)));
       const dx = 30.0;
       expect(dx < originalRect.width, true);
 
-      await _doScroll(tester, cell, const Offset(dx, 0));
+      final row = find.byKey(demo.secondaryScrollableKey(2));
+      await _doScroll(tester, row, const Offset(dx, 0));
 
-      final info = _positionToVisibilityInfo[demo.RowColumn(2, 0)];
+      var info = _positionToVisibilityInfo[demo.RowColumn(2, 0)];
       expect(info, isNotNull);
+
+      info = info!;
       expect(info.size, originalRect.size);
 
       final expectedVisibleBounds = Rect.fromLTRB(
@@ -140,14 +145,16 @@ void main() {
       final viewRect = tester.getRect(mainList);
 
       final cellKey = demo.cellKey(0, 0);
-      final cell = find.byKey(cellKey);
-      final originalRect = tester.getRect(cell);
+      final originalRect =
+          tester.getRect(find.byKey(demo.cellContentKey(0, 0)));
 
       final dy = originalRect.bottom - viewRect.top;
       await _doScroll(tester, mainList, Offset(0, dy));
 
-      final info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      var info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
+
+      info = info!;
       expect(info.size, originalRect.size);
       expect(info.visibleBounds.size, Size.zero);
       expect(info.visibleFraction, 0.0);
@@ -167,14 +174,18 @@ void main() {
       final viewRect = tester.getRect(mainList);
 
       final cellKey = demo.cellKey(0, 0);
-      final cell = find.byKey(cellKey);
-      final originalRect = tester.getRect(cell);
+      final originalRect =
+          tester.getRect(find.byKey(demo.cellContentKey(0, 0)));
 
       final dy = (originalRect.bottom - viewRect.top) - 1;
-      await _doScroll(tester, mainList, Offset(0, dy));
 
-      final info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      await _doScroll(
+          tester, find.byKey(demo.secondaryScrollableKey(0)), Offset(0, dy));
+
+      var info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
+
+      info = info!;
       expect(info.size, originalRect.size);
 
       final expectedVisibleBounds = Rect.fromLTRB(
@@ -194,13 +205,15 @@ void main() {
     'tree',
     callback: (tester) async {
       final cellKey = demo.cellKey(0, 0);
-      final cell = find.byKey(cellKey);
-      final originalRect = tester.getRect(cell);
+      final originalRect =
+          tester.getRect(find.byKey(demo.cellContentKey(0, 0)));
 
       await _clearWidgetTree(tester, notifyNow: false);
 
-      final info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
+      var info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
+
+      info = info!;
       expect(info.size, originalRect.size);
       expect(info.visibleBounds.size, Size.zero);
       expect(info.visibleFraction, 0.0);
@@ -251,7 +264,7 @@ void main() {
     'becoming disabled',
     widget: _TestPropertyChange(key: _testPropertyChangeKey),
     callback: (tester) async {
-      final state = _testPropertyChangeKey.currentState;
+      final state = _testPropertyChangeKey.currentState!;
 
       // Validate the initial state.  The visibility callback should have fired
       // exactly once.
@@ -305,9 +318,7 @@ void main() {
     'VisibilityDetector computes widget bounds in global coordinates',
     widget: _TestOffset(key: _testOffsetKey),
     callback: (tester) async {
-      final testWindow = tester.binding.window;
-      final viewSizeLogical =
-          testWindow.physicalSize / testWindow.devicePixelRatio;
+      final viewSize = tester.binding.renderView.size;
 
       final bounds =
           VisibilityDetectorController.instance.widgetBoundsFor(_testOffsetKey);
@@ -318,7 +329,7 @@ void main() {
       expect(
         bounds,
         Rect.fromCenter(
-          center: viewSizeLogical.center(Offset.zero),
+          center: viewSize.center(Offset.zero),
           width: _TestOffset.detectorWidth,
           height: _TestOffset.detectorHeight,
         ),
@@ -358,8 +369,8 @@ Future<void> _clearWidgetTree(WidgetTester tester,
 /// setup and teardown.
 void _wrapTest(
   String description, {
-  Widget widget,
-  @required WidgetTesterCallback callback,
+  Widget? widget,
+  required WidgetTesterCallback callback,
 }) {
   testWidgets(description, (tester) async {
     // We can't use [setUp] and [tearDown] because we want access to the
@@ -367,7 +378,9 @@ void _wrapTest(
     // widget tree is destroyed, which is too late for our purposes. (See
     // details below.)
     await _initWidgetTree(
-        widget ?? const demo.VisibilityDetectorDemo(), tester);
+      widget ?? demo.VisibilityDetectorDemo(useSlivers: false),
+      tester,
+    );
     await callback(tester);
 
     /// When the test destroys the widget tree with [VisibilityDetector] widgets
@@ -379,6 +392,16 @@ void _wrapTest(
     /// flush those [Timer] objects. (See https://github.com/flutter/flutter/issues/24166.)
     /// Instead we must explicitly clear the widget tree ourselves and wait for
     /// callbacks to fire before ending the test.
+    await _clearWidgetTree(tester);
+  });
+
+  // Test one more time using slivers version of the demo.
+  testWidgets(description, (tester) async {
+    await _initWidgetTree(
+      widget ?? demo.VisibilityDetectorDemo(useSlivers: true),
+      tester,
+    );
+    await callback(tester);
     await _clearWidgetTree(tester);
   });
 }
@@ -413,10 +436,10 @@ Future<void> _doStateChange(WidgetTester tester, VoidCallback callback) async {
 }
 
 // Simulates a screen rotation by swapping the screen width and height.
-Future<void> _simulateScreenRotation(WidgetTester tester) {
-  final oldViewSizePixels = tester.binding.window.physicalSize;
-  final newViewSizePixels =
-      Size(oldViewSizePixels.height, oldViewSizePixels.width);
+Future<void> _simulateScreenRotation(WidgetTester tester) async {
+  final oldViewSize = tester.binding.renderView.size;
+
+  final newViewSize = Size(oldViewSize.height, oldViewSize.width);
 
   // The typical way to simulate a screen rotation is to wrap the widget tree
   // in a [SizedBox] and change its dimensions.  However, empirical testing
@@ -425,25 +448,30 @@ Future<void> _simulateScreenRotation(WidgetTester tester) {
   // [VisibilityDetectorLayer.attach] without triggering
   // [VisibilityDetectorLayer.addToScene], whereas the [SizedBox] approach
   // triggers both.
-  tester.binding.window.physicalSizeTestValue = newViewSizePixels;
+  //
+  // TODO(https://github.com/flutter/flutter/issues/62451): Use TestWindow.physicalSizeTestValue.
+  await tester.binding.setSurfaceSize(newViewSize);
+  tester.binding.scheduleFrame();
 
   // Wait for the new frame.
-  return tester.pump();
+  await tester.pump();
 }
 
 /// Verifies that the specified cell of the demo app reported the expected
 /// visibility.
 void _expectVisibility(demo.RowColumn rc, double expectedFraction,
     {double epsilon = 0.001}) {
-  final info = _positionToVisibilityInfo[rc];
+  var info = _positionToVisibilityInfo[rc];
   expect(info, isNotNull);
+
+  info = info!;
   expect(info.visibleFraction, closeTo(expectedFraction, epsilon));
 }
 
 /// A widget used to test that disabling a [VisibilityDetector] does not trigger
 /// its visibility callback and that re-enabling it does.
 class _TestPropertyChange extends StatefulWidget {
-  const _TestPropertyChange({Key key}) : super(key: key);
+  const _TestPropertyChange({Key? key}) : super(key: key);
 
   @override
   _TestPropertyChangeState createState() => _TestPropertyChangeState();
@@ -490,7 +518,7 @@ class _TestPropertyChangeState extends State<_TestPropertyChange> {
 /// A widget to exercise calling [RenderVisibilityDetector.paint] with a
 /// non-zero [Offset].
 class _TestOffset extends StatelessWidget {
-  const _TestOffset({Key key}) : super(key: key);
+  const _TestOffset({required Key key}) : super(key: key);
 
   static const detectorWidth = 200.0;
   static const detectorHeight = 100.0;
@@ -501,7 +529,7 @@ class _TestOffset extends StatelessWidget {
       home: Scaffold(
         body: Center(
           child: VisibilityDetector(
-            key: key,
+            key: key!,
             onVisibilityChanged: (visibilityInfo) {},
             child: const SizedBox(
               width: detectorWidth,

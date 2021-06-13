@@ -22,12 +22,12 @@ class CustomCheckbox extends StatefulWidget {
 }
 
 class _CustomCheckboxState extends State<CustomCheckbox> {
-  bool _isLocalValue;
-  OverlayEntry _overlay;
+  bool? _localValue;
+  OverlayEntry? _overlay;
 
   @override
   void initState() {
-    _isLocalValue = widget.state.storedValue;
+    _localValue = widget.state.storedValue;
     widget.state.overlayController.addListener(_closeOverlay);
     super.initState();
   }
@@ -41,7 +41,7 @@ class _CustomCheckboxState extends State<CustomCheckbox> {
   void _showOverlay() {
     widget.state.overlayController.close();
     _overlay = _buildOverlay(context);
-    Overlay.of(context).insert(_overlay);
+    Overlay.of(context)!.insert(_overlay!);
   }
 
   void _closeOverlay() {
@@ -53,7 +53,7 @@ class _CustomCheckboxState extends State<CustomCheckbox> {
   OverlayEntry _buildOverlay(BuildContext context) {
     return createOverlayInTheMiddle(
       MessageOverlay(
-        message: widget.state.operationResult.error,
+        message: widget.state.operationResult.error!,
         style: widget.state.style.overlayStyle,
         closeIconSize: widget.state.style.closeIconSize,
         overlayController: widget.state.overlayController,
@@ -63,16 +63,16 @@ class _CustomCheckboxState extends State<CustomCheckbox> {
     );
   }
 
-  void _onValueChanged(bool value) async {
-    _isLocalValue = value;
+  void _onValueChanged(bool? value) async {
+    _localValue = value;
     widget.state.isSaving = true;
     setState(() {});
     widget.state.operationResult =
-        await widget.state.saver.save(widget.state.itemKey, _isLocalValue);
+        await widget.state.saver.save(widget.state.itemKey, _localValue);
     if (widget.state.operationResult.isSuccess) {
-      widget.state.storedValue = _isLocalValue;
+      widget.state.storedValue = _localValue;
     } else {
-      _isLocalValue = widget.state.storedValue;
+      _localValue = widget.state.storedValue;
       _showOverlay();
     }
     widget.state.isSaving = false;
@@ -85,7 +85,7 @@ class _CustomCheckboxState extends State<CustomCheckbox> {
 
     return Checkbox(
       onChanged: isEnabled ? _onValueChanged : null,
-      value: _isLocalValue,
+      value: _localValue,
       tristate: widget.state.tristate,
       activeColor: Theme.of(context).accentColor,
     );

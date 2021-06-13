@@ -6,6 +6,8 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -22,19 +24,20 @@ const tolerance = 1e-3;
 void main() {
   Future<void> setUpWidgetTest(
     WidgetTester tester, {
-    Key key,
-    ItemScrollController itemScrollController,
-    ItemPositionsListener itemPositionsListener,
+    Key? key,
+    ItemScrollController? itemScrollController,
+    ItemPositionsListener? itemPositionsListener,
     int initialIndex = 0,
     double initialAlignment = 0.0,
     int itemCount = defaultItemCount,
-    ScrollPhysics physics,
+    ScrollPhysics? physics,
     bool addSemanticIndexes = true,
-    int semanticChildCount,
-    EdgeInsets padding,
+    int? semanticChildCount,
+    EdgeInsets? padding,
     bool addRepaintBoundaries = true,
     bool addAutomaticKeepAlives = true,
-    double minCacheExtent,
+    double? minCacheExtent,
+    bool variableHeight = false,
   }) async {
     tester.binding.window.devicePixelRatioTestValue = 1.0;
     tester.binding.window.physicalSizeTestValue =
@@ -49,7 +52,8 @@ void main() {
           itemBuilder: (context, index) {
             assert(index >= 0 && index <= itemCount - 1);
             return SizedBox(
-              height: itemHeight,
+              height:
+                  variableHeight ? (itemHeight + (index % 13) * 5) : itemHeight,
               child: Text('Item $index'),
             );
           },
@@ -391,10 +395,12 @@ void main() {
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
-    var opacityWidget = tester.widget<Opacity>(find.descendant(
-        of: find.byType(ScrollablePositionedList),
-        matching: find.byType(Opacity)));
-    final initialOpacity = opacityWidget.opacity;
+    var fadeTransition = tester.widget<FadeTransition>(find
+        .descendant(
+            of: find.byType(ScrollablePositionedList),
+            matching: find.byType(FadeTransition))
+        .last);
+    final initialOpacity = fadeTransition.opacity;
 
     unawaited(
         itemScrollController.scrollTo(index: 20, duration: scrollDuration));
@@ -402,10 +408,12 @@ void main() {
     await tester.pump();
     await tester.pump(scrollDuration ~/ 2);
 
-    opacityWidget = tester.widget(find.descendant(
-        of: find.byType(ScrollablePositionedList),
-        matching: find.byType(Opacity)));
-    expect(opacityWidget.opacity, initialOpacity);
+    fadeTransition = tester.widget<FadeTransition>(find
+        .descendant(
+            of: find.byType(ScrollablePositionedList),
+            matching: find.byType(FadeTransition))
+        .last);
+    expect(fadeTransition.opacity, initialOpacity);
 
     await tester.pumpAndSettle();
 
@@ -449,40 +457,44 @@ void main() {
     final itemScrollController = ItemScrollController();
     await setUpWidgetTest(tester, itemScrollController: itemScrollController);
 
+    var fadeTransitionFinder = find.descendant(
+        of: find.byType(ScrollablePositionedList),
+        matching: find.byType(FadeTransition));
+
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
     await tester.pump();
     await tester.pump();
+    expect(fadeTransitionFinder.evaluate().length, 2);
     expect(
-        tester
-            .widget<Opacity>(find.descendant(
-                of: find.byType(ScrollablePositionedList),
-                matching: find.byType(Opacity)))
-            .opacity,
-        closeTo(1, 0.01));
+      tester.widget<FadeTransition>(fadeTransitionFinder.last).opacity.value,
+      closeTo(0, 0.01),
+    );
 
     await tester.pump(scrollDuration ~/ 2);
 
     expect(tester.getTopLeft(find.text('Item 10')).dy, 0);
     expect(tester.getBottomLeft(find.text('Item 19')).dy, screenHeight);
+    expect(fadeTransitionFinder.evaluate().length, 2);
     expect(
-        tester
-            .widget<Opacity>(find.descendant(
-                of: find.byType(ScrollablePositionedList),
-                matching: find.byType(Opacity)))
-            .opacity,
-        closeTo(0.5, 0.01));
+      tester.widget<FadeTransition>(fadeTransitionFinder.last).opacity.value,
+      closeTo(0.5, 0.01),
+    );
 
-    await tester.pump(scrollDuration ~/ 2);
+    await tester.pump(scrollDuration ~/ 2 - scrollDurationTolerance);
+    expect(fadeTransitionFinder.evaluate().length, 2);
     expect(
-        tester
-            .widget<Opacity>(find.descendant(
-                of: find.byType(ScrollablePositionedList),
-                matching: find.byType(Opacity)))
-            .opacity,
-        closeTo(0, 0.01));
+      tester.widget<FadeTransition>(fadeTransitionFinder.last).opacity.value,
+      closeTo(1, 0.01),
+    );
 
     await tester.pumpAndSettle();
+
+    expect(fadeTransitionFinder.evaluate().length, 1);
+    expect(
+      tester.widget<FadeTransition>(fadeTransitionFinder.last).opacity.value,
+      closeTo(1, 0.01),
+    );
   });
 
   testWidgets('Scroll to 100 (not already on screen) back scroll view',
@@ -523,18 +535,24 @@ void main() {
     await tester.pump();
     expect(
         tester
-            .widget<Opacity>(find.descendant(
-                of: find.byType(ScrollablePositionedList),
-                matching: find.byType(Opacity)))
-            .opacity,
+            .widget<FadeTransition>(find
+                .descendant(
+                    of: find.byType(ScrollablePositionedList),
+                    matching: find.byType(FadeTransition))
+                .last)
+            .opacity
+            .value,
         closeTo(0, 0.01));
     await tester.pump(scrollDuration + scrollDurationTolerance);
     expect(
         tester
-            .widget<Opacity>(find.descendant(
-                of: find.byType(ScrollablePositionedList),
-                matching: find.byType(Opacity)))
-            .opacity,
+            .widget<FadeTransition>(find
+                .descendant(
+                    of: find.byType(ScrollablePositionedList),
+                    matching: find.byType(FadeTransition))
+                .last)
+            .opacity
+            .value,
         closeTo(1, 0.01));
 
     expect(find.text('Item 0'), findsOneWidget);
@@ -594,9 +612,13 @@ void main() {
     expect(tester.getBottomLeft(find.text('Item 19')).dy, screenHeight);
     expect(
         tester
-            .widget<Opacity>(find.ancestor(
-                of: find.text('Item 10'), matching: find.byType(Opacity)))
-            .opacity,
+            .widget<FadeTransition>(find
+                .descendant(
+                    of: find.byType(ScrollablePositionedList),
+                    matching: find.byType(FadeTransition))
+                .last)
+            .opacity
+            .value,
         closeTo(0.5, 0.01));
 
     await tester.pumpAndSettle();
@@ -704,6 +726,28 @@ void main() {
             .itemLeadingEdge,
         0.5);
   });
+
+  testWidgets('Manually scroll a significant distance, jump to 100',
+      (WidgetTester tester) async {
+    // Test for https://github.com/google/flutter.widgets/issues/144.
+    final itemScrollController = ItemScrollController();
+    final itemPositionsListener = ItemPositionsListener.create();
+    await setUpWidgetTest(tester,
+        itemScrollController: itemScrollController,
+        itemPositionsListener: itemPositionsListener,
+        variableHeight: true);
+
+    final listFinder = find.byType(ScrollablePositionedList);
+    for (var i = 0; i < 5; i += 1) {
+      await tester.drag(listFinder, const Offset(0, -screenHeight));
+      await tester.pumpAndSettle();
+    }
+
+    itemScrollController.jumpTo(index: 100);
+    await tester.pumpAndSettle();
+
+    expect(tester.getTopLeft(find.text('Item 100')).dy, 0);
+  }, skip: true);
 
   testWidgets('Scroll to 100 and position at bottom',
       (WidgetTester tester) async {
@@ -856,10 +900,12 @@ void main() {
     await tester.pump();
 
     expect(tester.getTopLeft(find.text('Item 9')).dy, 0);
-    final opacityWidget = tester.widget<Opacity>(find.descendant(
-        of: find.byType(ScrollablePositionedList),
-        matching: find.byType(Opacity)));
-    expect(opacityWidget.opacity, 1.0);
+    final fadeTransition = tester.widget<FadeTransition>(find
+        .descendant(
+            of: find.byType(ScrollablePositionedList),
+            matching: find.byType(FadeTransition))
+        .last);
+    expect(fadeTransition.opacity.value, 1.0);
 
     await tester.pumpAndSettle();
   });
@@ -878,10 +924,12 @@ void main() {
     await tester.pump();
 
     expect(tester.getTopLeft(find.text('Item 10')).dy, 0);
-    final opacityWidget = tester.widget<Opacity>(find.descendant(
-        of: find.byType(ScrollablePositionedList),
-        matching: find.byType(Opacity)));
-    expect(opacityWidget.opacity, 1.0);
+    final fadeTransition = tester.widget<FadeTransition>(find
+        .descendant(
+            of: find.byType(ScrollablePositionedList),
+            matching: find.byType(FadeTransition))
+        .last);
+    expect(fadeTransition.opacity.value, 1.0);
 
     await tester.pumpAndSettle();
   });
@@ -904,7 +952,7 @@ void main() {
     await tester.pump();
 
     expect(tester.getTopLeft(find.text('Item 91')).dy, 0);
-    expect(find.byType(Opacity), findsNothing);
+    expect(find.byType(FadeTransition), findsNWidgets(2));
 
     await tester.pumpAndSettle();
   });
@@ -929,7 +977,7 @@ void main() {
     expect(tester.getBottomLeft(find.text('Item 100')).dy,
         closeTo(screenHeight, tolerance));
     expect(find.text('Item 9', skipOffstage: false), findsNothing);
-    expect(find.byType(Opacity), findsNothing);
+    expect(find.byType(FadeTransition), findsNWidgets(2));
 
     await tester.pumpAndSettle();
   });
@@ -952,10 +1000,12 @@ void main() {
     await tester.pump();
 
     expect(tester.getTopLeft(find.text('Item 9')).dy, closeTo(0, tolerance));
-    final opacityWidget = tester.widget<Opacity>(find.descendant(
-        of: find.byType(ScrollablePositionedList),
-        matching: find.byType(Opacity)));
-    expect(opacityWidget.opacity, 1.0);
+    final fadeTransition = tester.widget<FadeTransition>(find
+        .descendant(
+            of: find.byType(ScrollablePositionedList),
+            matching: find.byType(FadeTransition))
+        .last);
+    expect(fadeTransition.opacity.value, 1.0);
 
     await tester.pumpAndSettle();
   });
@@ -978,7 +1028,7 @@ void main() {
     await tester.pump();
 
     expect(tester.getTopLeft(find.text('Item 90')).dy, 0);
-    expect(find.byType(Opacity), findsNothing);
+    expect(find.byType(FadeTransition), findsNWidgets(2));
 
     await tester.pumpAndSettle();
   });
@@ -1068,6 +1118,59 @@ void main() {
 
     expect(tester.getTopLeft(find.text('Item 0')).dy, 0);
     expect(find.text('Item 100'), findsNothing);
+  });
+
+  testWidgets(
+      'Scroll to 100, scroll to 200, then scroll to 300 without waiting',
+      (WidgetTester tester) async {
+    // Possibly https://github.com/google/flutter.widgets/issues/171.
+    final itemScrollController = ItemScrollController();
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
+
+    unawaited(
+        itemScrollController.scrollTo(index: 100, duration: scrollDuration));
+    unawaited(
+        itemScrollController.scrollTo(index: 200, duration: scrollDuration));
+    unawaited(
+        itemScrollController.scrollTo(index: 300, duration: scrollDuration));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Item 100'), findsNothing);
+    expect(find.text('Item 200'), findsNothing);
+
+    var itemFinder = find.text('Item 300');
+    expect(itemFinder, findsOneWidget);
+    expect(tester.getTopLeft(itemFinder).dy, 0);
+  }, skip: true);
+
+  testWidgets(
+      'Jump to 400 at bottom, manually scroll, scroll to 100 at bottom and back',
+      (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    final itemPositionsListener = ItemPositionsListener.create();
+    await setUpWidgetTest(tester,
+        itemScrollController: itemScrollController,
+        itemPositionsListener: itemPositionsListener);
+
+    itemScrollController.jumpTo(index: 400, alignment: 1);
+    await tester.pumpAndSettle();
+
+    final listFinder = find.byType(ScrollablePositionedList);
+
+    await tester.drag(listFinder, const Offset(0, -screenHeight));
+    await tester.pumpAndSettle();
+
+    unawaited(itemScrollController.scrollTo(
+        index: 100, alignment: 1, duration: scrollDuration));
+    await tester.pumpAndSettle();
+
+    unawaited(itemScrollController.scrollTo(
+        index: 400, alignment: 1, duration: scrollDuration));
+    await tester.pumpAndSettle();
+
+    var itemFinder = find.text('Item 399');
+    expect(itemFinder, findsOneWidget);
+    expect(tester.getBottomLeft(itemFinder).dy, screenHeight);
   });
 
   testWidgets('physics', (WidgetTester tester) async {
@@ -1207,6 +1310,22 @@ void main() {
     final customScrollView2 =
         tester.widget<CustomScrollView>(find.byType(UnboundedCustomScrollView));
     expect(customScrollView2.semanticChildCount, defaultItemCount);
+  });
+
+  testWidgets('Semantic tree contains items in cache',
+      (WidgetTester tester) async {
+    final itemPositionsListener = ItemPositionsListener.create();
+    await setUpWidgetTest(tester, itemPositionsListener: itemPositionsListener);
+
+    final root = WidgetsBinding
+        .instance!.pipelineOwner.semanticsOwner!.rootSemanticsNode!;
+
+    final semanticNodes = <SemanticsNode>[root];
+
+    collectSemanticNodes(root, semanticNodes);
+
+    expect(semanticNodes.where((element) => element.label == 'Item 10'),
+        isNotEmpty);
   });
 
   testWidgets('padding test - centered at top', (WidgetTester tester) async {
@@ -1629,7 +1748,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: ValueListenableBuilder(
+        home: ValueListenableBuilder<int>(
           valueListenable: itemCount,
           builder: (context, itemCount, child) {
             return ScrollablePositionedList.builder(
@@ -1674,7 +1793,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: ValueListenableBuilder(
+        home: ValueListenableBuilder<int>(
           valueListenable: itemCount,
           builder: (context, itemCount, child) {
             return ScrollablePositionedList.builder(
@@ -1714,7 +1833,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: ValueListenableBuilder(
+        home: ValueListenableBuilder<int>(
           valueListenable: itemCount,
           builder: (context, itemCount, child) {
             return ScrollablePositionedList.builder(
@@ -1760,10 +1879,12 @@ void main() {
       minCacheExtent: 10,
     );
 
-    var opacityWidget = tester.widget<Opacity>(find.descendant(
-        of: find.byType(ScrollablePositionedList),
-        matching: find.byType(Opacity)));
-    final initialOpacity = opacityWidget.opacity;
+    var fadeTransition = tester.widget<FadeTransition>(find
+        .descendant(
+            of: find.byType(ScrollablePositionedList),
+            matching: find.byType(FadeTransition))
+        .last);
+    final initialOpacity = fadeTransition.opacity;
 
     unawaited(
         itemScrollController.scrollTo(index: 20, duration: scrollDuration));
@@ -1771,10 +1892,12 @@ void main() {
     await tester.pump();
     await tester.pump(scrollDuration ~/ 2);
 
-    opacityWidget = tester.widget(find.descendant(
-        of: find.byType(ScrollablePositionedList),
-        matching: find.byType(Opacity)));
-    expect(opacityWidget.opacity, initialOpacity);
+    fadeTransition = tester.widget<FadeTransition>(find
+        .descendant(
+            of: find.byType(ScrollablePositionedList),
+            matching: find.byType(FadeTransition))
+        .last);
+    expect(fadeTransition.opacity, initialOpacity);
 
     await tester.pumpAndSettle();
 
@@ -1792,10 +1915,12 @@ void main() {
       minCacheExtent: 200 * itemHeight,
     );
 
-    var opacityWidget = tester.widget<Opacity>(find.descendant(
-        of: find.byType(ScrollablePositionedList),
-        matching: find.byType(Opacity)));
-    final initialOpacity = opacityWidget.opacity;
+    var fadeTransition = tester.widget<FadeTransition>(find
+        .descendant(
+            of: find.byType(ScrollablePositionedList),
+            matching: find.byType(FadeTransition))
+        .last);
+    final initialOpacity = fadeTransition.opacity;
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
@@ -1803,10 +1928,12 @@ void main() {
     await tester.pump();
     await tester.pump(scrollDuration ~/ 2);
 
-    opacityWidget = tester.widget(find.descendant(
-        of: find.byType(ScrollablePositionedList),
-        matching: find.byType(Opacity)));
-    expect(opacityWidget.opacity, initialOpacity);
+    fadeTransition = tester.widget<FadeTransition>(find
+        .descendant(
+            of: find.byType(ScrollablePositionedList),
+            matching: find.byType(FadeTransition))
+        .last);
+    expect(fadeTransition.opacity, initialOpacity);
 
     await tester.pumpAndSettle();
 
@@ -1838,7 +1965,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: ValueListenableBuilder(
+        home: ValueListenableBuilder<Key>(
           valueListenable: key,
           builder: (context, key, child) {
             return Container(
@@ -1883,9 +2010,9 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: ValueListenableBuilder(
+        home: ValueListenableBuilder<Key>(
           valueListenable: outerKey,
-          builder: (context, outerKey, child) => ValueListenableBuilder(
+          builder: (context, outerKey, child) => ValueListenableBuilder<Key>(
             valueListenable: listKey,
             builder: (context, listKey, child) => Container(
               key: outerKey,
@@ -1931,7 +2058,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: ValueListenableBuilder(
+        home: ValueListenableBuilder<Key>(
           valueListenable: key,
           builder: (context, key, child) {
             return ScrollablePositionedList.builder(
@@ -1965,7 +2092,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: ValueListenableBuilder(
+        home: ValueListenableBuilder<Key>(
           valueListenable: key,
           builder: (context, key, child) {
             return Container(
@@ -2009,7 +2136,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: ValueListenableBuilder(
+        home: ValueListenableBuilder<Key>(
           valueListenable: containerKey,
           builder: (context, key, child) {
             return Container(
@@ -2055,7 +2182,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: ValueListenableBuilder(
+        home: ValueListenableBuilder<ItemScrollController>(
           valueListenable: itemScrollControllerListenable,
           builder: (context, itemScrollController, child) {
             return ScrollablePositionedList.builder(
@@ -2107,7 +2234,7 @@ void main() {
       home: Column(
         children: [
           Expanded(
-            child: ValueListenableBuilder(
+            child: ValueListenableBuilder<ItemScrollController>(
               valueListenable: topItemScrollControllerListenable,
               builder: (context, itemScrollController, child) {
                 return ScrollablePositionedList.builder(
@@ -2124,7 +2251,7 @@ void main() {
             ),
           ),
           Expanded(
-            child: ValueListenableBuilder(
+            child: ValueListenableBuilder<ItemScrollController>(
               valueListenable: bottomItemScrollControllerListenable,
               builder: (context, itemScrollController, child) {
                 return ScrollablePositionedList.builder(
@@ -2164,4 +2291,11 @@ void main() {
     expect(find.text('Item 70'), findsOneWidget);
     expect(find.text('Item 50'), findsOneWidget);
   });
+}
+
+bool collectSemanticNodes(SemanticsNode root, List<SemanticsNode> nodes) {
+  nodes.add(root);
+  if (!root.hasChildren) return true;
+  root.visitChildren((child) => collectSemanticNodes(child, nodes));
+  return true;
 }

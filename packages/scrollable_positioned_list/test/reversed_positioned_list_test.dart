@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:scrollable_positioned_list/src/item_positions_notifier.dart';
 import 'package:scrollable_positioned_list/src/positioned_list.dart';
 
 const screenHeight = 400.0;
@@ -13,12 +14,12 @@ const itemHeight = screenHeight / 10.0;
 const defaultItemCount = 500;
 
 void main() {
-  final itemPositions = ItemPositionsListener.create();
+  final itemPositionsNotifier = ItemPositionsListener.create();
 
   Future<void> setUpWidgetTest(
     WidgetTester tester, {
     int topItem = 0,
-    ScrollController scrollController,
+    ScrollController? scrollController,
     double anchor = 0,
     int itemCount = defaultItemCount,
   }) async {
@@ -37,7 +38,7 @@ void main() {
             height: itemHeight,
             child: Text('Item $index'),
           ),
-          itemPositionNotifier: itemPositions,
+          itemPositionsNotifier: itemPositionsNotifier as ItemPositionsNotifier,
           reverse: true,
         ),
       ),
@@ -53,12 +54,12 @@ void main() {
     expect(find.text('Item 5'), findsNothing);
 
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 0)
             .itemLeadingEdge,
         0);
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 4)
             .itemTrailingEdge,
         1 / 2);
@@ -73,12 +74,12 @@ void main() {
     expect(find.text('Item 10'), findsNothing);
 
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 0)
             .itemLeadingEdge,
         0);
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 9)
             .itemTrailingEdge,
         1);
@@ -94,22 +95,22 @@ void main() {
     expect(find.text('Item 15'), findsNothing);
 
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 4)
             .itemLeadingEdge,
         -1 / 10);
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 4)
             .itemTrailingEdge,
         0);
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 5)
             .itemLeadingEdge,
         0);
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 14)
             .itemTrailingEdge,
         1);
@@ -135,22 +136,22 @@ void main() {
     expect(find.text('Item 4'), findsNothing);
 
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 15)
             .itemLeadingEdge,
         1);
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 14)
             .itemTrailingEdge,
         1);
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 14)
             .itemLeadingEdge,
         9 / 10);
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 5)
             .itemLeadingEdge,
         0);
@@ -168,12 +169,12 @@ void main() {
     expect(find.text('Item 7'), findsOneWidget);
 
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 7)
             .itemLeadingEdge,
         0);
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 7)
             .itemTrailingEdge,
         1 / 10);
@@ -195,12 +196,12 @@ void main() {
     expect(find.text('Item 15'), findsNothing);
 
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 5)
             .itemLeadingEdge,
         0);
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 4)
             .itemLeadingEdge,
         -1 / 10);
@@ -222,17 +223,17 @@ void main() {
     expect(find.text('Item 17'), findsNothing);
 
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 6)
             .itemLeadingEdge,
         -1 / 10);
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 7)
             .itemLeadingEdge,
         0);
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 16)
             .itemTrailingEdge,
         1);
@@ -251,17 +252,17 @@ void main() {
     expect(find.text('Item 17'), findsNothing);
 
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 6)
             .itemLeadingEdge,
         -1 / 10);
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 7)
             .itemLeadingEdge,
         0);
     expect(
-        itemPositions.itemPositions.value
+        itemPositionsNotifier.itemPositions.value
             .firstWhere((position) => position.index == 16)
             .itemTrailingEdge,
         1);

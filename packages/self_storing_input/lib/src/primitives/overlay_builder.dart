@@ -18,7 +18,7 @@ OverlayEntry createOverlayInTheMiddle(
   BuildContext context,
   OverlayStyle style,
 ) {
-  RenderBox renderBox = context.findRenderObject();
+  RenderBox renderBox = context.findRenderObject() as RenderBox;
   var offset = renderBox.localToGlobal(Offset.zero);
 
   return OverlayEntry(
@@ -58,9 +58,9 @@ Widget applyOverlayStyle(OverlayStyle style, Widget child) {
 /// The overlay position will be adjusted, if necessary,
 /// to fit on the screen if possible.
 double _getOverlayPosition({
-  double target,
-  double overlaySize,
-  double areaSize,
+  required double target,
+  required double overlaySize,
+  required double areaSize,
 }) {
   if (target + overlaySize <= areaSize) {
     return target;

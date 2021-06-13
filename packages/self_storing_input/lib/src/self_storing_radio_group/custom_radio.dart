@@ -13,20 +13,20 @@ import 'shared_state.dart';
 /// Radio button that saves the radio group value using [state.saver]
 /// and can be unchecked.
 class CustomRadio extends StatelessWidget {
-  final SharedState state;
+  final SharedState? state;
   final Object value;
 
   const CustomRadio(this.state, this.value);
 
-  bool get isSelected => state.selectedValue == value;
+  bool get isSelected => state!.selectedValue == value;
 
   @override
   Widget build(BuildContext context) {
-    var isEnabled = !state.isSaving && state.overlay == null;
+    var isEnabled = !(state!.isSaving as bool) && state!.overlay == null;
     var iconSize = (Theme.of(context).iconTheme.size ?? 24);
     var icon = Icons.radio_button_unchecked;
     if (isSelected) {
-      icon = state.isUnselectable
+      icon = state!.isUnselectable
           ? Icons.check_circle
           : Icons.radio_button_checked;
     }
@@ -46,27 +46,27 @@ class CustomRadio extends StatelessWidget {
   }
 
   Future<void> _onTap(BuildContext context) async {
-    if (!state.isUnselectable && isSelected) return;
-    await state.select(value, !isSelected);
-    if (!state.operationResult.isSuccess) _showOverlay(context);
+    if (!state!.isUnselectable && isSelected) return;
+    await state!.select(value, !isSelected);
+    if (!state!.operationResult.isSuccess) _showOverlay(context);
   }
 
   void _showOverlay(BuildContext context) {
-    state.closeOverlay();
-    state.overlay = _buildOverlay(context);
-    Overlay.of(context).insert(state.overlay);
+    state!.closeOverlay();
+    state!.overlay = _buildOverlay(context);
+    Overlay.of(context)!.insert(state!.overlay!);
   }
 
   OverlayEntry _buildOverlay(BuildContext context) {
     return createOverlayInTheMiddle(
       MessageOverlay(
-        message: state.operationResult.error,
-        style: state.style.overlayStyle,
-        closeIconSize: state.style.closeIconSize,
-        overlayController: state.overlayController,
+        message: state!.operationResult.error!,
+        style: state!.style.overlayStyle,
+        closeIconSize: state!.style.closeIconSize,
+        overlayController: state!.overlayController,
       ),
       context,
-      state.style.overlayStyle,
+      state!.style.overlayStyle,
     );
   }
 }

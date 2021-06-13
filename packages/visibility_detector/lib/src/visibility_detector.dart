@@ -9,6 +9,7 @@ import 'dart:math' show max;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
+import 'render_sliver_visibility_detector.dart';
 import 'render_visibility_detector.dart';
 
 /// A [VisibilityDetector] widget fires a specified callback when the widget
@@ -25,27 +26,25 @@ class VisibilityDetector extends SingleChildRenderObjectWidget {
   /// Constructor.
   ///
   /// `key` is required to properly identify this widget; it must be unique
-  /// among all [VisibilityDetector] widgets.
+  /// among all [VisibilityDetector] and [SliverVisibilityDetector] widgets.
   ///
-  /// `child` must not be null.
-  ///
-  /// `onVisibilityChanged` may be null to disable this [VisibilityDetector].
+  /// `onVisibilityChanged` may be `null` to disable this [VisibilityDetector].
   const VisibilityDetector({
-    @required Key key,
-    @required Widget child,
-    @required this.onVisibilityChanged,
+    required Key key,
+    required Widget child,
+    required this.onVisibilityChanged,
   })  : assert(key != null),
         assert(child != null),
         super(key: key, child: child);
 
   /// The callback to invoke when this widget's visibility changes.
-  final VisibilityChangedCallback onVisibilityChanged;
+  final VisibilityChangedCallback? onVisibilityChanged;
 
   /// See [RenderObjectWidget.createRenderObject].
   @override
   RenderVisibilityDetector createRenderObject(BuildContext context) {
     return RenderVisibilityDetector(
-      key: key,
+      key: key!,
       onVisibilityChanged: onVisibilityChanged,
     );
   }
@@ -54,6 +53,43 @@ class VisibilityDetector extends SingleChildRenderObjectWidget {
   @override
   void updateRenderObject(
       BuildContext context, RenderVisibilityDetector renderObject) {
+    assert(renderObject.key == key);
+    renderObject.onVisibilityChanged = onVisibilityChanged;
+  }
+}
+
+class SliverVisibilityDetector extends SingleChildRenderObjectWidget {
+  /// Constructor.
+  ///
+  /// `key` is required to properly identify this widget; it must be unique
+  /// among all [VisibilityDetector] and [SliverVisibilityDetector] widgets.
+  ///
+  /// `onVisibilityChanged` may be `null` to disable this
+  /// [SliverVisibilityDetector].
+  const SliverVisibilityDetector({
+    required Key key,
+    required Widget sliver,
+    required this.onVisibilityChanged,
+  })  : assert(key != null),
+        assert(sliver != null),
+        super(key: key, child: sliver);
+
+  /// The callback to invoke when this widget's visibility changes.
+  final VisibilityChangedCallback? onVisibilityChanged;
+
+  /// See [RenderObjectWidget.createRenderObject].
+  @override
+  RenderSliverVisibilityDetector createRenderObject(BuildContext context) {
+    return RenderSliverVisibilityDetector(
+      key: key!,
+      onVisibilityChanged: onVisibilityChanged,
+    );
+  }
+
+  /// See [RenderObjectWidget.updateRenderObject].
+  @override
+  void updateRenderObject(
+      BuildContext context, RenderSliverVisibilityDetector renderObject) {
     assert(renderObject.key == key);
     renderObject.onVisibilityChanged = onVisibilityChanged;
   }
@@ -72,7 +108,7 @@ class VisibilityInfo {
   /// If `size` or `visibleBounds` are omitted or null, the [VisibilityInfo]
   /// will be initialized to [Offset.zero] or [Rect.zero] respectively.  This
   /// will indicate that the corresponding widget is competely hidden.
-  const VisibilityInfo({@required this.key, Size size, Rect visibleBounds})
+  const VisibilityInfo({required this.key, Size? size, Rect? visibleBounds})
       : assert(key != null),
         size = size ?? Size.zero,
         visibleBounds = visibleBounds ?? Rect.zero;
@@ -83,9 +119,9 @@ class VisibilityInfo {
   /// [widgetBounds] and [clipRect] are expected to be in the same coordinate
   /// system.
   factory VisibilityInfo.fromRects({
-    @required Key key,
-    @required Rect widgetBounds,
-    @required Rect clipRect,
+    required Key key,
+    required Rect widgetBounds,
+    required Rect clipRect,
   }) {
     assert(widgetBounds != null);
     assert(clipRect != null);
@@ -100,16 +136,12 @@ class VisibilityInfo {
   }
 
   /// The key for the corresponding [VisibilityDetector] widget.
-  ///
-  /// Never null.
   final Key key;
 
-  /// The size of the widget.  Never null.
+  /// The size of the widget.
   final Size size;
 
   /// The visible portion of the widget, in the widget's local coordinates.
-  ///
-  /// Never null.
   ///
   /// The bounds are reported using the widget's local coordinates to avoid
   /// expectations for the [VisibilityChangedCallback] to fire if the widget's
@@ -154,6 +186,11 @@ class VisibilityInfo {
     // if other properties are added.
     assert(info != null);
     return size == info.size && visibleBounds == info.visibleBounds;
+  }
+
+  @override
+  String toString() {
+    return 'VisibilityInfo(size: $size visibleBounds: $visibleBounds)';
   }
 }
 
