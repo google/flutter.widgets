@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:visibility_detector/visibility_detector.dart';
-
 import 'package:visibility_detector_example/main.dart' as demo;
 
 /// Maps [row, column] indices to the last reported [VisibilityInfo] for the
@@ -45,7 +44,7 @@ void main() {
     callback: (tester) async {
       final cellKey = demo.cellKey(0, 0);
       final expectedRect =
-          tester.getRect(find.byKey(demo.cellContentKey(0, 0)));
+      tester.getRect(find.byKey(demo.cellContentKey(0, 0)));
       var info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
 
@@ -57,8 +56,24 @@ void main() {
       expect(info.visibleFraction, 1.0);
 
       final bounds =
-          VisibilityDetectorController.instance.widgetBoundsFor(cellKey);
+      VisibilityDetectorController.instance.widgetBoundsFor(cellKey);
       expect(bounds, expectedRect);
+    },
+  );
+
+  _wrapTest(
+    'VisibilityDetector test with transform.scale',
+    callback: (tester) async {
+      final scaleButton = find.byKey(demo.scaleButtonKey);
+      await tester.tap(scaleButton);
+      await tester.pumpAndSettle();
+      await _doStateChange(tester, () { });
+
+      var info = _positionToVisibilityInfo[demo.RowColumn(0, 1)];
+      expect(info, isNotNull);
+
+      info = info!;
+      expect(info.visibleFraction, 1.0);
     },
   );
 

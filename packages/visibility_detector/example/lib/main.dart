@@ -32,6 +32,8 @@ const double _reportHeight = 200;
 /// The [Key] to the main [ListView] widget.
 const mainListKey = Key('MainList');
 
+const scaleButtonKey = Key('scaleButton');
+
 Key secondaryScrollableKey(int primaryIndex) =>
     ValueKey('secondary-$primaryIndex');
 
@@ -102,6 +104,8 @@ class VisibilityDetectorDemoPageState
   /// Whether to use slivers.
   bool _useSlivers = false;
 
+  bool _useScale = false;
+
   /// The four layouts, that can be changed via pressing the Layout button.
   static const _layouts = [
     Layout(Axis.vertical, Axis.horizontal, reverse: false),
@@ -126,6 +130,14 @@ class VisibilityDetectorDemoPageState
     });
   }
 
+  /// Toggles the visibility of the pseudo-table of [VisibilityDetector]
+  /// widgets.
+  void _toggleScale() {
+    setState(() {
+      _useScale = !_useScale;
+    });
+  }
+
   /// Toggles between the layouts.
   void _toggleLayout() {
     setState(() {
@@ -147,27 +159,36 @@ class VisibilityDetectorDemoPageState
     // [ListView]s.
     final table = !_tableShown
         ? null
-        : ListView.builder(
-            key: mainListKey,
-            scrollDirection: _layout.mainAxis,
-            itemExtent:
-                (_layout.mainAxis == Axis.vertical ? cellHeight : cellWidth) +
+        : ClipRect(
+            child: Container(
+              width: _useScale ? 400 : null,
+              height: _useScale ? 300 : null,
+              child: ListView.builder(
+                key: mainListKey,
+                scrollDirection: _layout.mainAxis,
+                itemExtent: (_layout.mainAxis == Axis.vertical
+                        ? cellHeight
+                        : cellWidth) +
                     2 * externalCellPadding,
-            itemBuilder: (BuildContext context, int primaryIndex) {
-              return _useSlivers
-                  ? SliverDemoPageSecondaryAxis(
-                      key: secondaryScrollableKey(primaryIndex),
-                      primaryIndex: primaryIndex,
-                      secondaryAxis: _layout.secondaryAxis,
-                      reverse: _layout.reverse,
-                    )
-                  : DemoPageSecondaryAxis(
-                      key: secondaryScrollableKey(primaryIndex),
-                      primaryIndex: primaryIndex,
-                      secondaryAxis: _layout.secondaryAxis,
-                      reverse: _layout.reverse,
-                    );
-            },
+                itemBuilder: (BuildContext context, int primaryIndex) {
+                  return _useSlivers
+                      ? SliverDemoPageSecondaryAxis(
+                          key: secondaryScrollableKey(primaryIndex),
+                          primaryIndex: primaryIndex,
+                          secondaryAxis: _layout.secondaryAxis,
+                          reverse: _layout.reverse,
+                          useScale: _useScale,
+                        )
+                      : DemoPageSecondaryAxis(
+                          key: secondaryScrollableKey(primaryIndex),
+                          primaryIndex: primaryIndex,
+                          secondaryAxis: _layout.secondaryAxis,
+                          reverse: _layout.reverse,
+                          useScale: _useScale,
+                        );
+                },
+              ),
+            ),
           );
 
     return Scaffold(
@@ -197,6 +218,14 @@ class VisibilityDetectorDemoPageState
             heroTag: null,
             child: _tableShown ? const Text('Hide') : const Text('Show'),
           ),
+          const SizedBox(width: 8),
+          FloatingActionButton(
+            key: scaleButtonKey,
+            shape: const Border(),
+            onPressed: _toggleScale,
+            heroTag: null,
+            child: _useScale ? const Text('Scale') : const Text('No scaling'),
+          ),
         ],
       ),
       body: Column(
@@ -218,11 +247,13 @@ class DemoPageSecondaryAxis extends StatelessWidget {
     required this.primaryIndex,
     required this.secondaryAxis,
     required this.reverse,
+    required this.useScale,
   }) : super(key: key);
 
   final Axis secondaryAxis;
   final int primaryIndex;
   final bool reverse;
+  final bool useScale;
 
   @override
   Widget build(BuildContext context) {
@@ -235,6 +266,7 @@ class DemoPageSecondaryAxis extends StatelessWidget {
           primaryIndex: primaryIndex,
           secondaryIndex: secondaryIndex,
           useSlivers: false,
+          useScale: useScale,
         );
       },
     );
@@ -248,11 +280,13 @@ class SliverDemoPageSecondaryAxis extends StatelessWidget {
     required this.primaryIndex,
     required this.secondaryAxis,
     required this.reverse,
+    required this.useScale,
   }) : super(key: key);
 
   final Axis secondaryAxis;
   final int primaryIndex;
   final bool reverse;
+  final bool useScale;
 
   @override
   Widget build(BuildContext context) {
@@ -276,6 +310,7 @@ class SliverDemoPageSecondaryAxis extends StatelessWidget {
               primaryIndex: primaryIndex,
               secondaryIndex: secondaryIndex,
               useSlivers: true,
+              useScale: useScale,
             ),
           SliverToBoxAdapter(
             child: SizedBox(
@@ -296,6 +331,7 @@ class DemoPageCell extends StatelessWidget {
     required this.primaryIndex,
     required this.secondaryIndex,
     required this.useSlivers,
+    required this.useScale,
   })  : _cellName = 'Item $primaryIndex-$secondaryIndex',
         _backgroundColor = ((primaryIndex + secondaryIndex) % 2 == 0)
             ? Colors.pink[200]
@@ -305,6 +341,7 @@ class DemoPageCell extends StatelessWidget {
   final int primaryIndex;
   final int secondaryIndex;
   final bool useSlivers;
+  final bool useScale;
 
   /// The text to show for the cell.
   final String _cellName;
@@ -341,11 +378,23 @@ class DemoPageCell extends StatelessWidget {
       );
     }
 
-    return VisibilityDetector(
+    var visibilityDetector = VisibilityDetector(
       key: cellKey(primaryIndex, secondaryIndex),
       onVisibilityChanged: _handleVisibilityChanged,
       child: cell,
     );
+
+    if (useScale) {
+      return Transform.scale(
+        scale: 0.25,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 100),
+          child: visibilityDetector,
+        ),
+      );
+    } else {
+      return visibilityDetector;
+    }
   }
 }
 
