@@ -122,7 +122,7 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// Computes the bounds for the corresponding [VisibilityDetector] widget, in
   /// global coordinates.
   Rect _computeWidgetBounds() {
-    final r = _localRectToGlobal(this, (widgetOffset & widgetSize).shift(paintOffset));
+    final r = _localRectToGlobal(this, (paintOffset + widgetOffset & widgetSize));
     return r.shift(_layerOffset);
   }
 
