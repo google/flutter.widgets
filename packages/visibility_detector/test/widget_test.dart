@@ -44,7 +44,7 @@ void main() {
     callback: (tester) async {
       final cellKey = demo.cellKey(0, 0);
       final expectedRect =
-      tester.getRect(find.byKey(demo.cellContentKey(0, 0)));
+          tester.getRect(find.byKey(demo.cellContentKey(0, 0)));
       var info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
       expect(info, isNotNull);
 
@@ -56,7 +56,7 @@ void main() {
       expect(info.visibleFraction, 1.0);
 
       final bounds =
-      VisibilityDetectorController.instance.widgetBoundsFor(cellKey);
+          VisibilityDetectorController.instance.widgetBoundsFor(cellKey);
       expect(bounds, expectedRect);
     },
   );
@@ -66,8 +66,8 @@ void main() {
     callback: (tester) async {
       final scaleButton = find.byKey(demo.scaleButtonKey);
       await tester.tap(scaleButton);
-      await tester.pumpAndSettle();
-      await _doStateChange(tester, () { });
+      await tester.pump();
+      await tester.pump(VisibilityDetectorController.instance.updateInterval);
 
       var info = _positionToVisibilityInfo[demo.RowColumn(0, 1)];
       expect(info, isNotNull);
@@ -496,7 +496,9 @@ class _TestPropertyChangeState extends State<_TestPropertyChange> {
   /// Whether our [VisibilityDetector] should be enabled (i.e., whether it
   /// should fire visibility callbacks).
   bool _visibilityDetectorEnabled = true;
+
   bool get visibilityDetectorEnabled => _visibilityDetectorEnabled;
+
   set visibilityDetectorEnabled(bool value) {
     setState(() {
       _visibilityDetectorEnabled = value;
@@ -505,11 +507,13 @@ class _TestPropertyChangeState extends State<_TestPropertyChange> {
 
   /// The last reported visibility of our [VisibilityDetector].
   double _lastVisibleFraction = 0;
+
   double get lastVisibleFraction => _lastVisibleFraction;
 
   /// The number of times that our [VisibilityDetector]'s callback has been
   /// triggered.
   int _callbackCount = 0;
+
   int get callbackCount => _callbackCount;
 
   /// [VisibilityDetector] callback for when the visibility of the widget
