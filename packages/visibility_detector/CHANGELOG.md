@@ -1,3 +1,7 @@
+# 0.2.1
+
+* Bug fix for using VisibilityDetector with FittedBox and Transform.scale [issue #285](https://github.com/google/flutter.widgets/issues/285).
+
 # 0.2.0
 
 * Added `SliverVisibilityDetector` to report visibility of `RenderSliver`-based
