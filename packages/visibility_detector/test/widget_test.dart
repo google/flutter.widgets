@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:visibility_detector/visibility_detector.dart';
-
 import 'package:visibility_detector_example/main.dart' as demo;
 
 /// Maps [row, column] indices to the last reported [VisibilityInfo] for the
@@ -59,6 +58,22 @@ void main() {
       final bounds =
           VisibilityDetectorController.instance.widgetBoundsFor(cellKey);
       expect(bounds, expectedRect);
+    },
+  );
+
+  _wrapTest(
+    'VisibilityDetector test with transform.scale',
+    callback: (tester) async {
+      final scaleButton = find.byKey(demo.scaleButtonKey);
+      await tester.tap(scaleButton);
+      await tester.pump();
+      await tester.pump(VisibilityDetectorController.instance.updateInterval);
+
+      var info = _positionToVisibilityInfo[demo.RowColumn(0, 1)];
+      expect(info, isNotNull);
+
+      info = info!;
+      expect(info.visibleFraction, 1.0);
     },
   );
 
@@ -481,7 +496,9 @@ class _TestPropertyChangeState extends State<_TestPropertyChange> {
   /// Whether our [VisibilityDetector] should be enabled (i.e., whether it
   /// should fire visibility callbacks).
   bool _visibilityDetectorEnabled = true;
+
   bool get visibilityDetectorEnabled => _visibilityDetectorEnabled;
+
   set visibilityDetectorEnabled(bool value) {
     setState(() {
       _visibilityDetectorEnabled = value;
@@ -490,11 +507,13 @@ class _TestPropertyChangeState extends State<_TestPropertyChange> {
 
   /// The last reported visibility of our [VisibilityDetector].
   double _lastVisibleFraction = 0;
+
   double get lastVisibleFraction => _lastVisibleFraction;
 
   /// The number of times that our [VisibilityDetector]'s callback has been
   /// triggered.
   int _callbackCount = 0;
+
   int get callbackCount => _callbackCount;
 
   /// [VisibilityDetector] callback for when the visibility of the widget
