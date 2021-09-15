@@ -28,7 +28,6 @@ Iterable<Layer> _getLayerChain(Layer start) {
 /// The sequence must be in [parent, child] order.  The sequence must not be
 /// null.
 Matrix4 _accumulateTransforms(Iterable<Layer> layerChain) {
-  assert(layerChain != null);
 
   final transform = Matrix4.identity();
   if (layerChain.isNotEmpty) {
@@ -66,11 +65,7 @@ class VisibilityDetectorLayer extends ContainerLayer {
       required this.widgetSize,
       required this.paintOffset,
       required this.onVisibilityChanged})
-      : assert(key != null),
-        assert(paintOffset != null),
-        assert(widgetSize != null),
-        assert(onVisibilityChanged != null),
-        _layerOffset = Offset.zero;
+      : _layerOffset = Offset.zero;
 
   /// Timer used by [_scheduleUpdate].
   static Timer? _timer;
@@ -244,7 +239,6 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// Invokes the visibility callback if [VisibilityInfo] hasn't meaningfully
   /// changed since the last time we invoked it.
   void _fireCallback(VisibilityInfo info) {
-    assert(info != null);
 
     final oldInfo = _lastVisibility[key];
     final visible = !info.visibleBounds.isEmpty;
