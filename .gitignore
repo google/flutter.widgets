@@ -6,6 +6,10 @@
 build/
 .packages
 
+generated_plugin_registrant.dart
+.flutter-plugins
+.flutter-plugins-dependencies
+
 # Or the files created by dart2js.
 *.dart.js
 *.js_
