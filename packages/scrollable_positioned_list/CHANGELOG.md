@@ -1,3 +1,6 @@
+# 0.2.1
+  * Fix crash on NaN or infinite offset.
+
 # 0.2.0-nullsafety.0
   * Update to null safety.
 
@@ -28,11 +31,11 @@
 
 # 0.1.7
   * Apply viewport dimensions in UnboundedRenderedViewport.performResize.
-    To work around change in https://github.com/flutter/flutter/pull/61973 
+    To work around change in https://github.com/flutter/flutter/pull/61973
     causing breakage
 
 # 0.1.6
-  * Change to do local scroll (without a fade) whenever target item is found 
+  * Change to do local scroll (without a fade) whenever target item is found
     within the cache.
   * Added sdk constraints to the example.
   * Moved `itemScrollControllerDetachment` to
@@ -41,7 +44,7 @@
 # 0.1.5
 
   * Added minCacheExtent to ScrollablePositionedList
-  * Fixes the issue when item count updated from zero to one and `index` in 
+  * Fixes the issue when item count updated from zero to one and `index` in
     `itemBuilder` becomes `-1`.  Fixes
     [issue #104](https://github.com/google/flutter.widgets/issues/104).
 
