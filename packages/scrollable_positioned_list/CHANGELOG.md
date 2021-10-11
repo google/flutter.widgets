@@ -1,3 +1,6 @@
+# 0.2.2
+  * Move dependencies from pre-release versions to released versions.
+
 # 0.2.1
   * Fix crash on NaN or infinite offset.
 
