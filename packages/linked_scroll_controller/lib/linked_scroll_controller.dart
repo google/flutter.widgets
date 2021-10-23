@@ -11,7 +11,8 @@ import 'package:flutter/rendering.dart';
 /// each other.
 ///
 /// Controllers are added and returned via [addAndGet]. The initial offset
-/// of the newly created controller is synced to the current offset.
+/// for all controllers can be set via constructor's [initialScrollOffset]
+/// argument.
 /// Controllers must be `dispose`d when no longer in use to prevent memory
 /// leaks and performance degradation.
 ///
