@@ -27,6 +27,7 @@ import 'wrapping.dart';
 class PositionedList extends StatefulWidget {
   /// Create a [PositionedList].
   const PositionedList({
+    Key? key,
     required this.itemCount,
     required this.itemBuilder,
     this.separatorBuilder,
@@ -46,7 +47,8 @@ class PositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
-        assert((positionedIndex == 0) || (positionedIndex < itemCount));
+        assert((positionedIndex == 0) || (positionedIndex < itemCount)),
+        super(key: key);
 
   /// Number of items the [itemBuilder] can produce.
   final int itemCount;
@@ -330,9 +332,8 @@ class _PositionedListState extends State<PositionedList> {
           if (widget.scrollDirection == Axis.vertical) {
             final reveal = viewport!.getOffsetToReveal(box, 0).offset;
             if (!reveal.isFinite) continue;
-            final itemOffset = reveal -
-                viewport.offset.pixels +
-                anchor * viewport.size.height;
+            final itemOffset =
+                reveal - viewport.offset.pixels + anchor * viewport.size.height;
             positions.add(ItemPosition(
                 index: key.value,
                 itemLeadingEdge: itemOffset.round() /
