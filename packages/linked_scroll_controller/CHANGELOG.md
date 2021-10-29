@@ -1,3 +1,7 @@
+# 0.2.0
+
+  * Stable release for null safety.
+
 # 0.2.0-nullsafety.0
 
   * Update to null safety.

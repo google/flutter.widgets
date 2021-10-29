@@ -1,3 +1,11 @@
+# 0.2.2
+
+* Minor internal changes to maintain forward-compatibility with [flutter#91753](https://github.com/flutter/flutter/pull/91753).
+
+# 0.2.1
+
+* Bug fix for using VisibilityDetector with FittedBox and Transform.scale [issue #285](https://github.com/google/flutter.widgets/issues/285).
+
 # 0.2.0
 
 * Added `SliverVisibilityDetector` to report visibility of `RenderSliver`-based

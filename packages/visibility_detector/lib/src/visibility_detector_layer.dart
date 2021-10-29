@@ -69,8 +69,7 @@ class VisibilityDetectorLayer extends ContainerLayer {
       : assert(key != null),
         assert(paintOffset != null),
         assert(widgetSize != null),
-        assert(onVisibilityChanged != null),
-        _layerOffset = Offset.zero;
+        assert(onVisibilityChanged != null);
 
   /// Timer used by [_scheduleUpdate].
   static Timer? _timer;
@@ -108,9 +107,6 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// The size of the corresponding [VisibilityDetector] widget.
   final Size widgetSize;
 
-  /// Last known layer offset supplied to [addToScene].
-  Offset _layerOffset;
-
   /// The offset supplied to [RenderVisibilityDetector.paint] method.
   final Offset paintOffset;
 
@@ -122,8 +118,7 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// Computes the bounds for the corresponding [VisibilityDetector] widget, in
   /// global coordinates.
   Rect _computeWidgetBounds() {
-    final r = _localRectToGlobal(this, widgetOffset & widgetSize);
-    return r.shift(paintOffset + _layerOffset);
+    return _localRectToGlobal(this, paintOffset + widgetOffset & widgetSize);
   }
 
   /// Computes the accumulated clipping bounds, in global coordinates.
@@ -271,9 +266,11 @@ class VisibilityDetectorLayer extends ContainerLayer {
   /// See [Layer.addToScene].
   @override
   void addToScene(ui.SceneBuilder builder, [Offset layerOffset = Offset.zero]) {
-    _layerOffset = layerOffset;
+    // TODO(goderbauer): Remove unused layerOffset parameter once
+    //     https://github.com/flutter/flutter/pull/91753 is in stable.
+    assert(layerOffset == Offset.zero);
     _scheduleUpdate();
-    super.addToScene(builder, layerOffset);
+    super.addToScene(builder);
   }
 
   /// See [AbstractNode.attach].
