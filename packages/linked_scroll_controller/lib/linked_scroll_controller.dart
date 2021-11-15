@@ -247,6 +247,10 @@ class _LinkedScrollPosition extends ScrollPositionWithSingleContext {
     if (newPixels == pixels) {
       return 0.0;
     }
+    // Detect overscroll
+    if (newPixels > maxScrollExtent) {
+      newPixels = maxScrollExtent;
+    }
     updateUserScrollDirection(newPixels - pixels > 0.0
         ? ScrollDirection.forward
         : ScrollDirection.reverse);
@@ -254,20 +258,14 @@ class _LinkedScrollPosition extends ScrollPositionWithSingleContext {
     if (owner.canLinkWithPeers) {
       _peerActivities.addAll(owner.linkWithPeers(this));
       for (var activity in _peerActivities) {
-        activity.moveTo(newPixels, maxScrollExtent);
+        activity.moveTo(newPixels);
       }
     }
 
-    return setPixelsInternal(newPixels, maxScrollExtent);
+    return setPixelsInternal(newPixels);
   }
 
-  double setPixelsInternal(double newPixels, double sourceMaxScrollExtent) {
-    // If we have scroll views of different heights and overscroll, we do not
-    // want that overscroll to be passed on to the peers. So, we make sure to
-    // not scroll beyond the `maxScrollExtent` of the source scroll view.
-    if (newPixels > sourceMaxScrollExtent) {
-      newPixels = sourceMaxScrollExtent;
-    }
+  double setPixelsInternal(double newPixels) {
     return super.setPixels(newPixels);
   }
 
@@ -351,9 +349,9 @@ class _LinkedScrollActivity extends ScrollActivity {
   @override
   double get velocity => 0.0;
 
-  void moveTo(double newPixels, sourceMaxScrollExtent) {
+  void moveTo(double newPixels) {
     _updateUserScrollDirection();
-    delegate.setPixelsInternal(newPixels, sourceMaxScrollExtent);
+    delegate.setPixelsInternal(newPixels);
   }
 
   void jumpTo(double newPixels) {
