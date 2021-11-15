@@ -310,6 +310,25 @@ void main() {
       expect(state._controllers.offset, equals(state._letters.offset));
       expect(state._controllers.offset, equals(state._numbers.offset));
     });
+
+    testWidgets('overscroll does not affect peers', (tester) async {
+      await tester.pumpWidget(TestUnequalListViews());
+      final state = tester
+          .state<TestUnequalListViewsState>(find.byType(TestUnequalListViews));
+
+      expect(state._longer.position.pixels, 0.0);
+      expect(state._shorter.position.pixels, 0.0);
+
+      // Trigger overscroll for the shorter list
+      state._shorter.jumpTo(state._shorter.position.maxScrollExtent + 100);
+
+      await tester.pumpAndSettle();
+
+      expect(state._shorter.position.pixels,
+          state._shorter.position.maxScrollExtent);
+      expect(state._longer.position.pixels,
+          state._shorter.position.maxScrollExtent);
+    });
   });
 }
 
@@ -330,6 +349,64 @@ class TestEmptyGroupState extends State<TestEmptyGroup> {
   @override
   Widget build(BuildContext context) {
     return SizedBox();
+  }
+}
+
+class TestUnequalListViews extends StatefulWidget {
+  @override
+  TestUnequalListViewsState createState() => TestUnequalListViewsState();
+}
+
+class TestUnequalListViewsState extends State<TestUnequalListViews> {
+  late LinkedScrollControllerGroup _controllers;
+  late ScrollController _longer;
+  late ScrollController _shorter;
+
+  @override
+  void initState() {
+    super.initState();
+    _controllers = LinkedScrollControllerGroup();
+    _longer = _controllers.addAndGet();
+    _shorter = _controllers.addAndGet();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: ListView(
+              controller: _longer,
+              children: <Widget>[
+                Tile('Hello A'),
+                Tile('Hello B'),
+                Tile('Hello C'),
+                Tile('Hello D'),
+                Tile('Hello E'),
+                Tile('Hello F'),
+                Tile('Hello G'),
+                Tile('Hello H'),
+                Tile('Hello I'),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              controller: _shorter,
+              children: <Widget>[
+                Tile('Hello 1'),
+                Tile('Hello 2'),
+                Tile('Hello 3'),
+                Tile('Hello 4'),
+                Tile('Hello 5'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
