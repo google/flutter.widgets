@@ -254,14 +254,20 @@ class _LinkedScrollPosition extends ScrollPositionWithSingleContext {
     if (owner.canLinkWithPeers) {
       _peerActivities.addAll(owner.linkWithPeers(this));
       for (var activity in _peerActivities) {
-        activity.moveTo(newPixels);
+        activity.moveTo(newPixels, maxScrollExtent);
       }
     }
 
-    return setPixelsInternal(newPixels);
+    return setPixelsInternal(newPixels, maxScrollExtent);
   }
 
-  double setPixelsInternal(double newPixels) {
+  double setPixelsInternal(double newPixels, double sourceMaxScrollExtent) {
+    // If we have scroll views of different heights and overscroll, we do not
+    // want that overscroll to be passed on to the peers. So, we make sure to
+    // not scroll beyond the `maxScrollExtent` of the source scroll view.
+    if (newPixels > sourceMaxScrollExtent) {
+      newPixels = sourceMaxScrollExtent;
+    }
     return super.setPixels(newPixels);
   }
 
@@ -345,9 +351,9 @@ class _LinkedScrollActivity extends ScrollActivity {
   @override
   double get velocity => 0.0;
 
-  void moveTo(double newPixels) {
+  void moveTo(double newPixels, sourceMaxScrollExtent) {
     _updateUserScrollDirection();
-    delegate.setPixelsInternal(newPixels);
+    delegate.setPixelsInternal(newPixels, sourceMaxScrollExtent);
   }
 
   void jumpTo(double newPixels) {
