@@ -319,11 +319,16 @@ void main() {
       expect(state._longer.position.pixels, 0.0);
       expect(state._shorter.position.pixels, 0.0);
 
-      // Trigger overscroll for the shorter list
-      state._shorter.jumpTo(state._shorter.position.maxScrollExtent + 100);
-
+      await tester.dragUntilVisible(find.text('Hello 5'),
+          find.byType(TestUnequalListViews), Offset(0.0, -50.0));
       await tester.pumpAndSettle();
 
+      // Trigger overscroll by scrolling downwards an arbitrary amount
+      await tester.drag(find.text('Hello 5'), Offset(0.0, -300.0));
+      await tester.pumpAndSettle();
+
+      // Verify that the longer list has not continued scrolling after the
+      // shorter list hit `maxScrollExtent`.
       expect(state._shorter.position.pixels,
           state._shorter.position.maxScrollExtent);
       expect(state._longer.position.pixels,
