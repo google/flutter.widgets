@@ -1,3 +1,5 @@
+# 0.2.3
+  * Support shrink wrap
 # 0.2.2
   * Move dependencies from pre-release versions to released versions.
 

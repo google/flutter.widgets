@@ -1,5 +1,5 @@
 name: scrollable_positioned_list
-version: 0.2.2
+version: 0.2.3
 description: >
   A list with helper methods to programmatically scroll to an item.
 homepage: https://github.com/google/flutter.widgets/tree/master/packages/scrollable_positioned_list
