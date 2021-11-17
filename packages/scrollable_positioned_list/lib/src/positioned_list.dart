@@ -12,6 +12,7 @@ import 'element_registry.dart';
 import 'item_positions_listener.dart';
 import 'item_positions_notifier.dart';
 import 'scroll_view.dart';
+import 'wrapping.dart';
 
 /// A list of widgets similar to [ListView], except scroll control
 /// and position reporting is based on index rather than pixel offset.
@@ -26,6 +27,7 @@ import 'scroll_view.dart';
 class PositionedList extends StatefulWidget {
   /// Create a [PositionedList].
   const PositionedList({
+    Key? key,
     required this.itemCount,
     required this.itemBuilder,
     this.separatorBuilder,
@@ -35,6 +37,7 @@ class PositionedList extends StatefulWidget {
     this.alignment = 0,
     this.scrollDirection = Axis.vertical,
     this.reverse = false,
+    this.shrinkWrap = false,
     this.physics,
     this.padding,
     this.cacheExtent,
@@ -44,7 +47,8 @@ class PositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
-        assert((positionedIndex == 0) || (positionedIndex < itemCount));
+        assert((positionedIndex == 0) || (positionedIndex < itemCount)),
+        super(key: key);
 
   /// Number of items the [itemBuilder] can produce.
   final int itemCount;
@@ -85,6 +89,15 @@ class PositionedList extends StatefulWidget {
   ///
   /// See [ScrollView.reverse].
   final bool reverse;
+
+  /// {@template flutter.widgets.scroll_view.shrinkWrap}
+  /// Whether the extent of the scroll view in the [scrollDirection] should be
+  /// determined by the contents being viewed.
+  ///
+  ///  Defaults to false.
+  ///
+  /// See [ScrollView.shrinkWrap].
+  final bool shrinkWrap;
 
   /// How the scroll view should respond to user input.
   ///
@@ -163,6 +176,7 @@ class _PositionedListState extends State<PositionedList> {
           reverse: widget.reverse,
           cacheExtent: widget.cacheExtent,
           physics: widget.physics,
+          shrinkWrap: widget.shrinkWrap,
           semanticChildCount: widget.semanticChildCount ?? widget.itemCount,
           slivers: <Widget>[
             if (widget.positionedIndex > 0)
@@ -301,17 +315,25 @@ class _PositionedListState extends State<PositionedList> {
           return;
         }
         final positions = <ItemPosition>[];
-        RenderViewport? viewport;
+        RenderViewportBase? viewport;
         for (var element in registeredElements.value!) {
           final RenderBox box = element.renderObject as RenderBox;
-          viewport ??= RenderAbstractViewport.of(box) as RenderViewport?;
+          viewport ??= RenderAbstractViewport.of(box) as RenderViewportBase?;
+          var anchor = 0.0;
+          if (viewport is RenderViewport) {
+            anchor = viewport.anchor;
+          }
+
+          if (viewport is CustomRenderViewport) {
+            anchor = viewport.anchor;
+          }
+
           final ValueKey<int> key = element.widget.key as ValueKey<int>;
           if (widget.scrollDirection == Axis.vertical) {
             final reveal = viewport!.getOffsetToReveal(box, 0).offset;
             if (!reveal.isFinite) continue;
-            final itemOffset = reveal -
-                viewport.offset.pixels +
-                viewport.anchor * viewport.size.height;
+            final itemOffset =
+                reveal - viewport.offset.pixels + anchor * viewport.size.height;
             positions.add(ItemPosition(
                 index: key.value,
                 itemLeadingEdge: itemOffset.round() /
