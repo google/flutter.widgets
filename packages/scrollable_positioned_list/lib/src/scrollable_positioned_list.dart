@@ -14,6 +14,7 @@ import 'item_positions_listener.dart';
 import 'item_positions_notifier.dart';
 import 'positioned_list.dart';
 import 'post_mount_callback.dart';
+import 'viewport.dart';
 
 /// Number of screens to scroll when scrolling a long distance.
 const int _screenScrollCount = 2;
@@ -52,6 +53,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
+    this.viewportLayoutUpdate,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
@@ -79,11 +81,13 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
+    this.viewportLayoutUpdate,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         assert(separatorBuilder != null),
         itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
         super(key: key);
+  final ViewportLayoutUpdate? viewportLayoutUpdate;
 
   /// Number of items the [itemBuilder] can produce.
   final int itemCount;
@@ -366,6 +370,8 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                       padding: widget.padding,
                       addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
                       addRepaintBoundaries: widget.addRepaintBoundaries,
+                      viewportLayoutUpdate:
+                          widget.viewportLayoutUpdate ?? (a, b, c) {},
                     ),
                   ),
                 ),
@@ -396,6 +402,8 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                         padding: widget.padding,
                         addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
                         addRepaintBoundaries: widget.addRepaintBoundaries,
+                        viewportLayoutUpdate:
+                            widget.viewportLayoutUpdate ?? (a, b, c) {},
                       ),
                     ),
                   ),

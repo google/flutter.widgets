@@ -14,21 +14,22 @@ import 'viewport.dart';
 class UnboundedCustomScrollView extends CustomScrollView {
   final bool _shrinkWrap;
 
-  const UnboundedCustomScrollView({
-    Key? key,
-    Axis scrollDirection = Axis.vertical,
-    bool reverse = false,
-    ScrollController? controller,
-    bool? primary,
-    ScrollPhysics? physics,
-    bool shrinkWrap = false,
-    Key? center,
-    double anchor = 0.0,
-    double? cacheExtent,
-    List<Widget> slivers = const <Widget>[],
-    int? semanticChildCount,
-    DragStartBehavior dragStartBehavior = DragStartBehavior.start,
-  })  : _shrinkWrap = shrinkWrap,
+  const UnboundedCustomScrollView(
+      {Key? key,
+      Axis scrollDirection = Axis.vertical,
+      bool reverse = false,
+      ScrollController? controller,
+      bool? primary,
+      ScrollPhysics? physics,
+      bool shrinkWrap = false,
+      Key? center,
+      double anchor = 0.0,
+      double? cacheExtent,
+      List<Widget> slivers = const <Widget>[],
+      int? semanticChildCount,
+      DragStartBehavior dragStartBehavior = DragStartBehavior.start,
+      required this.viewportLayoutUpdate})
+      : _shrinkWrap = shrinkWrap,
         _anchor = anchor,
         super(
           key: key,
@@ -48,6 +49,8 @@ class UnboundedCustomScrollView extends CustomScrollView {
   // [CustomScrollView] enforces constraints on [CustomScrollView.anchor], so
   // we need our own version.
   final double _anchor;
+
+  final ViewportLayoutUpdate viewportLayoutUpdate;
 
   @override
   double get anchor => _anchor;
@@ -78,6 +81,7 @@ class UnboundedCustomScrollView extends CustomScrollView {
       cacheExtent: cacheExtent,
       center: center,
       anchor: anchor,
+      viewportLayoutUpdate: viewportLayoutUpdate,
     );
   }
 }

@@ -7,6 +7,9 @@ import 'dart:math' as math;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
+typedef ViewportLayoutUpdate = void Function(
+    double viewportHeight, double minScrollExtent, double maxScrollExtent);
+
 /// A render object that is bigger on the inside.
 ///
 /// Version of [Viewport] with some modifications to how extents are
@@ -19,6 +22,7 @@ class UnboundedViewport extends Viewport {
     AxisDirection? crossAxisDirection,
     double anchor = 0.0,
     required ViewportOffset offset,
+    required this.viewportLayoutUpdate,
     Key? center,
     double? cacheExtent,
     List<Widget> slivers = const <Widget>[],
@@ -36,19 +40,21 @@ class UnboundedViewport extends Viewport {
   // version.
   final double _anchor;
 
+  final ViewportLayoutUpdate viewportLayoutUpdate;
+
   @override
   double get anchor => _anchor;
 
   @override
   RenderViewport createRenderObject(BuildContext context) {
     return UnboundedRenderViewport(
-      axisDirection: axisDirection,
-      crossAxisDirection: crossAxisDirection ??
-          Viewport.getDefaultCrossAxisDirection(context, axisDirection),
-      anchor: anchor,
-      offset: offset,
-      cacheExtent: cacheExtent,
-    );
+        axisDirection: axisDirection,
+        crossAxisDirection: crossAxisDirection ??
+            Viewport.getDefaultCrossAxisDirection(context, axisDirection),
+        anchor: anchor,
+        offset: offset,
+        cacheExtent: cacheExtent,
+        viewportLayoutUpdate: viewportLayoutUpdate);
   }
 }
 
@@ -66,6 +72,7 @@ class UnboundedRenderViewport extends RenderViewport {
     AxisDirection axisDirection = AxisDirection.down,
     required AxisDirection crossAxisDirection,
     required ViewportOffset offset,
+    required this.viewportLayoutUpdate,
     double anchor = 0.0,
     List<RenderSliver>? children,
     RenderSliver? center,
@@ -78,7 +85,7 @@ class UnboundedRenderViewport extends RenderViewport {
             center: center,
             cacheExtent: cacheExtent,
             children: children);
-
+  final ViewportLayoutUpdate viewportLayoutUpdate;
   static const int _maxLayoutCycles = 10;
 
   double _anchor;
@@ -218,6 +225,8 @@ class UnboundedRenderViewport extends RenderViewport {
       }
       return true;
     }());
+
+    viewportLayoutUpdate(size.height, _minScrollExtent, _maxScrollExtent);
   }
 
   double _attemptLayout(
