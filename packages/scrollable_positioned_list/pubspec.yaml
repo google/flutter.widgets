@@ -1,4 +1,4 @@
-name: scrollable_positioned_list
+name: chat_list
 version: 0.2.3
 description: >
   A list with helper methods to programmatically scroll to an item.
