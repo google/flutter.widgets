@@ -52,6 +52,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
+    this.keepPositionWithoutScroll = false,
     this.onItemKey,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
@@ -80,6 +81,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
+    this.keepPositionWithoutScroll = false,
     this.onItemKey,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
@@ -174,6 +176,9 @@ class ScrollablePositionedList extends StatefulWidget {
   /// cache extent.
   final double? minCacheExtent;
 
+  /// [keepPositionWithoutScroll] keep item not scroll when insert data in header
+  /// When [keepPositionWithoutScroll] is true, you must provide onItemKey;
+  final bool keepPositionWithoutScroll;
   final String Function(int index)? onItemKey;
 
   @override
@@ -333,14 +338,15 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
         });
       }
     }
-
-    if (primary.target == 0) {
-      primary.target++;
-    } else {
-      if (_lastTargetKey != null) {
-        var currTargetIndex = _getIndexOfKey();
-        if (currTargetIndex != null && currTargetIndex > primary.target) {
-          primary.target++;
+    if (widget.keepPositionWithoutScroll) {
+      if (primary.target == 0) {
+        primary.target++;
+      } else {
+        if (_lastTargetKey != null) {
+          var currTargetIndex = _getIndexOfKey();
+          if (currTargetIndex != null && currTargetIndex > primary.target) {
+            primary.target++;
+          }
         }
       }
     }
