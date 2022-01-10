@@ -54,6 +54,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
     this.viewportLayoutUpdate,
+    this.onItemKey,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
@@ -82,6 +83,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
     this.viewportLayoutUpdate,
+    this.onItemKey,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         assert(separatorBuilder != null),
@@ -175,6 +177,8 @@ class ScrollablePositionedList extends StatefulWidget {
   /// in builds of widgets that would otherwise already be built in the
   /// cache extent.
   final double? minCacheExtent;
+
+  final String Function(int index)? onItemKey;
 
   @override
   State<StatefulWidget> createState() => _ScrollablePositionedListState();
@@ -333,10 +337,38 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
         });
       }
     }
+
+    if (primary.target == 0) {
+      primary.target++;
+    } else {
+      if (_lastTargetKey != null) {
+        var currTargetIndex = _getIndexOfKey();
+        if (currTargetIndex != null && currTargetIndex > primary.target) {
+          primary.target++;
+        }
+      }
+    }
+  }
+
+  String? _lastTargetKey;
+  int? _getIndexOfKey() {
+    if (widget.onItemKey != null) {
+      int? index;
+      for (var i = 0; i < widget.itemCount; i++) {
+        if (widget.onItemKey!(i) == _lastTargetKey) {
+          index = i;
+          break;
+        }
+      }
+      return index;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.itemCount > 0) {
+      _lastTargetKey = widget.onItemKey!(primary.target);
+    }
     return LayoutBuilder(
       builder: (context, constraints) {
         final cacheExtent = _cacheExtent(constraints);
@@ -372,6 +404,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                       addRepaintBoundaries: widget.addRepaintBoundaries,
                       viewportLayoutUpdate:
                           widget.viewportLayoutUpdate ?? (a, b, c) {},
+                      // onItemKey: widget.onItemKey
                     ),
                   ),
                 ),
