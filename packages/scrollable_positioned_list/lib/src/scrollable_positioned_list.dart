@@ -52,6 +52,8 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
+    this.keepPositionWithoutScroll = false,
+    this.onItemKey,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
@@ -79,6 +81,8 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
+    this.keepPositionWithoutScroll = false,
+    this.onItemKey,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         assert(separatorBuilder != null),
@@ -171,6 +175,11 @@ class ScrollablePositionedList extends StatefulWidget {
   /// in builds of widgets that would otherwise already be built in the
   /// cache extent.
   final double? minCacheExtent;
+
+  /// [keepPositionWithoutScroll] keep item not scroll when insert data in header
+  /// When [keepPositionWithoutScroll] is true, you must provide onItemKey;
+  final bool keepPositionWithoutScroll;
+  final String Function(int index)? onItemKey;
 
   @override
   State<StatefulWidget> createState() => _ScrollablePositionedListState();
@@ -329,10 +338,46 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
         });
       }
     }
+
+    /// Check does user enabled keepPositionWithoutScroll
+    /// ScrollablePositionedList.separated will set double itemChild.
+    /// primary.target also should be double
+    /// The submit only work with Vertical scrolling
+    if (widget.keepPositionWithoutScroll) {
+      assert(widget.onItemKey != null,
+          "Please implement onItemKey if keepPositionWithoutScroll was enabled");
+      if (_lastTargetKey != null) {
+        var currTargetIndex = _getIndexOfKey();
+        if (currTargetIndex != null && currTargetIndex > primary.target) {
+          primary.target++;
+        }
+      }
+    }
+  }
+
+  String? _lastTargetKey;
+  int? _getIndexOfKey() {
+    if (widget.onItemKey != null) {
+      int? index;
+      for (var i = 0; i < widget.itemCount; i++) {
+        if (widget.onItemKey!(i) == _lastTargetKey) {
+          index = i;
+          break;
+        }
+      }
+      return index;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    /// Collect last target key
+    if (widget.itemCount > 0 && widget.onItemKey != null) {
+      _lastTargetKey = widget.onItemKey!(primary.target);
+    } else {
+      _lastTargetKey = null;
+    }
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final cacheExtent = _cacheExtent(constraints);
