@@ -86,29 +86,53 @@ class _ScrollablePositionedListPageState
   @override
   Widget build(BuildContext context) => Material(
         child: OrientationBuilder(
-          builder: (context, orientation) => Column(
-            children: <Widget>[
-              Expanded(
-                child: list(orientation),
-              ),
-              positionsView,
-              Row(
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      scrollControlButtons,
-                      const SizedBox(height: 10),
-                      jumpControlButtons,
-                      alignmentControl,
-                      keepPositionWidget
-                    ],
-                  ),
-                ],
-              )
-            ],
+          builder: (context, orientation) => SafeArea(
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  child: list(orientation),
+                ),
+                positionsView,
+                Row(
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        scrollControlButtons,
+                        const SizedBox(height: 10),
+                        jumpControlButtons,
+                        alignmentControl,
+                        keepPositionWidget
+                      ],
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       );
+
+  _insertToFirst() {
+    final heightGenerator = Random(328902348);
+    final colorGenerator = Random(42490823);
+    items.insert(0, items[0] - 1);
+    itemHeights.insert(
+        0,
+        heightGenerator.nextDouble() * (maxItemHeight - minItemHeight) +
+            minItemHeight);
+    itemColors.insert(
+        0, Color(colorGenerator.nextInt(randomMax)).withOpacity(1));
+  }
+
+  _insertToLast() {
+    final heightGenerator = Random(328902348);
+    final colorGenerator = Random(42490823);
+    items.add(items.last + 1);
+    itemHeights.add(
+        heightGenerator.nextDouble() * (maxItemHeight - minItemHeight) +
+            minItemHeight);
+    itemColors.add(Color(colorGenerator.nextInt(randomMax)).withOpacity(1));
+  }
 
   Widget get keepPositionWidget => SizedBox(
         height: 40,
@@ -124,29 +148,15 @@ class _ScrollablePositionedListPageState
                 }),
             ElevatedButton(
                 onPressed: () {
-                  final heightGenerator = Random(328902348);
-                  final colorGenerator = Random(42490823);
-                  items.insert(0, items[0] - 1);
-                  itemHeights.insert(
-                      0,
-                      heightGenerator.nextDouble() *
-                              (maxItemHeight - minItemHeight) +
-                          minItemHeight);
-                  itemColors.insert(0,
-                      Color(colorGenerator.nextInt(randomMax)).withOpacity(1));
+                  _insertToFirst();
+                  _insertToFirst();
                   setState(() {});
                 },
                 child: Text("Add to First")),
             ElevatedButton(
                 onPressed: () {
-                  final heightGenerator = Random(328902348);
-                  final colorGenerator = Random(42490823);
-                  items.add(items.last + 1);
-                  itemHeights.add(heightGenerator.nextDouble() *
-                          (maxItemHeight - minItemHeight) +
-                      minItemHeight);
-                  itemColors.add(
-                      Color(colorGenerator.nextInt(randomMax)).withOpacity(1));
+                  _insertToLast();
+                  _insertToLast();
                   setState(() {});
                 },
                 child: Text("Add to Last"))
