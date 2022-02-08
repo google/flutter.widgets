@@ -3,11 +3,9 @@
 // found in the LICENSE file.
 
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -1318,7 +1316,7 @@ void main() {
     await setUpWidgetTest(tester, itemPositionsListener: itemPositionsListener);
 
     final root = WidgetsBinding
-        .instance!.pipelineOwner.semanticsOwner!.rootSemanticsNode!;
+        .instance.pipelineOwner.semanticsOwner!.rootSemanticsNode!;
 
     final semanticNodes = <SemanticsNode>[root];
 

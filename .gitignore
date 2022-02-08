@@ -20,3 +20,8 @@ pubspec.lock
 .settings
 .idea
 .c9
+
+# Flutter tool generated ephemeral files
+.flutter-plugins
+.flutter-plugins-dependencies
+generated_plugin_registrant.dart

@@ -7,10 +7,6 @@
 import 'package:flutter/material.dart';
 import 'package:self_storing_input/self_storing_input.dart';
 
-import '../primitives/operation_result.dart';
-import '../primitives/saver.dart';
-import 'self_storing_radio_group_style.dart';
-
 /// State that needs to be shared between main widget and children.
 class SharedState with ChangeNotifier {
   final Saver saver;
