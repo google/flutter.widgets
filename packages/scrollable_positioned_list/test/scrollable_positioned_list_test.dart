@@ -70,6 +70,11 @@ void main() {
     );
   }
 
+  final Finder fadeTransitionFinder = find.descendant(
+    of: find.byType(ScrollablePositionedList),
+    matching: find.byType(FadeTransition),
+  );
+
   testWidgets('List positioned with 0 at top', (WidgetTester tester) async {
     final itemPositionsListener = ItemPositionsListener.create();
     await setUpWidgetTest(tester, itemPositionsListener: itemPositionsListener);
@@ -393,11 +398,7 @@ void main() {
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener);
 
-    var fadeTransition = tester.widget<FadeTransition>(find
-        .descendant(
-            of: find.byType(ScrollablePositionedList),
-            matching: find.byType(FadeTransition))
-        .last);
+    var fadeTransition = tester.widget<FadeTransition>(fadeTransitionFinder);
     final initialOpacity = fadeTransition.opacity;
 
     unawaited(
@@ -406,11 +407,7 @@ void main() {
     await tester.pump();
     await tester.pump(scrollDuration ~/ 2);
 
-    fadeTransition = tester.widget<FadeTransition>(find
-        .descendant(
-            of: find.byType(ScrollablePositionedList),
-            matching: find.byType(FadeTransition))
-        .last);
+    fadeTransition = tester.widget<FadeTransition>(fadeTransitionFinder);
     expect(fadeTransition.opacity, initialOpacity);
 
     await tester.pumpAndSettle();
@@ -454,10 +451,6 @@ void main() {
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
     await setUpWidgetTest(tester, itemScrollController: itemScrollController);
-
-    var fadeTransitionFinder = find.descendant(
-        of: find.byType(ScrollablePositionedList),
-        matching: find.byType(FadeTransition));
 
     unawaited(
         itemScrollController.scrollTo(index: 100, duration: scrollDuration));
@@ -532,26 +525,14 @@ void main() {
     await tester.pump();
     await tester.pump();
     expect(
-        tester
-            .widget<FadeTransition>(find
-                .descendant(
-                    of: find.byType(ScrollablePositionedList),
-                    matching: find.byType(FadeTransition))
-                .last)
-            .opacity
-            .value,
-        closeTo(0, 0.01));
+      tester.widget<FadeTransition>(fadeTransitionFinder.last).opacity.value,
+      closeTo(0, 0.01),
+    );
     await tester.pump(scrollDuration + scrollDurationTolerance);
     expect(
-        tester
-            .widget<FadeTransition>(find
-                .descendant(
-                    of: find.byType(ScrollablePositionedList),
-                    matching: find.byType(FadeTransition))
-                .last)
-            .opacity
-            .value,
-        closeTo(1, 0.01));
+      tester.widget<FadeTransition>(fadeTransitionFinder.last).opacity.value,
+      closeTo(1, 0.01),
+    );
 
     expect(find.text('Item 0'), findsOneWidget);
     expect(tester.getTopLeft(find.text('Item 0')).dy, 0);
@@ -609,15 +590,9 @@ void main() {
     expect(tester.getTopLeft(find.text('Item 10')).dy, 0);
     expect(tester.getBottomLeft(find.text('Item 19')).dy, screenHeight);
     expect(
-        tester
-            .widget<FadeTransition>(find
-                .descendant(
-                    of: find.byType(ScrollablePositionedList),
-                    matching: find.byType(FadeTransition))
-                .last)
-            .opacity
-            .value,
-        closeTo(0.5, 0.01));
+      tester.widget<FadeTransition>(fadeTransitionFinder.last).opacity.value,
+      closeTo(0.5, 0.01),
+    );
 
     await tester.pumpAndSettle();
   });
@@ -898,11 +873,7 @@ void main() {
     await tester.pump();
 
     expect(tester.getTopLeft(find.text('Item 9')).dy, 0);
-    final fadeTransition = tester.widget<FadeTransition>(find
-        .descendant(
-            of: find.byType(ScrollablePositionedList),
-            matching: find.byType(FadeTransition))
-        .last);
+    final fadeTransition = tester.widget<FadeTransition>(fadeTransitionFinder);
     expect(fadeTransition.opacity.value, 1.0);
 
     await tester.pumpAndSettle();
@@ -922,11 +893,7 @@ void main() {
     await tester.pump();
 
     expect(tester.getTopLeft(find.text('Item 10')).dy, 0);
-    final fadeTransition = tester.widget<FadeTransition>(find
-        .descendant(
-            of: find.byType(ScrollablePositionedList),
-            matching: find.byType(FadeTransition))
-        .last);
+    final fadeTransition = tester.widget<FadeTransition>(fadeTransitionFinder);
     expect(fadeTransition.opacity.value, 1.0);
 
     await tester.pumpAndSettle();
@@ -950,7 +917,7 @@ void main() {
     await tester.pump();
 
     expect(tester.getTopLeft(find.text('Item 91')).dy, 0);
-    expect(find.byType(FadeTransition), findsNWidgets(2));
+    expect(fadeTransitionFinder, findsNWidgets(1));
 
     await tester.pumpAndSettle();
   });
@@ -975,7 +942,7 @@ void main() {
     expect(tester.getBottomLeft(find.text('Item 100')).dy,
         closeTo(screenHeight, tolerance));
     expect(find.text('Item 9', skipOffstage: false), findsNothing);
-    expect(find.byType(FadeTransition), findsNWidgets(2));
+    expect(fadeTransitionFinder, findsNWidgets(1));
 
     await tester.pumpAndSettle();
   });
@@ -998,11 +965,7 @@ void main() {
     await tester.pump();
 
     expect(tester.getTopLeft(find.text('Item 9')).dy, closeTo(0, tolerance));
-    final fadeTransition = tester.widget<FadeTransition>(find
-        .descendant(
-            of: find.byType(ScrollablePositionedList),
-            matching: find.byType(FadeTransition))
-        .last);
+    final fadeTransition = tester.widget<FadeTransition>(fadeTransitionFinder);
     expect(fadeTransition.opacity.value, 1.0);
 
     await tester.pumpAndSettle();
@@ -1026,7 +989,7 @@ void main() {
     await tester.pump();
 
     expect(tester.getTopLeft(find.text('Item 90')).dy, 0);
-    expect(find.byType(FadeTransition), findsNWidgets(2));
+    expect(fadeTransitionFinder, findsNWidgets(1));
 
     await tester.pumpAndSettle();
   });
@@ -1877,11 +1840,7 @@ void main() {
       minCacheExtent: 10,
     );
 
-    var fadeTransition = tester.widget<FadeTransition>(find
-        .descendant(
-            of: find.byType(ScrollablePositionedList),
-            matching: find.byType(FadeTransition))
-        .last);
+    var fadeTransition = tester.widget<FadeTransition>(fadeTransitionFinder);
     final initialOpacity = fadeTransition.opacity;
 
     unawaited(
@@ -1890,11 +1849,7 @@ void main() {
     await tester.pump();
     await tester.pump(scrollDuration ~/ 2);
 
-    fadeTransition = tester.widget<FadeTransition>(find
-        .descendant(
-            of: find.byType(ScrollablePositionedList),
-            matching: find.byType(FadeTransition))
-        .last);
+    fadeTransition = tester.widget<FadeTransition>(fadeTransitionFinder);
     expect(fadeTransition.opacity, initialOpacity);
 
     await tester.pumpAndSettle();
@@ -1913,11 +1868,9 @@ void main() {
       minCacheExtent: 200 * itemHeight,
     );
 
-    var fadeTransition = tester.widget<FadeTransition>(find
-        .descendant(
-            of: find.byType(ScrollablePositionedList),
-            matching: find.byType(FadeTransition))
-        .last);
+    var fadeTransition = tester.widget<FadeTransition>(
+      fadeTransitionFinder,
+    );
     final initialOpacity = fadeTransition.opacity;
 
     unawaited(
@@ -1926,11 +1879,7 @@ void main() {
     await tester.pump();
     await tester.pump(scrollDuration ~/ 2);
 
-    fadeTransition = tester.widget<FadeTransition>(find
-        .descendant(
-            of: find.byType(ScrollablePositionedList),
-            matching: find.byType(FadeTransition))
-        .last);
+    fadeTransition = tester.widget<FadeTransition>(fadeTransitionFinder);
     expect(fadeTransition.opacity, initialOpacity);
 
     await tester.pumpAndSettle();
