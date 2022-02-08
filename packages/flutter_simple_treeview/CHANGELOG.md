@@ -1,3 +1,7 @@
+# 3.0.1
+
+  * Minor fixes.
+
 # 3.0.0
 
   * Stable release for null safety.

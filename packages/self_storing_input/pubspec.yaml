@@ -1,5 +1,5 @@
 name: self_storing_input
-version: 4.0.0
+version: 4.0.1
 description: >
   A set of input widgets that automatically save and load
   the entered value to a data store.
