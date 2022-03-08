@@ -25,3 +25,11 @@ This widget visualises a tree structure, where a node can be any widget.
                     ),
                   ]),
 ```
+
+## Architecture
+
+```sh
+% ../../tool/dcdg.sh flutter_simple_treeview
+```
+
+![](flutter_simple_treeview.svg)

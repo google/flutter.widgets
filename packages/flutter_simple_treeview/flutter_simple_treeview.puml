@@ -1,0 +1,77 @@
+@startuml
+set namespaceSeparator ::
+
+class "flutter_simple_treeview::src::tree_view.dart::TreeView" {
+  +List<TreeNode> nodes
+  +double? indent
+  +double? iconSize
+  +TreeController? treeController
+  +_TreeViewState createState()
+}
+
+"flutter_simple_treeview::src::tree_view.dart::TreeView" o-- "flutter_simple_treeview::src::primitives::tree_controller.dart::TreeController"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "flutter_simple_treeview::src::tree_view.dart::TreeView"
+
+class "flutter_simple_treeview::src::tree_view.dart::_TreeViewState" {
+  -TreeController? _controller
+  +void initState()
+  +Widget build()
+}
+
+"flutter_simple_treeview::src::tree_view.dart::_TreeViewState" o-- "flutter_simple_treeview::src::primitives::tree_controller.dart::TreeController"
+"flutter::src::widgets::framework.dart::State" <|-- "flutter_simple_treeview::src::tree_view.dart::_TreeViewState"
+
+class "flutter_simple_treeview::src::node_widget.dart::NodeWidget" {
+  +TreeNode treeNode
+  +double? indent
+  +double? iconSize
+  +TreeController state
+  +_NodeWidgetState createState()
+}
+
+"flutter_simple_treeview::src::node_widget.dart::NodeWidget" o-- "flutter_simple_treeview::src::primitives::tree_node.dart::TreeNode"
+"flutter_simple_treeview::src::node_widget.dart::NodeWidget" o-- "flutter_simple_treeview::src::primitives::tree_controller.dart::TreeController"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "flutter_simple_treeview::src::node_widget.dart::NodeWidget"
+
+class "flutter_simple_treeview::src::node_widget.dart::_NodeWidgetState" {
+  -bool _isLeaf
+  -bool _isExpanded
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "flutter_simple_treeview::src::node_widget.dart::_NodeWidgetState"
+
+class "flutter_simple_treeview::src::primitives::tree_node.dart::TreeNode" {
+  +List<TreeNode>? children
+  +Widget content
+  +Key? key
+}
+
+"flutter_simple_treeview::src::primitives::tree_node.dart::TreeNode" o-- "flutter::src::widgets::framework.dart::Widget"
+"flutter_simple_treeview::src::primitives::tree_node.dart::TreeNode" o-- "flutter::src::foundation::key.dart::Key"
+
+class "flutter_simple_treeview::src::primitives::tree_controller.dart::TreeController" {
+  -bool _allNodesExpanded
+  -Map<Key, bool> _expanded
+  +bool allNodesExpanded
+  +bool isNodeExpanded()
+  +void toggleNodeExpanded()
+  +void expandAll()
+  +void collapseAll()
+  +void expandNode()
+  +void collapseNode()
+}
+
+class "flutter_simple_treeview::src::primitives::key_provider.dart::_TreeNodeKey" {
+}
+
+"flutter::src::foundation::key.dart::ValueKey" <|-- "flutter_simple_treeview::src::primitives::key_provider.dart::_TreeNodeKey"
+
+class "flutter_simple_treeview::src::primitives::key_provider.dart::KeyProvider" {
+  -int _nextIndex
+  -Set<Key> _keys
+  +Key key()
+}
+
+
+@enduml
