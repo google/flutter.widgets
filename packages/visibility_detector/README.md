@@ -86,6 +86,15 @@ the corresponding issues above, tests alternatively can:
 See `test/widget_test.dart` for examples.
 
 
+## Architecture
+
+```sh
+% ../../tool/dcdg.sh visibility_detector
+```
+
+![](visibility_detector.svg)
+
+
 ## Known limitations
 
 * `VisibilityDetector` considers only its bounding box.  It does not take

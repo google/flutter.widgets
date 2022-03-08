@@ -1,0 +1,103 @@
+@startuml
+set namespaceSeparator ::
+
+class "visibility_detector::src::render_sliver_visibility_detector.dart::RenderSliverVisibilityDetector" {
+  +Key key
+  -void Function(VisibilityInfo)? _onVisibilityChanged
+  +void Function(VisibilityInfo)? onVisibilityChanged
+  +bool alwaysNeedsCompositing
+  +void paint()
+}
+
+"visibility_detector::src::render_sliver_visibility_detector.dart::RenderSliverVisibilityDetector" o-- "flutter::src::foundation::key.dart::Key"
+"visibility_detector::src::render_sliver_visibility_detector.dart::RenderSliverVisibilityDetector" o-- "visibility_detector::src::visibility_detector.dart::void Function(VisibilityInfo)"
+"flutter::src::rendering::proxy_sliver.dart::RenderProxySliver" <|-- "visibility_detector::src::render_sliver_visibility_detector.dart::RenderSliverVisibilityDetector"
+
+class "visibility_detector::src::render_visibility_detector.dart::RenderVisibilityDetector" {
+  +Key key
+  -void Function(VisibilityInfo)? _onVisibilityChanged
+  +void Function(VisibilityInfo)? onVisibilityChanged
+  +bool alwaysNeedsCompositing
+  +void paint()
+}
+
+"visibility_detector::src::render_visibility_detector.dart::RenderVisibilityDetector" o-- "flutter::src::foundation::key.dart::Key"
+"visibility_detector::src::render_visibility_detector.dart::RenderVisibilityDetector" o-- "visibility_detector::src::visibility_detector.dart::void Function(VisibilityInfo)"
+"flutter::src::rendering::proxy_box.dart::RenderProxyBox" <|-- "visibility_detector::src::render_visibility_detector.dart::RenderVisibilityDetector"
+
+class "visibility_detector::src::visibility_detector.dart::VisibilityDetector" {
+  +void Function(VisibilityInfo)? onVisibilityChanged
+  +RenderVisibilityDetector createRenderObject()
+  +void updateRenderObject()
+}
+
+"visibility_detector::src::visibility_detector.dart::VisibilityDetector" o-- "visibility_detector::src::visibility_detector.dart::void Function(VisibilityInfo)"
+"flutter::src::widgets::framework.dart::SingleChildRenderObjectWidget" <|-- "visibility_detector::src::visibility_detector.dart::VisibilityDetector"
+
+class "visibility_detector::src::visibility_detector.dart::SliverVisibilityDetector" {
+  +void Function(VisibilityInfo)? onVisibilityChanged
+  +RenderSliverVisibilityDetector createRenderObject()
+  +void updateRenderObject()
+}
+
+"visibility_detector::src::visibility_detector.dart::SliverVisibilityDetector" o-- "visibility_detector::src::visibility_detector.dart::void Function(VisibilityInfo)"
+"flutter::src::widgets::framework.dart::SingleChildRenderObjectWidget" <|-- "visibility_detector::src::visibility_detector.dart::SliverVisibilityDetector"
+
+class "visibility_detector::src::visibility_detector.dart::VisibilityInfo" {
+  +Key key
+  +Size size
+  +Rect visibleBounds
+  +double visibleFraction
+  +bool matchesVisibility()
+  +String toString()
+}
+
+"visibility_detector::src::visibility_detector.dart::VisibilityInfo" o-- "flutter::src::foundation::key.dart::Key"
+"visibility_detector::src::visibility_detector.dart::VisibilityInfo" o-- "dart::ui::Size"
+"visibility_detector::src::visibility_detector.dart::VisibilityInfo" o-- "dart::ui::Rect"
+
+class "visibility_detector::src::visibility_detector_layer.dart::VisibilityDetectorLayer" {
+  {static} -Timer? _timer
+  {static} -Map<Key, VisibilityDetectorLayer> _updated
+  {static} -Map<Key, VisibilityInfo> _lastVisibility
+  {static} -Map<Key, Rect> _lastBounds
+  +Key key
+  +Offset widgetOffset
+  +Size widgetSize
+  +Offset paintOffset
+  +void Function(VisibilityInfo) onVisibilityChanged
+  {static} +Map<Key, Rect> widgetBounds
+  -Rect _computeWidgetBounds()
+  -Rect _computeClipRect()
+  -void _scheduleUpdate()
+  {static} -void _handleTimer()
+  {static} +void notifyNow()
+  {static} +void forget()
+  {static} -void _processCallbacks()
+  -void _fireCallback()
+  +void addToScene()
+  +void attach()
+  +void detach()
+  +void debugFillProperties()
+}
+
+"visibility_detector::src::visibility_detector_layer.dart::VisibilityDetectorLayer" o-- "dart::async::Timer"
+"visibility_detector::src::visibility_detector_layer.dart::VisibilityDetectorLayer" o-- "flutter::src::foundation::key.dart::Key"
+"visibility_detector::src::visibility_detector_layer.dart::VisibilityDetectorLayer" o-- "dart::ui::Offset"
+"visibility_detector::src::visibility_detector_layer.dart::VisibilityDetectorLayer" o-- "dart::ui::Size"
+"visibility_detector::src::visibility_detector_layer.dart::VisibilityDetectorLayer" o-- "visibility_detector::src::visibility_detector.dart::void Function(VisibilityInfo)"
+"flutter::src::rendering::layer.dart::ContainerLayer" <|-- "visibility_detector::src::visibility_detector_layer.dart::VisibilityDetectorLayer"
+
+class "visibility_detector::src::visibility_detector_controller.dart::VisibilityDetectorController" {
+  {static} -VisibilityDetectorController _instance
+  +Duration updateInterval
+  {static} +VisibilityDetectorController instance
+  +void notifyNow()
+  +void forget()
+  +Rect? widgetBoundsFor()
+}
+
+"visibility_detector::src::visibility_detector_controller.dart::VisibilityDetectorController" o-- "visibility_detector::src::visibility_detector_controller.dart::VisibilityDetectorController"
+
+
+@enduml
