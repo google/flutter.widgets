@@ -17,3 +17,4 @@ dev_dependencies:
   test:
   flutter_test:
     sdk: flutter
+  dcdg: ^4.0.1
