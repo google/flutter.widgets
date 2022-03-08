@@ -1,0 +1,82 @@
+@startuml
+set namespaceSeparator ::
+
+class "linked_scroll_controller::linked_scroll_controller.dart::LinkedScrollControllerGroup" {
+  -List<_LinkedScrollController> _allControllers
+  -_LinkedScrollControllerGroupOffsetNotifier _offsetNotifier
+  +double offset
+  -Iterable<_LinkedScrollController> _attachedControllers
+  +ScrollController addAndGet()
+  +void addOffsetChangedListener()
+  +void removeOffsetChangedListener()
+  +Future<void> animateTo()
+  +void jumpTo()
+  +void resetScroll()
+}
+
+"linked_scroll_controller::linked_scroll_controller.dart::LinkedScrollControllerGroup" o-- "linked_scroll_controller::linked_scroll_controller.dart::_LinkedScrollControllerGroupOffsetNotifier"
+
+class "linked_scroll_controller::linked_scroll_controller.dart::_LinkedScrollControllerGroupOffsetNotifier" {
+  +LinkedScrollControllerGroup controllerGroup
+  -double? _cachedOffset
+  +void notifyListeners()
+}
+
+"linked_scroll_controller::linked_scroll_controller.dart::_LinkedScrollControllerGroupOffsetNotifier" o-- "linked_scroll_controller::linked_scroll_controller.dart::LinkedScrollControllerGroup"
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "linked_scroll_controller::linked_scroll_controller.dart::_LinkedScrollControllerGroupOffsetNotifier"
+
+class "linked_scroll_controller::linked_scroll_controller.dart::_LinkedScrollController" {
+  -LinkedScrollControllerGroup _controllers
+  +double initialScrollOffset
+  +_LinkedScrollPosition position
+  -Iterable<_LinkedScrollController> _allPeersWithClients
+  +bool canLinkWithPeers
+  +void dispose()
+  +void attach()
+  +_LinkedScrollPosition createScrollPosition()
+  +Iterable<_LinkedScrollActivity> linkWithPeers()
+  +Iterable<_LinkedScrollActivity> link()
+}
+
+"linked_scroll_controller::linked_scroll_controller.dart::_LinkedScrollController" o-- "linked_scroll_controller::linked_scroll_controller.dart::LinkedScrollControllerGroup"
+"linked_scroll_controller::linked_scroll_controller.dart::_LinkedScrollController" o-- "linked_scroll_controller::linked_scroll_controller.dart::_LinkedScrollPosition"
+"flutter::src::widgets::scroll_controller.dart::ScrollController" <|-- "linked_scroll_controller::linked_scroll_controller.dart::_LinkedScrollController"
+
+class "linked_scroll_controller::linked_scroll_controller.dart::_LinkedScrollPosition" {
+  +_LinkedScrollController owner
+  -Set<_LinkedScrollActivity> _peerActivities
+  +ScrollHoldController hold()
+  -void _holdInternal()
+  +void beginActivity()
+  +double setPixels()
+  +double setPixelsInternal()
+  +void forcePixels()
+  +void forcePixelsInternal()
+  +_LinkedScrollActivity link()
+  +void unlink()
+  +void updateUserScrollDirection()
+  +void debugFillDescription()
+}
+
+"linked_scroll_controller::linked_scroll_controller.dart::_LinkedScrollPosition" o-- "linked_scroll_controller::linked_scroll_controller.dart::_LinkedScrollController"
+"flutter::src::widgets::scroll_position_with_single_context.dart::ScrollPositionWithSingleContext" <|-- "linked_scroll_controller::linked_scroll_controller.dart::_LinkedScrollPosition"
+
+class "linked_scroll_controller::linked_scroll_controller.dart::_LinkedScrollActivity" {
+  +Set<_LinkedScrollPosition> drivers
+  +_LinkedScrollPosition delegate
+  +bool shouldIgnorePointer
+  +bool isScrolling
+  +double velocity
+  +void link()
+  +void unlink()
+  +void moveTo()
+  +void jumpTo()
+  -void _updateUserScrollDirection()
+  +void dispose()
+}
+
+"linked_scroll_controller::linked_scroll_controller.dart::_LinkedScrollActivity" o-- "linked_scroll_controller::linked_scroll_controller.dart::_LinkedScrollPosition"
+"flutter::src::widgets::scroll_activity.dart::ScrollActivity" <|-- "linked_scroll_controller::linked_scroll_controller.dart::_LinkedScrollActivity"
+
+
+@enduml
