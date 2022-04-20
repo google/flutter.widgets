@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:collection/collection.dart' show IterableExtension;
+import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -57,6 +58,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
+    this.extraScrollSpeed,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
@@ -87,12 +89,14 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
+    this.extraScrollSpeed,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         assert(separatorBuilder != null),
         itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
         scrollOffsetNotifier = scrollOffsetListener as ScrollOffsetNotifier?,
         super(key: key);
+  final int? extraScrollSpeed;
 
   /// Number of items the [itemBuilder] can produce.
   final int itemCount;
@@ -324,6 +328,30 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
 
   double previousOffset = 0;
 
+  void _speedUpScrollListener(ScrollController controller) {
+    if (widget.extraScrollSpeed == null || widget.extraScrollSpeed == 0) {
+      return;
+    }
+    // if (!controller.hasClients) {
+    //   return;
+    // }
+    ScrollDirection scrollDirection = controller.position.userScrollDirection;
+    if (scrollDirection != ScrollDirection.idle) {
+      double scrollEnd = controller.offset +
+          (scrollDirection == ScrollDirection.reverse
+              ? widget.extraScrollSpeed!
+              : -widget.extraScrollSpeed!);
+      scrollEnd = min(controller.position.maxScrollExtent,
+          max(controller.position.minScrollExtent, scrollEnd));
+      controller.jumpTo(scrollEnd);
+    }
+  }
+
+  void _speedupClosurePrimary() =>
+      _speedUpScrollListener(primary.scrollController);
+  void _speedupClosureSecondary() =>
+      _speedUpScrollListener(secondary.scrollController);
+
   @override
   void initState() {
     super.initState();
@@ -338,6 +366,8 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     widget.scrollOffsetController?._attach(this);
     primary.itemPositionsNotifier.itemPositions.addListener(_updatePositions);
     secondary.itemPositionsNotifier.itemPositions.addListener(_updatePositions);
+    primary.scrollController.addListener(_speedupClosurePrimary);
+    secondary.scrollController.addListener(_speedupClosureSecondary);
     primary.scrollController.addListener(() {
       final currentOffset = primary.scrollController.offset;
       final offsetChange = currentOffset - previousOffset;
@@ -369,6 +399,8 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
         .removeListener(_updatePositions);
     secondary.itemPositionsNotifier.itemPositions
         .removeListener(_updatePositions);
+    primary.scrollController.removeListener(_speedupClosurePrimary);
+    secondary.scrollController.removeListener(_speedupClosureSecondary);
     _animationController?.dispose();
     super.dispose();
   }
@@ -612,9 +644,13 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
         if (opacity.value >= 0.5) {
           // Secondary [ListView] is more visible than the primary; make it the
           // new primary.
+          primary.scrollController.removeListener(_speedupClosurePrimary);
           var temp = primary;
+          secondary.scrollController.removeListener(_speedupClosureSecondary);
           primary = secondary;
+          primary.scrollController.addListener(_speedupClosurePrimary);
           secondary = temp;
+          secondary.scrollController.removeListener(_speedupClosureSecondary);
         }
         _isTransitioning = false;
         opacity.parent = const AlwaysStoppedAnimation<double>(0);
