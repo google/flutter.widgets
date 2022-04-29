@@ -3,7 +3,7 @@ version: 4.0.1
 description: >
   A set of input widgets that automatically save and load
   the entered value to a data store.
-homepage: https://github.com/google/flutter.widgets
+repository: https://github.com/google/flutter.widgets/tree/master/packages/self_storing_input
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
