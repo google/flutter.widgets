@@ -1,5 +1,8 @@
+# 0.3.0
+  * Move to Flutter version 2.10.5 and update dependencies' null safety calls.
+
 # 0.2.3
-  * Support shrink wrap
+  * Support shrink wrap.
 # 0.2.2
   * Move dependencies from pre-release versions to released versions.
 
