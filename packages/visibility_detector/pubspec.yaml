@@ -1,13 +1,13 @@
 name: visibility_detector
-version: 0.2.2
+version: 0.3.0
 description: >
     A widget that detects the visibility of its child
     and notifies a callback.
 homepage: https://github.com/google/flutter.widgets/tree/master/packages/visibility_detector
 
 environment:
-  sdk: '>=2.12.0-0 <3.0.0'
-  flutter: '>=1.13.8'
+  sdk: '>=2.12.0 <3.0.0'
+  flutter: '>=2.10.5'
 
 dependencies:
   flutter:
