@@ -1,3 +1,6 @@
+# 0.3.0
+  * Move to Flutter version 2.10.5 and update dependencies' null safety calls.
+
 # 0.2.2
 
 * Minor internal changes to maintain forward-compatibility with [flutter#91753](https://github.com/flutter/flutter/pull/91753).
