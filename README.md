@@ -1,7 +1,5 @@
 # Flutter widgets
 
-[![Build Status](https://travis-ci.org/google/flutter.widgets.svg?branch=master)](https://travis-ci.org/google/flutter.widgets)
-
 This repository contains the source code for various Flutter widgets that are
 developed by Google but not by the core Flutter team.
 
