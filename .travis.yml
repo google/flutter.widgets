@@ -1,9 +1,0 @@
-os: linux
-before_script:
-  - git clone https://github.com/flutter/flutter.git --branch beta
-  - pushd flutter
-  - git fetch --deepen=1
-  - popd
-  - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
-  - flutter doctor
-script: ./tool/travis.sh
