@@ -1,5 +1,8 @@
-# 0.3.1-dev
+# 0.3.2
+* Reverts change from 0.3.0 where the Flutter version constraint should have
+  been set to 2.13.0 instead of 2.10.5.
 
+# 0.3.1-dev
 * Populate the pubspec `repository` field.
 
 # 0.3.0
