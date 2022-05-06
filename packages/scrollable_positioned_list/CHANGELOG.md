@@ -1,3 +1,11 @@
+# 0.3.2
+* Re-apply Flutter framework bindings' null safety calls but set SDK
+  constraints correctly to 2.12.0 instead.
+
+# 0.3.1
+* Reverts change from 0.3.0 where the Flutter version constraint should have
+  been set to 2.12.0 instead of 2.10.5.
+
 # 0.3.0
   * Move to Flutter version 2.10.5 and update dependencies' null safety calls.
 

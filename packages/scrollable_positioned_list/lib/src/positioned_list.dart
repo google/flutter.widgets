@@ -308,7 +308,7 @@ class _PositionedListState extends State<PositionedList> {
   void _schedulePositionNotificationUpdate() {
     if (!updateScheduled) {
       updateScheduled = true;
-      SchedulerBinding.instance!.addPostFrameCallback((_) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
         if (registeredElements.value == null) {
           updateScheduled = false;
           return;
