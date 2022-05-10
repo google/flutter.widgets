@@ -8,7 +8,6 @@ import 'dart:math' show max;
 
 import 'package:flutter/widgets.dart';
 
-import 'render_sliver_visibility_detector.dart';
 import 'render_visibility_detector.dart';
 
 /// A [VisibilityDetector] widget fires a specified callback when the widget
@@ -104,13 +103,15 @@ class VisibilityInfo {
   /// `key` corresponds to the [Key] used to construct the corresponding
   /// [VisibilityDetector] widget.  Must not be null.
   ///
-  /// If `size` or `visibleBounds` are omitted or null, the [VisibilityInfo]
+  /// If `size` or `visibleBounds` are omitted, the [VisibilityInfo]
   /// will be initialized to [Offset.zero] or [Rect.zero] respectively.  This
   /// will indicate that the corresponding widget is competely hidden.
-  const VisibilityInfo({required this.key, Size? size, Rect? visibleBounds})
-      : assert(key != null),
-        size = size ?? Size.zero,
-        visibleBounds = visibleBounds ?? Rect.zero;
+  const VisibilityInfo({
+    required this.key,
+    this.size = Size.zero,
+    this.visibleBounds = Rect.zero,
+    this.screenRect = Rect.zero,
+  }) : assert(key != null);
 
   /// Constructs a [VisibilityInfo] from widget bounds and a corresponding
   /// clipping rectangle.
@@ -131,7 +132,10 @@ class VisibilityInfo {
         : Rect.zero;
 
     return VisibilityInfo(
-        key: key, size: widgetBounds.size, visibleBounds: visibleBounds);
+        key: key,
+        size: widgetBounds.size,
+        screenRect: widgetBounds,
+        visibleBounds: visibleBounds);
   }
 
   /// The key for the corresponding [VisibilityDetector] widget.
@@ -146,6 +150,9 @@ class VisibilityInfo {
   /// expectations for the [VisibilityChangedCallback] to fire if the widget's
   /// position changes but retains the same visibility.
   final Rect visibleBounds;
+
+  /// The widget's global coordinates on the screen, in logical pixels.
+  final Rect screenRect;
 
   /// A fraction in the range \[0, 1\] that represents what proportion of the
   /// widget is visible (assuming rectangular bounding boxes).
@@ -189,7 +196,7 @@ class VisibilityInfo {
 
   @override
   String toString() {
-    return 'VisibilityInfo(size: $size visibleBounds: $visibleBounds)';
+    return 'VisibilityInfo(size: $size visibleBounds: $visibleBounds, screenRect: $screenRect)';
   }
 }
 

@@ -74,6 +74,7 @@ class VisibilityDetectorDemo extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: title,
+      scrollBehavior: const MaterialScrollBehavior().copyWith(scrollbars: false),
       theme: ThemeData(primarySwatch: Colors.blue),
       home: VisibilityDetectorDemoPage(key: key, useSlivers: useSlivers),
     );
