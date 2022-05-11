@@ -33,4 +33,3 @@ for test_dir in packages/**/test/ ; do
   popd > /dev/null
   echo
 done
-
