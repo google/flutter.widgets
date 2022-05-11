@@ -114,8 +114,8 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     }
   }
 
-  static final Map<RenderObject, List<RenderObject>> _cachedAncestorLists =
-      <RenderObject, List<RenderObject>>{};
+  static final Expando<List<RenderObject>> _cachedAncestorLists =
+      Expando<List<RenderObject>>();
 
   int _debugScheduleUpdateCount = 0;
 
@@ -163,7 +163,7 @@ mixin RenderVisibilityDetectorBase on RenderObject {
 
   VisibilityInfo _determineVisibility(ContainerLayer layer, Rect bounds) {
     if (_disposed || !layer.attached || !attached) {
-      _cachedAncestorLists.remove(this);
+      _cachedAncestorLists[this] = null;
       // layer is detached and thus invisible.
       return VisibilityInfo(
         key: key,
@@ -216,7 +216,7 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     _compositionCallbackCanceller?.call();
     _compositionCallbackCanceller = null;
     _disposed = true;
-    _cachedAncestorLists.remove(this);
+    _cachedAncestorLists[this] = null;
     super.dispose();
   }
 }
