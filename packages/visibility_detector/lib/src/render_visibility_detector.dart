@@ -101,20 +101,40 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     if (_onVisibilityChanged == value) {
       return;
     }
+    _compositionCallbackCanceller?.call();
+    _compositionCallbackCanceller = null;
     _onVisibilityChanged = value;
     if (value == null) {
       // Remove all cached data so that we won't fire visibility callbacks when
       // a timer expires or get stale old information the next time around.
       forget(key);
-      _compositionCallbackCanceller?.call();
-      _compositionCallbackCanceller = null;
       _lastVisibility.remove(key);
     } else {
       markNeedsPaint();
     }
   }
 
+  static final Map<RenderObject, List<RenderObject>> _cachedAncestorLists =
+      <RenderObject, List<RenderObject>>{};
+
+  int _debugScheduleUpdateCount = 0;
+
+  /// The number of times the schedule update callback has been invoked from
+  /// [Layer.addCompositionCallback].
+  ///
+  /// This is used for testing, and always returns 0 outside of debug mode.
+  @visibleForTesting
+  int? get debugScheduleUpdateCount {
+    if (kDebugMode) {
+      return _debugScheduleUpdateCount;
+    }
+    return 0;
+  }
+
   void _scheduleUpdate(ContainerLayer layer, Rect bounds) {
+    if (kDebugMode) {
+      _debugScheduleUpdateCount += 1;
+    }
     bool isFirstUpdate = _updates.isEmpty;
     _updates[key] = () {
       _fireCallback(layer, bounds);
@@ -143,6 +163,7 @@ mixin RenderVisibilityDetectorBase on RenderObject {
 
   VisibilityInfo _determineVisibility(ContainerLayer layer, Rect bounds) {
     if (_disposed || !layer.attached || !attached) {
+      _cachedAncestorLists.remove(this);
       // layer is detached and thus invisible.
       return VisibilityInfo(
         key: key,
@@ -159,11 +180,15 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     // the usually shallower height of the layer tree compared to the render
     // tree. Alternatively, if the canvas itself exposed the current matrix/clip
     // we could use that.
-    final ancestors = <RenderObject>[];
     RenderObject? ancestor = parent as RenderObject?;
-    while (ancestor != null && ancestor.parent != null) {
-      ancestors.add(ancestor);
-      ancestor = ancestor.parent as RenderObject?;
+
+    final List<RenderObject> ancestors = <RenderObject>[];
+    if (ancestors.isEmpty && ancestor != null) {
+      _cachedAncestorLists[ancestor] = ancestors;
+      while (ancestor != null && ancestor.parent != null) {
+        ancestors.add(ancestor);
+        ancestor = ancestor.parent as RenderObject?;
+      }
     }
 
     // Determine the transform and clip from first child of root down to
@@ -191,6 +216,7 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     _compositionCallbackCanceller?.call();
     _compositionCallbackCanceller = null;
     _disposed = true;
+    _cachedAncestorLists.remove(this);
     super.dispose();
   }
 }
@@ -215,6 +241,7 @@ class RenderVisibilityDetector extends RenderProxyBox
   @override
   void paint(PaintingContext context, Offset offset) {
     if (onVisibilityChanged != null) {
+      _compositionCallbackCanceller?.call();
       _compositionCallbackCanceller =
           context.addCompositionCallback((ContainerLayer layer) {
         assert(!debugDisposed!);
@@ -247,7 +274,9 @@ class RenderSliverVisibilityDetector extends RenderProxySliver
   @override
   void paint(PaintingContext context, Offset offset) {
     if (onVisibilityChanged != null) {
-      context.addCompositionCallback((ContainerLayer layer) {
+      _compositionCallbackCanceller?.call();
+      _compositionCallbackCanceller =
+          context.addCompositionCallback((ContainerLayer layer) {
         assert(!debugDisposed!);
 
         Size widgetSize;
