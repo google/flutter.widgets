@@ -22,8 +22,7 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     return _updates.length;
   }
 
-  static Map<Key, RenderVisibilityDetectorBase> _updates =
-      <Key, RenderVisibilityDetectorBase>{};
+  static Map<Key, VoidCallback> _updates = <Key, VoidCallback>{};
   static Map<Key, VisibilityInfo> _lastVisibility = <Key, VisibilityInfo>{};
 
   /// See [VisibilityDetectorController.notifyNow].
@@ -58,17 +57,15 @@ mixin RenderVisibilityDetectorBase on RenderObject {
 
   /// Executes visibility callbacks for all updated instances.
   static void _processCallbacks() {
-    for (final detector in _updates.values) {
-      detector._fireCallback();
+    for (final callback in _updates.values) {
+      callback();
     }
     _updates.clear();
   }
 
-  void _fireCallback() {
-    assert(_info != null);
-
+  void _fireCallback(ContainerLayer layer, Rect bounds) {
     final oldInfo = _lastVisibility[key];
-    final info = _info!;
+    final info = _determineVisibility(layer, bounds);
     final visible = !info.visibleBounds.isEmpty;
 
     if (oldInfo == null) {
@@ -111,23 +108,17 @@ mixin RenderVisibilityDetectorBase on RenderObject {
       forget(key);
       _compositionCallbackCanceller?.call();
       _compositionCallbackCanceller = null;
-      _info = null;
       _lastVisibility.remove(key);
     } else {
       markNeedsPaint();
     }
   }
 
-  VisibilityInfo? _info;
-
-  /// Invokes the visibility callback if [VisibilityInfo] hasn't meaningfully
-  /// changed since the last time we invoked it.
-  void _setInfo(VisibilityInfo value) {
-    if (_info != null && value.matchesVisibility(_info!)) {
-      return;
-    }
+  void _scheduleUpdate(ContainerLayer layer, Rect bounds) {
     bool isFirstUpdate = _updates.isEmpty;
-    _updates[key] = this;
+    _updates[key] = () {
+      _fireCallback(layer, bounds);
+    };
     final updateInterval = VisibilityDetectorController.instance.updateInterval;
     if (updateInterval == Duration.zero) {
       // Even with [Duration.zero], we still want to defer callbacks to the end
@@ -148,14 +139,15 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     } else {
       assert(_timer!.isActive);
     }
-    _info = value;
   }
 
-  void _determineVisibility(ContainerLayer layer, Rect bounds) {
-    if (!layer.attached) {
+  VisibilityInfo _determineVisibility(ContainerLayer layer, Rect bounds) {
+    if (_disposed || !layer.attached || !attached) {
       // layer is detached and thus invisible.
-      _setInfo(VisibilityInfo(key: key, size: _info?.size ?? Size.zero));
-      return;
+      return VisibilityInfo(
+        key: key,
+        size: _lastVisibility[key]?.size ?? Size.zero,
+      );
     }
     final transform = Matrix4.identity();
 
@@ -186,22 +178,19 @@ mixin RenderVisibilityDetectorBase on RenderObject {
         clip = clip.intersect(MatrixUtils.transformRect(transform, parentClip));
       }
     }
-    _setInfo(VisibilityInfo.fromRects(
+    return VisibilityInfo.fromRects(
       key: key,
       widgetBounds: MatrixUtils.transformRect(transform, bounds),
       clipRect: clip,
-    ));
+    );
   }
 
-  // Needed in case we get called back after disposal.
   bool _disposed = false;
-
   @override
   void dispose() {
-    _setInfo(VisibilityInfo(key: key, size: _info?.size ?? Size.zero));
-    _disposed = true;
     _compositionCallbackCanceller?.call();
     _compositionCallbackCanceller = null;
+    _disposed = true;
     super.dispose();
   }
 }
@@ -228,8 +217,8 @@ class RenderVisibilityDetector extends RenderProxyBox
     if (onVisibilityChanged != null) {
       _compositionCallbackCanceller =
           context.addCompositionCallback((ContainerLayer layer) {
-        assert(!_disposed);
-        _determineVisibility(layer, offset & semanticBounds.size);
+        assert(!debugDisposed!);
+        _scheduleUpdate(layer, offset & semanticBounds.size);
       });
     }
     super.paint(context, offset);
@@ -259,7 +248,7 @@ class RenderSliverVisibilityDetector extends RenderProxySliver
   void paint(PaintingContext context, Offset offset) {
     if (onVisibilityChanged != null) {
       context.addCompositionCallback((ContainerLayer layer) {
-        assert(!_disposed);
+        assert(!debugDisposed!);
 
         Size widgetSize;
         Offset widgetOffset;
@@ -294,7 +283,7 @@ class RenderSliverVisibilityDetector extends RenderProxySliver
                 Size(geometry!.scrollExtent, constraints.crossAxisExtent);
             break;
         }
-        _determineVisibility(layer, offset + widgetOffset & widgetSize);
+        _scheduleUpdate(layer, offset + widgetOffset & widgetSize);
       });
     }
     super.paint(context, offset);

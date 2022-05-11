@@ -126,15 +126,16 @@ class VisibilityInfo {
     assert(widgetBounds != null);
     assert(clipRect != null);
 
+    final bool overlaps = widgetBounds.overlaps(clipRect);
     // Compute the intersection in the widget's local coordinates.
-    final visibleBounds = widgetBounds.overlaps(clipRect)
+    final visibleBounds = overlaps
         ? widgetBounds.intersect(clipRect).shift(-widgetBounds.topLeft)
         : Rect.zero;
 
     return VisibilityInfo(
         key: key,
         size: widgetBounds.size,
-        screenRect: widgetBounds,
+        screenRect: overlaps ? widgetBounds : Rect.zero,
         visibleBounds: visibleBounds);
   }
 
@@ -196,7 +197,7 @@ class VisibilityInfo {
 
   @override
   String toString() {
-    return 'VisibilityInfo(size: $size visibleBounds: $visibleBounds, screenRect: $screenRect)';
+    return 'VisibilityInfo(key: $key, size: $size visibleBounds: $visibleBounds, screenRect: $screenRect)';
   }
 }
 
