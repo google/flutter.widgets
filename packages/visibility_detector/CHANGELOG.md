@@ -1,3 +1,12 @@
+# 0.4.0
+
+* Refactor to avoid forcing composition in the layer/render trees.
+* Remove `VisibilityDetectorLayer`.
+* Add `RenderVisibilityDetectorBase` as a mixin that mostly takes over
+  functionality from the old layer.
+* Remove the lookup map/method for getting former screen rects and instead add
+  the rect to `VisibilityInfo`.
+
 # 0.3.1-dev
 
 * Populate the pubspec `repository` field.
