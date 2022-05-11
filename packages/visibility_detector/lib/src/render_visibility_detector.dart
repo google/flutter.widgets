@@ -210,6 +210,12 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     );
   }
 
+  @override
+  void detach() {
+    _cachedAncestorLists[this] = null;
+    super.detach();
+  }
+
   bool _disposed = false;
   @override
   void dispose() {
