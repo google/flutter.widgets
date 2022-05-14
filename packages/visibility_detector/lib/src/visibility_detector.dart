@@ -199,6 +199,18 @@ class VisibilityInfo {
   String toString() {
     return 'VisibilityInfo(key: $key, size: $size visibleBounds: $visibleBounds, screenRect: $screenRect)';
   }
+
+  @override
+  int get hashCode => Object.hash(key, size, visibleBounds, screenRect);
+
+  @override
+  bool operator ==(Object other) {
+    return other is VisibilityInfo &&
+        other.key == key &&
+        other.size == size &&
+        other.visibleBounds == visibleBounds &&
+        other.screenRect == screenRect;
+  }
 }
 
 /// The tolerance used to determine whether two floating-point values are

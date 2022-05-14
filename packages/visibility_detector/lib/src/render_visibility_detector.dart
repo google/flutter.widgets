@@ -63,7 +63,7 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     _updates.clear();
   }
 
-  void _fireCallback(ContainerLayer layer, Rect bounds) {
+  void _fireCallback(ContainerLayer? layer, Rect bounds) {
     final oldInfo = _lastVisibility[key];
     final info = _determineVisibility(layer, bounds);
     final visible = !info.visibleBounds.isEmpty;
@@ -104,6 +104,7 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     _compositionCallbackCanceller?.call();
     _compositionCallbackCanceller = null;
     _onVisibilityChanged = value;
+
     if (value == null) {
       // Remove all cached data so that we won't fire visibility callbacks when
       // a timer expires or get stale old information the next time around.
@@ -111,11 +112,13 @@ mixin RenderVisibilityDetectorBase on RenderObject {
       _lastVisibility.remove(key);
     } else {
       markNeedsPaint();
+      // If an update is happening and some ancestor no longer paints this RO,
+      // the markNeedsPaint above will never cause the composition callback to
+      // fire and we could miss a hide event. This schedule will get
+      // over-written by subsequent updates in paint, if paint is called.
+      _scheduleUpdate(null, semanticBounds);
     }
   }
-
-  static final Expando<List<RenderObject>> _cachedAncestorLists =
-      Expando<List<RenderObject>>();
 
   int _debugScheduleUpdateCount = 0;
 
@@ -131,7 +134,7 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     return 0;
   }
 
-  void _scheduleUpdate(ContainerLayer layer, Rect bounds) {
+  void _scheduleUpdate(ContainerLayer? layer, Rect bounds) {
     if (kDebugMode) {
       _debugScheduleUpdateCount += 1;
     }
@@ -161,9 +164,8 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     }
   }
 
-  VisibilityInfo _determineVisibility(ContainerLayer layer, Rect bounds) {
-    if (_disposed || !layer.attached || !attached) {
-      _cachedAncestorLists[this] = null;
+  VisibilityInfo _determineVisibility(ContainerLayer? layer, Rect bounds) {
+    if (_disposed || layer?.attached == false || !attached) {
       // layer is detached and thus invisible.
       return VisibilityInfo(
         key: key,
@@ -183,12 +185,14 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     RenderObject? ancestor = parent as RenderObject?;
 
     final List<RenderObject> ancestors = <RenderObject>[];
-    if (ancestors.isEmpty && ancestor != null) {
-      _cachedAncestorLists[ancestor] = ancestors;
-      while (ancestor != null && ancestor.parent != null) {
-        ancestors.add(ancestor);
-        ancestor = ancestor.parent as RenderObject?;
+    RenderObject child = this;
+    while (ancestor != null && ancestor.parent != null) {
+      if (!ancestor.paintsChild(child)) {
+        return VisibilityInfo(key: key, size: bounds.size);
       }
+      ancestors.add(ancestor);
+      child = ancestor;
+      ancestor = ancestor.parent as RenderObject?;
     }
 
     // Determine the transform and clip from first child of root down to
@@ -210,19 +214,12 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     );
   }
 
-  @override
-  void detach() {
-    _cachedAncestorLists[this] = null;
-    super.detach();
-  }
-
   bool _disposed = false;
   @override
   void dispose() {
     _compositionCallbackCanceller?.call();
     _compositionCallbackCanceller = null;
     _disposed = true;
-    _cachedAncestorLists[this] = null;
     super.dispose();
   }
 }
