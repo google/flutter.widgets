@@ -246,9 +246,11 @@ class RenderVisibilityDetector extends RenderProxyBox
     if (onVisibilityChanged != null) {
       _compositionCallbackCanceller?.call();
       _compositionCallbackCanceller =
-          context.addCompositionCallback((ContainerLayer layer) {
+          context.addCompositionCallback((Layer layer) {
         assert(!debugDisposed!);
-        _scheduleUpdate(layer, offset & semanticBounds.size);
+        final ContainerLayer? container =
+            layer is ContainerLayer ? layer : layer.parent;
+        _scheduleUpdate(container, offset & semanticBounds.size);
       });
     }
     super.paint(context, offset);
@@ -279,7 +281,7 @@ class RenderSliverVisibilityDetector extends RenderProxySliver
     if (onVisibilityChanged != null) {
       _compositionCallbackCanceller?.call();
       _compositionCallbackCanceller =
-          context.addCompositionCallback((ContainerLayer layer) {
+          context.addCompositionCallback((Layer layer) {
         assert(!debugDisposed!);
 
         Size widgetSize;
@@ -315,7 +317,9 @@ class RenderSliverVisibilityDetector extends RenderProxySliver
                 Size(geometry!.scrollExtent, constraints.crossAxisExtent);
             break;
         }
-        _scheduleUpdate(layer, offset + widgetOffset & widgetSize);
+        final ContainerLayer? container =
+            layer is ContainerLayer ? layer : layer.parent;
+        _scheduleUpdate(container, offset + widgetOffset & widgetSize);
       });
     }
     super.paint(context, offset);
