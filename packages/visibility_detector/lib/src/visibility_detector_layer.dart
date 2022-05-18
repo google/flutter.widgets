@@ -135,6 +135,8 @@ class VisibilityDetectorLayer extends ContainerLayer {
         curClipRect = parentLayer.clipRRect!.outerRect;
       } else if (parentLayer is ClipPathLayer) {
         curClipRect = parentLayer.clipPath!.getBounds();
+      } else if (parentLayer is PhysicalModelLayer) {
+        curClipRect = parentLayer.clipPath!.getBounds();
       }
 
       if (curClipRect != null) {
