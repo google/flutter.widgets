@@ -12,7 +12,7 @@ echo "PASSED"
 echo
 
 # Make sure we pass the analyzer
-echo "Checking dartanalyzer..."
+echo "Checking flutter analyze..."
 for package_pubspec in packages/**/pubspec.yaml ; do
   package_dir=$(dirname "${package_pubspec}")
   echo "${package_dir}"

@@ -1,0 +1,21 @@
+name: Flutter
+
+on:
+  schedule:
+    # “At 00:00 (UTC) on Sunday.”
+    - cron: '0 0 * * 0'
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: subosito/flutter-action@v2.4
+      with:
+        channel: 'master'
+    - run: flutter --version
+    - run: tool/validate.sh
