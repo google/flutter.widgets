@@ -116,7 +116,7 @@ mixin RenderVisibilityDetectorBase on RenderObject {
       // the markNeedsPaint above will never cause the composition callback to
       // fire and we could miss a hide event. This schedule will get
       // over-written by subsequent updates in paint, if paint is called.
-      _scheduleUpdate(null, semanticBounds);
+      _scheduleUpdate(null);
     }
   }
 
@@ -131,10 +131,10 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     if (kDebugMode) {
       return _debugScheduleUpdateCount;
     }
-    return 0;
+    return null;
   }
 
-  void _scheduleUpdate(ContainerLayer? layer, Rect bounds) {
+  void _scheduleUpdate(ContainerLayer? layer) {
     if (kDebugMode) {
       _debugScheduleUpdateCount += 1;
     }
@@ -215,6 +215,25 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     );
   }
 
+  /// Used to get the bounds of the render object when it is time to update
+  /// clients about visibility.
+  Rect get bounds;
+
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    if (onVisibilityChanged != null) {
+      _compositionCallbackCanceller?.call();
+      _compositionCallbackCanceller =
+          context.addCompositionCallback((Layer layer) {
+        assert(!debugDisposed!);
+        final ContainerLayer? container =
+            layer is ContainerLayer ? layer : layer.parent;
+        _scheduleUpdate(container);
+      });
+    }
+    super.paint(context, offset);
+  }
+
   bool _disposed = false;
   @override
   void dispose() {
@@ -241,21 +260,8 @@ class RenderVisibilityDetector extends RenderProxyBox
   @override
   final Key key;
 
-  /// See [RenderObject.paint].
   @override
-  void paint(PaintingContext context, Offset offset) {
-    if (onVisibilityChanged != null) {
-      _compositionCallbackCanceller?.call();
-      _compositionCallbackCanceller =
-          context.addCompositionCallback((Layer layer) {
-        assert(!debugDisposed!);
-        final ContainerLayer? container =
-            layer is ContainerLayer ? layer : layer.parent;
-        _scheduleUpdate(container, semanticBounds);
-      });
-    }
-    super.paint(context, offset);
-  }
+  Rect get bounds => semanticBounds;
 }
 
 /// The [RenderObject] corresponding to the [SliverVisibilityDetector] widget.
@@ -276,53 +282,37 @@ class RenderSliverVisibilityDetector extends RenderProxySliver
   @override
   final Key key;
 
-  /// See [RenderObject.paint].
   @override
-  void paint(PaintingContext context, Offset offset) {
-    if (onVisibilityChanged != null) {
-      _compositionCallbackCanceller?.call();
-      _compositionCallbackCanceller =
-          context.addCompositionCallback((Layer layer) {
-        assert(!debugDisposed!);
-
-        Size widgetSize;
-        Offset widgetOffset;
-        switch (applyGrowthDirectionToAxisDirection(
-          constraints.axisDirection,
-          constraints.growthDirection,
-        )) {
-          case AxisDirection.down:
-            widgetOffset = Offset(0, -constraints.scrollOffset);
-            widgetSize =
-                Size(constraints.crossAxisExtent, geometry!.scrollExtent);
-            break;
-          case AxisDirection.up:
-            final startOffset = geometry!.paintExtent +
-                constraints.scrollOffset -
-                geometry!.scrollExtent;
-            widgetOffset = Offset(0, math.min(startOffset, 0));
-            widgetSize =
-                Size(constraints.crossAxisExtent, geometry!.scrollExtent);
-            break;
-          case AxisDirection.right:
-            widgetOffset = Offset(-constraints.scrollOffset, 0);
-            widgetSize =
-                Size(geometry!.scrollExtent, constraints.crossAxisExtent);
-            break;
-          case AxisDirection.left:
-            final startOffset = geometry!.paintExtent +
-                constraints.scrollOffset -
-                geometry!.scrollExtent;
-            widgetOffset = Offset(math.min(startOffset, 0), 0);
-            widgetSize =
-                Size(geometry!.scrollExtent, constraints.crossAxisExtent);
-            break;
-        }
-        final ContainerLayer? container =
-            layer is ContainerLayer ? layer : layer.parent;
-        _scheduleUpdate(container, widgetOffset & widgetSize);
-      });
+  Rect get bounds {
+    Size widgetSize;
+    Offset widgetOffset;
+    switch (applyGrowthDirectionToAxisDirection(
+      constraints.axisDirection,
+      constraints.growthDirection,
+    )) {
+      case AxisDirection.down:
+        widgetOffset = Offset(0, -constraints.scrollOffset);
+        widgetSize = Size(constraints.crossAxisExtent, geometry!.scrollExtent);
+        break;
+      case AxisDirection.up:
+        final startOffset = geometry!.paintExtent +
+            constraints.scrollOffset -
+            geometry!.scrollExtent;
+        widgetOffset = Offset(0, math.min(startOffset, 0));
+        widgetSize = Size(constraints.crossAxisExtent, geometry!.scrollExtent);
+        break;
+      case AxisDirection.right:
+        widgetOffset = Offset(-constraints.scrollOffset, 0);
+        widgetSize = Size(geometry!.scrollExtent, constraints.crossAxisExtent);
+        break;
+      case AxisDirection.left:
+        final startOffset = geometry!.paintExtent +
+            constraints.scrollOffset -
+            geometry!.scrollExtent;
+        widgetOffset = Offset(math.min(startOffset, 0), 0);
+        widgetSize = Size(geometry!.scrollExtent, constraints.crossAxisExtent);
+        break;
     }
-    super.paint(context, offset);
+    return widgetOffset & widgetSize;
   }
 }

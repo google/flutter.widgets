@@ -79,7 +79,6 @@ void main() {
                   child: VisibilityDetector(
                     key: UniqueKey(),
                     onVisibilityChanged: (info) {
-                      print(info);
                       if (info.visibleFraction > .6) {
                         inView = true;
                         onFirstVis = 1;
