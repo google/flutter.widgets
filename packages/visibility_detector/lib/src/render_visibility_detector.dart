@@ -34,6 +34,7 @@ mixin RenderVisibilityDetectorBase on RenderObject {
 
   static void forget(Key key) {
     _updates.remove(key);
+    _lastVisibility.remove(key);
 
     if (_updates.isEmpty) {
       _timer?.cancel();
@@ -109,14 +110,13 @@ mixin RenderVisibilityDetectorBase on RenderObject {
       // Remove all cached data so that we won't fire visibility callbacks when
       // a timer expires or get stale old information the next time around.
       forget(key);
-      _lastVisibility.remove(key);
     } else {
       markNeedsPaint();
       // If an update is happening and some ancestor no longer paints this RO,
       // the markNeedsPaint above will never cause the composition callback to
       // fire and we could miss a hide event. This schedule will get
       // over-written by subsequent updates in paint, if paint is called.
-      _scheduleUpdate(null);
+      _scheduleUpdate();
     }
   }
 
@@ -125,7 +125,7 @@ mixin RenderVisibilityDetectorBase on RenderObject {
   /// The number of times the schedule update callback has been invoked from
   /// [Layer.addCompositionCallback].
   ///
-  /// This is used for testing, and always returns 0 outside of debug mode.
+  /// This is used for testing, and always returns null outside of debug mode.
   @visibleForTesting
   int? get debugScheduleUpdateCount {
     if (kDebugMode) {
@@ -134,7 +134,7 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     return null;
   }
 
-  void _scheduleUpdate(ContainerLayer? layer) {
+  void _scheduleUpdate([ContainerLayer? layer]) {
     if (kDebugMode) {
       _debugScheduleUpdateCount += 1;
     }
