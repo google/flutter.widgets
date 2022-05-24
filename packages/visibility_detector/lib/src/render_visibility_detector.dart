@@ -185,6 +185,7 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     RenderObject? ancestor = parent as RenderObject?;
 
     final List<RenderObject> ancestors = <RenderObject>[];
+    ancestors.add(this);
     RenderObject child = this;
     while (ancestor != null && ancestor.parent != null) {
       if (!ancestor.paintsChild(child)) {
@@ -201,11 +202,11 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     for (int index = ancestors.length - 1; index > 0; index -= 1) {
       final parent = ancestors[index];
       final child = ancestors[index - 1];
-      parent.applyPaintTransform(child, transform);
       Rect? parentClip = parent.describeApproximatePaintClip(child);
       if (parentClip != null) {
         clip = clip.intersect(MatrixUtils.transformRect(transform, parentClip));
       }
+      parent.applyPaintTransform(child, transform);
     }
     return VisibilityInfo.fromRects(
       key: key,
@@ -250,7 +251,7 @@ class RenderVisibilityDetector extends RenderProxyBox
         assert(!debugDisposed!);
         final ContainerLayer? container =
             layer is ContainerLayer ? layer : layer.parent;
-        _scheduleUpdate(container, offset & semanticBounds.size);
+        _scheduleUpdate(container, semanticBounds);
       });
     }
     super.paint(context, offset);
@@ -319,7 +320,7 @@ class RenderSliverVisibilityDetector extends RenderProxySliver
         }
         final ContainerLayer? container =
             layer is ContainerLayer ? layer : layer.parent;
-        _scheduleUpdate(container, offset + widgetOffset & widgetSize);
+        _scheduleUpdate(container, widgetOffset & widgetSize);
       });
     }
     super.paint(context, offset);
