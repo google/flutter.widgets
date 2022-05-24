@@ -8,7 +8,6 @@ import 'dart:math' show max;
 
 import 'package:flutter/widgets.dart';
 
-import 'render_sliver_visibility_detector.dart';
 import 'render_visibility_detector.dart';
 
 /// A [VisibilityDetector] widget fires a specified callback when the widget
@@ -104,13 +103,14 @@ class VisibilityInfo {
   /// `key` corresponds to the [Key] used to construct the corresponding
   /// [VisibilityDetector] widget.  Must not be null.
   ///
-  /// If `size` or `visibleBounds` are omitted or null, the [VisibilityInfo]
+  /// If `size` or `visibleBounds` are omitted, the [VisibilityInfo]
   /// will be initialized to [Offset.zero] or [Rect.zero] respectively.  This
   /// will indicate that the corresponding widget is competely hidden.
-  const VisibilityInfo({required this.key, Size? size, Rect? visibleBounds})
-      : assert(key != null),
-        size = size ?? Size.zero,
-        visibleBounds = visibleBounds ?? Rect.zero;
+  const VisibilityInfo({
+    required this.key,
+    this.size = Size.zero,
+    this.visibleBounds = Rect.zero,
+  }) : assert(key != null);
 
   /// Constructs a [VisibilityInfo] from widget bounds and a corresponding
   /// clipping rectangle.
@@ -125,13 +125,17 @@ class VisibilityInfo {
     assert(widgetBounds != null);
     assert(clipRect != null);
 
+    final bool overlaps = widgetBounds.overlaps(clipRect);
     // Compute the intersection in the widget's local coordinates.
-    final visibleBounds = widgetBounds.overlaps(clipRect)
+    final visibleBounds = overlaps
         ? widgetBounds.intersect(clipRect).shift(-widgetBounds.topLeft)
         : Rect.zero;
 
     return VisibilityInfo(
-        key: key, size: widgetBounds.size, visibleBounds: visibleBounds);
+      key: key,
+      size: widgetBounds.size,
+      visibleBounds: visibleBounds,
+    );
   }
 
   /// The key for the corresponding [VisibilityDetector] widget.
@@ -189,7 +193,18 @@ class VisibilityInfo {
 
   @override
   String toString() {
-    return 'VisibilityInfo(size: $size visibleBounds: $visibleBounds)';
+    return 'VisibilityInfo(key: $key, size: $size visibleBounds: $visibleBounds)';
+  }
+
+  @override
+  int get hashCode => Object.hash(key, size, visibleBounds);
+
+  @override
+  bool operator ==(Object other) {
+    return other is VisibilityInfo &&
+        other.key == key &&
+        other.size == size &&
+        other.visibleBounds == visibleBounds;
   }
 }
 

@@ -16,9 +16,6 @@ final _positionToVisibilityInfo = <demo.RowColumn, VisibilityInfo>{};
 /// [Key] used to identify the [_TestPropertyChange] widget.
 final _testPropertyChangeKey = GlobalKey<_TestPropertyChangeState>();
 
-/// [Key] used to identify the [_TestOffset] widget or its [VisibilityDetector].
-final _testOffsetKey = UniqueKey();
-
 void main() {
   setUpAll(() {
     demo.visibilityListeners.add((demo.RowColumn rc, VisibilityInfo info) {
@@ -41,7 +38,6 @@ void main() {
   _wrapTest(
     'VisibilityDetector reports initial visibility',
     callback: (tester) async {
-      final cellKey = demo.cellKey(0, 0);
       final expectedRect =
           tester.getRect(find.byKey(demo.cellContentKey(0, 0)));
       var info = _positionToVisibilityInfo[demo.RowColumn(0, 0)];
@@ -53,10 +49,6 @@ void main() {
       expect(info.size.height, demo.cellHeight);
       expect(info.visibleBounds, Offset.zero & info.size);
       expect(info.visibleFraction, 1.0);
-
-      final bounds =
-          VisibilityDetectorController.instance.widgetBoundsFor(cellKey);
-      expect(bounds, expectedRect);
     },
   );
 
@@ -84,7 +76,6 @@ void main() {
       expect(mainList, findsOneWidget);
       final viewRect = tester.getRect(mainList);
 
-      final cellKey = demo.cellKey(0, 0);
       final originalRect =
           tester.getRect(find.byKey(demo.cellContentKey(0, 0)));
 
@@ -106,10 +97,6 @@ void main() {
       expect(info.visibleBounds, expectedVisibleBounds);
       expect(info.visibleFraction,
           info.visibleBounds.height / originalRect.height);
-
-      final bounds =
-          VisibilityDetectorController.instance.widgetBoundsFor(cellKey);
-      expect(bounds, originalRect.shift(const Offset(0, -dy)));
     },
   );
 
@@ -120,7 +107,6 @@ void main() {
       final mainList = find.byKey(demo.mainListKey);
       final viewRect = tester.getRect(mainList);
 
-      final cellKey = demo.cellKey(2, 0);
       final originalRect =
           tester.getRect(find.byKey(demo.cellContentKey(2, 0)));
       const dx = 30.0;
@@ -143,10 +129,6 @@ void main() {
       expect(info.visibleBounds, expectedVisibleBounds);
       expect(
           info.visibleFraction, info.visibleBounds.width / originalRect.width);
-
-      final bounds =
-          VisibilityDetectorController.instance.widgetBoundsFor(cellKey);
-      expect(bounds, originalRect.shift(const Offset(-dx, 0)));
     },
   );
 
@@ -158,7 +140,6 @@ void main() {
       expect(mainList, findsOneWidget);
       final viewRect = tester.getRect(mainList);
 
-      final cellKey = demo.cellKey(0, 0);
       final originalRect =
           tester.getRect(find.byKey(demo.cellContentKey(0, 0)));
 
@@ -172,10 +153,6 @@ void main() {
       expect(info.size, originalRect.size);
       expect(info.visibleBounds.size, Size.zero);
       expect(info.visibleFraction, 0.0);
-
-      final bounds =
-          VisibilityDetectorController.instance.widgetBoundsFor(cellKey);
-      expect(bounds, null);
     },
   );
 
@@ -187,7 +164,6 @@ void main() {
       expect(mainList, findsOneWidget);
       final viewRect = tester.getRect(mainList);
 
-      final cellKey = demo.cellKey(0, 0);
       final originalRect =
           tester.getRect(find.byKey(demo.cellContentKey(0, 0)));
 
@@ -207,10 +183,6 @@ void main() {
       expect(info.visibleBounds, expectedVisibleBounds);
       expect(info.visibleFraction,
           info.visibleBounds.height / originalRect.height);
-
-      final bounds =
-          VisibilityDetectorController.instance.widgetBoundsFor(cellKey);
-      expect(bounds, originalRect.shift(Offset(0, -dy)));
     },
   );
 
@@ -218,7 +190,6 @@ void main() {
     'VisibilityDetector reports being not visible when removed from the widget '
     'tree',
     callback: (tester) async {
-      final cellKey = demo.cellKey(0, 0);
       final originalRect =
           tester.getRect(find.byKey(demo.cellContentKey(0, 0)));
 
@@ -231,10 +202,6 @@ void main() {
       expect(info.size, originalRect.size);
       expect(info.visibleBounds.size, Size.zero);
       expect(info.visibleFraction, 0.0);
-
-      final bounds =
-          VisibilityDetectorController.instance.widgetBoundsFor(cellKey);
-      expect(bounds, null);
     },
   );
 
@@ -327,29 +294,6 @@ void main() {
       _expectVisibility(demo.RowColumn(5, 0), 0, epsilon: 0);
     },
   );
-
-  _wrapTest(
-    'VisibilityDetector computes widget bounds in global coordinates',
-    widget: _TestOffset(key: _testOffsetKey),
-    callback: (tester) async {
-      final viewSize = tester.binding.renderView.size;
-
-      final bounds =
-          VisibilityDetectorController.instance.widgetBoundsFor(_testOffsetKey);
-      expect(
-        bounds,
-        tester.getRect(find.byType(VisibilityDetector)),
-      );
-      expect(
-        bounds,
-        Rect.fromCenter(
-          center: viewSize.center(Offset.zero),
-          width: _TestOffset.detectorWidth,
-          height: _TestOffset.detectorHeight,
-        ),
-      );
-    },
-  );
 }
 
 /// Initializes the widget tree that is populated with [VisibilityDetector]
@@ -410,7 +354,7 @@ void _wrapTest(
   });
 
   // Test one more time using slivers version of the demo.
-  testWidgets(description, (tester) async {
+  testWidgets('$description (slivers)', (tester) async {
     await _initWidgetTree(
       widget ?? demo.VisibilityDetectorDemo(useSlivers: true),
       tester,
@@ -529,34 +473,6 @@ class _TestPropertyChangeState extends State<_TestPropertyChange> {
       onVisibilityChanged:
           visibilityDetectorEnabled ? _handleVisibilityChanged : null,
       child: const Placeholder(),
-    );
-  }
-}
-
-/// A widget to exercise calling [RenderVisibilityDetector.paint] with a
-/// non-zero [Offset].
-class _TestOffset extends StatelessWidget {
-  const _TestOffset({required Key key}) : super(key: key);
-
-  static const detectorWidth = 200.0;
-  static const detectorHeight = 100.0;
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: VisibilityDetector(
-            key: key!,
-            onVisibilityChanged: (visibilityInfo) {},
-            child: const SizedBox(
-              width: detectorWidth,
-              height: detectorHeight,
-              child: Placeholder(),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
