@@ -190,13 +190,11 @@ void main() {
         key: Key('app_widget'),
         size: Size(800, 600),
         visibleBounds: Rect.fromLTRB(0, 0, 800, 600),
-        screenRect: Rect.fromLTRB(0, 0, 800, 600),
       ),
       VisibilityInfo(
         key: Key('weatherCard'),
         size: Size(800, 600),
         visibleBounds: Rect.fromLTRB(0, 0, 800, 600),
-        screenRect: Rect.fromLTRB(0, 0, 800, 600),
       ),
       VisibilityInfo(
         key: Key('weatherCard'),
@@ -206,7 +204,6 @@ void main() {
         key: Key('weatherCard'),
         size: Size(800, 600),
         visibleBounds: Rect.fromLTRB(0, 0, 800, 600),
-        screenRect: Rect.fromLTRB(0, 0, 800, 600),
       ),
       VisibilityInfo(
         key: Key('app_widget'),

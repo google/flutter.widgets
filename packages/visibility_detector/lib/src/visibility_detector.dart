@@ -110,7 +110,6 @@ class VisibilityInfo {
     required this.key,
     this.size = Size.zero,
     this.visibleBounds = Rect.zero,
-    this.screenRect = Rect.zero,
   }) : assert(key != null);
 
   /// Constructs a [VisibilityInfo] from widget bounds and a corresponding
@@ -133,10 +132,10 @@ class VisibilityInfo {
         : Rect.zero;
 
     return VisibilityInfo(
-        key: key,
-        size: widgetBounds.size,
-        screenRect: overlaps ? widgetBounds : Rect.zero,
-        visibleBounds: visibleBounds);
+      key: key,
+      size: widgetBounds.size,
+      visibleBounds: visibleBounds,
+    );
   }
 
   /// The key for the corresponding [VisibilityDetector] widget.
@@ -151,9 +150,6 @@ class VisibilityInfo {
   /// expectations for the [VisibilityChangedCallback] to fire if the widget's
   /// position changes but retains the same visibility.
   final Rect visibleBounds;
-
-  /// The widget's global coordinates on the screen, in logical pixels.
-  final Rect screenRect;
 
   /// A fraction in the range \[0, 1\] that represents what proportion of the
   /// widget is visible (assuming rectangular bounding boxes).
@@ -197,19 +193,18 @@ class VisibilityInfo {
 
   @override
   String toString() {
-    return 'VisibilityInfo(key: $key, size: $size visibleBounds: $visibleBounds, screenRect: $screenRect)';
+    return 'VisibilityInfo(key: $key, size: $size visibleBounds: $visibleBounds)';
   }
 
   @override
-  int get hashCode => Object.hash(key, size, visibleBounds, screenRect);
+  int get hashCode => Object.hash(key, size, visibleBounds);
 
   @override
   bool operator ==(Object other) {
     return other is VisibilityInfo &&
         other.key == key &&
         other.size == size &&
-        other.visibleBounds == visibleBounds &&
-        other.screenRect == screenRect;
+        other.visibleBounds == visibleBounds;
   }
 }
 
