@@ -13,7 +13,7 @@ jobs:
   build:
     matrix:
       version:
-        - lastest
+        - stable
         - master
       package:
         - flutter_simple_treeview
