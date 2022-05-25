@@ -17,7 +17,7 @@ for package_pubspec in packages/**/pubspec.yaml ; do
   package_dir=$(dirname "${package_pubspec}")
   echo "${package_dir}"
   pushd "${package_dir}" > /dev/null
-  flutter analyze
+  flutter analyze --no-fatal-infos
   popd > /dev/null
   echo
 done
