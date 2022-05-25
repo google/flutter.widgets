@@ -10,12 +10,12 @@ on:
     branches: [ master ]
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        dir: ['packages/flutter_simple_treeview', 'packages/linked_scroll_controller', 'packages/scrollable_positioned_list', 'packages/self_storing_input', 'packages/visibility_detector']
+        dir: ['flutter_simple_treeview', 'linked_scroll_controller', 'scrollable_positioned_list', 'self_storing_input', 'visibility_detector']
         version: ['stable', 'master']
     steps:
       - uses: actions/checkout@v3
@@ -28,12 +28,12 @@ jobs:
 
       - name: flutter pub get
         run: flutter pub get
-        working-directory: ${{ matrix.dir }}
+        working-directory: packages/${{ matrix.dir }}
 
       - name: flutter analyze
         run: flutter analyze
-        working-directory: ${{ matrix.dir }}
+        working-directory: packages/${{ matrix.dir }}
 
       - name: flutter test
         run: flutter test
-        working-directory: ${{ matrix.dir }}
+        working-directory: packages/${{ matrix.dir }}
