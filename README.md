@@ -16,7 +16,7 @@ Package | Description | Published Version
 [linked_scroll_controller](packages/linked_scroll_controller/) | A scroll controller that allows two or more scroll views to be in sync. | [![pub package](https://img.shields.io/pub/v/linked_scroll_controller.svg)](https://pub.dev/packages/linked_scroll_controller)
 [scrollable_positioned_list](packages/scrollable_positioned_list/) | A list with helper methods to programmatically scroll to an item. | [![pub package](https://img.shields.io/pub/v/scrollable_positioned_list.svg)](https://pub.dev/packages/scrollable_positioned_list)
 [self_storing_input](packages/self_storing_input/) | A set of input widgets that automatically save and load the entered value to a data store. | [![pub package](https://img.shields.io/pub/v/self_storing_input.svg)](https://pub.dev/packages/self_storing_input)
-[visibility_detector](packages/visibility_detector/) | A widget that detects the visibility of its c
+[visibility_detector](packages/visibility_detector/) | A widget that detects the visibility of its child and notifies a callback. | [![pub package](https://img.shields.io/pub/v/visibility_detector.svg)](https://pub.dev/packages/visibility_detector)
 
 ## Issues
 
