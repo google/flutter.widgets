@@ -15,8 +15,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        dir: ['flutter_simple_treeview', 'linked_scroll_controller', 'scrollable_positioned_list', 'self_storing_input', 'visibility_detector']
-        version: ['stable', 'master']
+        package: [flutter_simple_treeview, linked_scroll_controller, scrollable_positioned_list, self_storing_input, visibility_detector]
+        version: [stable, master]
+        exclude:
+          - package: visibility_detector
+            version: stable
     steps:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2.4.0
@@ -28,12 +31,12 @@ jobs:
 
       - name: flutter pub get
         run: flutter pub get
-        working-directory: packages/${{ matrix.dir }}
+        working-directory: packages/${{ matrix.package }}
 
       - name: flutter analyze
         run: flutter analyze
-        working-directory: packages/${{ matrix.dir }}
+        working-directory: packages/${{ matrix.package }}
 
       - name: flutter test
         run: flutter test
-        working-directory: packages/${{ matrix.dir }}
+        working-directory: packages/${{ matrix.package }}
