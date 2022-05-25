@@ -10,36 +10,30 @@ on:
     branches: [ master ]
 
 jobs:
-  repo_matrix:
+  builds:
     strategy:
+      fail-fast: false
       matrix:
-        version:
-          - stable
-          - master
-        package:
-          - flutter_simple_treeview
-          - linked_scroll_controller
-          - scrollable_positioned_list
-          - self_storing_input
-          - visibility_detector
+        version: [stable, master]
+        package: [flutter_simple_treeview, linked_scroll_controller, scrollable_positioned_list, self_storing_input, visibility_detector]
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2.4.0
-        with:
-          channel: ${{ repo_matrix.version }}
+  steps:
+    - uses: actions/checkout@v3
+    - uses: subosito/flutter-action@v2.4.0
+      with:
+        channel: ${{ builds.version }}
 
-      - name: flutter version
-        run: flutter --version
+    - name: flutter version
+      run: flutter --version
 
-      - name: flutter pub get
-        run: flutter pub get
-        working-directory: packages/${{ repo_matrix.package }}
+    - name: flutter pub get
+      run: flutter pub get
+      working-directory: packages/${{ builds.package }}
 
-      - name: flutter analyze
-        run: flutter analyze
-        working-directory: packages/${{ repo_matrix.package }}
+    - name: flutter analyze
+      run: flutter analyze
+      working-directory: packages/${{ builds.package }}
 
-      - name: flutter test
-        run: flutter test
-        working-directory: packages/${{ repo_matrix.package }}
+    - name: flutter test
+      run: flutter test
+      working-directory: packages/${{ builds.package }}
