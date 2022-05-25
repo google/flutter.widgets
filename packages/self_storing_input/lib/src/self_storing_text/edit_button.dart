@@ -38,7 +38,7 @@ class _EditButtonState extends State<EditButton> {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.edit, color: Theme.of(context).accentColor),
+      icon: Icon(Icons.edit, color: Theme.of(context).colorScheme.secondary),
       onPressed: () {
         widget.state.overlayController.close();
         _overlay = _buildOverlay(context);

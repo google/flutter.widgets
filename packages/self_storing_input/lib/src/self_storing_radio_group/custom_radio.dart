@@ -38,7 +38,7 @@ class CustomRadio extends StatelessWidget {
         child: Icon(
           icon,
           color: isSelected && isEnabled
-              ? Theme.of(context).accentColor
+              ? Theme.of(context).colorScheme.secondary
               : Theme.of(context).disabledColor,
         ),
       ),

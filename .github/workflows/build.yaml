@@ -11,13 +11,12 @@ on:
 
 jobs:
   test:
-    name: Test
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        version: ['stable', 'master']
         dir: ['packages/flutter_simple_treeview', 'packages/linked_scroll_controller', 'packages/scrollable_positioned_list', 'packages/self_storing_input', 'packages/visibility_detector']
+        version: ['stable', 'master']
     steps:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2.4.0
