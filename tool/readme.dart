@@ -5,7 +5,8 @@ void main(List<String> args) {
       .listSync()
       .whereType<Directory>()
       .map((d) => Package(d))
-      .toList();
+      .toList()
+    ..sort();
 
   print('Package | Description | Published Version');
   print('--- | --- | ---');
@@ -19,7 +20,7 @@ void main(List<String> args) {
   }
 }
 
-class Package {
+class Package implements Comparable<Package> {
   final Directory dir;
 
   Package(this.dir);
@@ -40,4 +41,7 @@ class Package {
         .substring('description:'.length)
         .trim();
   }
+
+  @override
+  int compareTo(Package other) => name.compareTo(other.name);
 }
