@@ -270,6 +270,8 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
 
   bool _isTransitioning = false;
 
+  late AnimationController _controller;
+
   @override
   void initState() {
     super.initState();
@@ -283,6 +285,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     widget.itemScrollController?._attach(this);
     primary.itemPositionsNotifier.itemPositions.addListener(_updatePositions);
     secondary.itemPositionsNotifier.itemPositions.addListener(_updatePositions);
+    _controller = AnimationController(vsync: this);
   }
 
   @override
@@ -297,6 +300,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
         .removeListener(_updatePositions);
     secondary.itemPositionsNotifier.itemPositions
         .removeListener(_updatePositions);
+    _controller.dispose();
     super.dispose();
   }
 
@@ -484,9 +488,10 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       startAnimationCallback = () {
         SchedulerBinding.instance.addPostFrameCallback((_) {
           startAnimationCallback = () {};
+          _controller.duration = duration;
 
-          opacity.parent = _opacityAnimation(opacityAnimationWeights).animate(
-              AnimationController(vsync: this, duration: duration)..forward());
+          opacity.parent = _opacityAnimation(opacityAnimationWeights)
+              .animate(_controller..forward());
           secondary.scrollController.jumpTo(-direction *
               (_screenScrollCount *
                       primary.scrollController.position.viewportDimension -
