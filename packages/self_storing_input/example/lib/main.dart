@@ -123,8 +123,8 @@ class _DemoState extends State<Demo> {
         children: [
           Text(
             header,
-            style:
-                TextStyle(color: Theme.of(context).accentColor, fontSize: 20),
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.secondary, fontSize: 20),
           ),
           SizedBox(height: 20),
           _right(children),
@@ -142,7 +142,7 @@ class _DemoState extends State<Demo> {
         child: Text(
           'Source Code',
           style: TextStyle(
-            color: Theme.of(context).accentColor,
+            color: Theme.of(context).colorScheme.secondary,
             decoration: TextDecoration.underline,
           ),
         ),

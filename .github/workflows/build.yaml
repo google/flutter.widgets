@@ -4,18 +4,45 @@ on:
   schedule:
     # “At 00:00 (UTC) on Sunday.”
     - cron: '0 0 * * 0'
-  pull_request:
   push:
-    branches:
-      - master
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [flutter_simple_treeview, linked_scroll_controller, scrollable_positioned_list, self_storing_input, visibility_detector]
+        version: [stable, master]
+        exclude:
+          - package: visibility_detector
+            version: stable
+    name: ${{ matrix.package }} / flutter ${{ matrix.version }}
     steps:
-    - uses: actions/checkout@v3
-    - uses: subosito/flutter-action@v2.4.0
-      with:
-        channel: 'master'
-    - run: flutter --version
-    - run: tool/validate.sh
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2.4.0
+        with:
+          channel: ${{ matrix.version }}
+
+      - name: flutter version
+        run: flutter --version
+
+      - name: flutter pub get
+        run: flutter pub get
+        working-directory: packages/${{ matrix.package }}
+
+      - name: flutter analyze
+        run: flutter analyze
+        working-directory: packages/${{ matrix.package }}
+
+      - name: flutter test
+        run: flutter test
+        working-directory: packages/${{ matrix.package }}
+
+      - name: flutter format
+        run: flutter format --dry-run --set-exit-if-changed .
+        working-directory: packages/${{ matrix.package }}
+
