@@ -40,3 +40,8 @@ jobs:
       - name: flutter test
         run: flutter test
         working-directory: packages/${{ matrix.package }}
+
+      - name: flutter format
+        run: flutter format --dry-run --set-exit-if-changed
+        working-directory: packages/${{ matrix.package }}
+
