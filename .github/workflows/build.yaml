@@ -20,6 +20,7 @@ jobs:
         exclude:
           - package: visibility_detector
             version: stable
+    name: test ${{ matrix.package }} on flutter ${{ matrix.version }}
     steps:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2.4.0
@@ -42,6 +43,6 @@ jobs:
         working-directory: packages/${{ matrix.package }}
 
       - name: flutter format
-        run: flutter format --dry-run --set-exit-if-changed
+        run: flutter format --dry-run --set-exit-if-changed .
         working-directory: packages/${{ matrix.package }}
 
