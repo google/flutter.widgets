@@ -20,7 +20,7 @@ jobs:
         exclude:
           - package: visibility_detector
             version: stable
-    name: test ${{ matrix.package }} on flutter ${{ matrix.version }}
+    name: ${{ matrix.package }} / flutter ${{ matrix.version }}
     steps:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2.4.0
