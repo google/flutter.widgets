@@ -8,7 +8,7 @@ void main(List<String> args) {
       .toList()
     ..sort();
 
-  print('Package | Description | Published Version');
+  print('Package | Description | Version');
   print('--- | --- | ---');
   for (var package in packages) {
     print(
