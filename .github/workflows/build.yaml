@@ -53,6 +53,8 @@ jobs:
 
       - name: flutter format
         run: flutter format --dry-run --set-exit-if-changed .
+        # Only test formatting on one version of Flutter.
+        if: ${{ matrix.version }} == 'master'
 
   # A job configuration to do some light validation of the CI configuration.
   validate:
