@@ -10,7 +10,7 @@ team. They are mainly made available as a reference. Support is best-effort.
 
 ## Packages
 
-Package | Description | Published Version
+Package | Description | Version
 --- | --- | ---
 [flutter_simple_treeview](packages/flutter_simple_treeview/) | A widget, that visualises a tree structure, where a node can be any widget. | [![pub package](https://img.shields.io/pub/v/flutter_simple_treeview.svg)](https://pub.dev/packages/flutter_simple_treeview)
 [linked_scroll_controller](packages/linked_scroll_controller/) | A scroll controller that allows two or more scroll views to be in sync. | [![pub package](https://img.shields.io/pub/v/linked_scroll_controller.svg)](https://pub.dev/packages/linked_scroll_controller)
