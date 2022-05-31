@@ -20,15 +20,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Add new packages here to ensure that they're tested on the CI.
         package:
           - flutter_simple_treeview
           - linked_scroll_controller
           - scrollable_positioned_list
           - self_storing_input
           - visibility_detector
+        # Test against the Flutter stable and master SDKs.
         version:
           - stable
           - master
+        # For now, don't test visibility_detector against Flutter stable (3.0).
+        # TODO: remove this after Flutter 3.2 ships.
         exclude:
           - package: visibility_detector
             version: stable

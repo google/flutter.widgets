@@ -14,8 +14,11 @@ void main(List<String> args) {
 
   var failed = false;
   var lines =
-      File(actionsFile).readAsLinesSync().map((line) => line.trim()).toList();
+      File(actionsFile).readAsLinesSync().map((line) => line.trim()).toSet();
 
+  // Here, we look for `- package-name`. This will catch a few additional
+  // matches we don't care about, like `- stable`; that won't be an issue in
+  // terms of validating that we're testing all packages.
   for (var package in packages) {
     if (lines.contains('- $package')) {
       print("  found configuration: '- $package'");
