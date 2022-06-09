@@ -180,8 +180,14 @@ class ScrollablePositionedList extends StatefulWidget {
 class ItemScrollController {
   /// Whether any ScrollablePositionedList objects are attached this object.
   ///
-  /// If `false`, then [jumpTo] and [scrollTo] must not be called.
+  /// If `false`, then [jumpTo], [scrollTo] and [jumpToPixel] must not be called.
   bool get isAttached => _scrollableListState != null;
+
+  /// Returns the current [scrollController.offset].
+  /// Also see [jumpToPixel].
+  double get currentScrollControllerOffset {
+    return _scrollableListState!.primary.scrollController.offset;
+  }
 
   _ScrollablePositionedListState? _scrollableListState;
 
@@ -243,6 +249,13 @@ class ItemScrollController {
       curve: curve,
       opacityAnimationWeights: opacityAnimationWeights,
     );
+  }
+
+  /// Immediately jump the list to the provided [value] via
+  /// [scrollController.jumpTo].
+  /// Also see [currentScrollControllerOffset].
+  void jumpToPixel(double value) {
+    _scrollableListState!.primary.scrollController.jumpTo(value);
   }
 
   void _attach(_ScrollablePositionedListState scrollableListState) {
