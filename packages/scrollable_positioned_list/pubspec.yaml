@@ -6,7 +6,6 @@ homepage: https://github.com/google/flutter.widgets/tree/master/packages/scrolla
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
-  flutter: '>=2.12.0'
 
 dependencies:
   flutter:
