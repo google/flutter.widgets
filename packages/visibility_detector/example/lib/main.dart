@@ -529,7 +529,7 @@ class RowColumn extends Comparable<RowColumn> {
   }
 
   @override
-  int get hashCode => hashValues(row, column);
+  int get hashCode => Object.hash(row, column);
 
   /// See [Comparable.compareTo].  Sorts [RowColumn] objects in row-major order.
   @override
