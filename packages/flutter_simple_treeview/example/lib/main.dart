@@ -29,8 +29,10 @@ class Demo extends StatelessWidget {
                     "Source Code",
                     style: TextStyle(color: Colors.white),
                   ),
-                  onPressed: () async => await launch(
-                      'https://github.com/google/flutter.widgets/tree/master/packages/flutter_simple_treeview/example')),
+                  onPressed: () async => await launchUrl(
+                        Uri.https('github.com',
+                            'google/flutter.widgets/tree/master/packages/flutter_simple_treeview/example'),
+                      )),
             ],
             bottom: TabBar(
               tabs: [
