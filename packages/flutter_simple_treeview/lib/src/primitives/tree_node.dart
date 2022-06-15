@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 /// One node of a tree.
 class TreeNode {
-  List<TreeNode>? children;
+  final List<TreeNode>? children;
   final Widget content;
   final Key? key;
 
