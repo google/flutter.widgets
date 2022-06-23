@@ -772,6 +772,30 @@ void main() {
         0.5);
   });
 
+  testWidgets('Scroll then stop', (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    final itemPositionsListener = ItemPositionsListener.create();
+    await setUpWidgetTest(tester,
+        itemScrollController: itemScrollController,
+        itemPositionsListener: itemPositionsListener);
+
+    unawaited(itemScrollController.scrollTo(
+        index: 100, alignment: 0, duration: scrollDuration));
+    await tester.pump();
+    await tester.pump();
+
+    await tester.pump((scrollDuration + scrollDurationTolerance) ~/ 2);
+
+    itemScrollController.stopScroll(canceled: true);
+    await tester.pump(scrollDuration + scrollDurationTolerance);
+    var finder = find.textContaining("Item");
+
+    for (var element in finder.evaluate()) {
+      var text = element.widget as Text;
+      assert(text.data != "Item 100");
+    }
+  });
+
   testWidgets('Scroll to 9 and position at middle',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
