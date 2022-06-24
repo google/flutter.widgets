@@ -310,6 +310,29 @@ void main() {
       expect(state._controllers.offset, equals(state._letters.offset));
       expect(state._controllers.offset, equals(state._numbers.offset));
     });
+
+    testWidgets('applyViewportDimensions.', (tester) async {
+      await tester.pumpWidget(Test());
+      final state = tester.state<TestState>(find.byType(Test));
+
+      final viewportDimension = state._letters.position.viewportDimension;
+
+      // Change the viewportDimension.
+      final double changedViewportDimension = viewportDimension - 100;
+      state._controllers.applyViewportDimension(changedViewportDimension);
+
+      await tester.pumpAndSettle();
+
+      // The viewportDimension of the connected controllers should change.
+      expect(
+        state._letters.position.viewportDimension,
+        changedViewportDimension,
+      );
+      expect(
+        state._numbers.position.viewportDimension,
+        changedViewportDimension,
+      );
+    });
   });
 }
 
