@@ -333,6 +333,29 @@ void main() {
         changedViewportDimension,
       );
     });
+
+    testWidgets('notifyListeners.', (tester) async {
+      await tester.pumpWidget(Test());
+      final state = tester.state<TestState>(find.byType(Test));
+
+      int countLettersCalls = 0;
+      int countNumbersCalls = 0;
+
+      // Add listeners.
+      state._letters.addListener(() {
+        countLettersCalls += 1;
+      });
+      state._letters.addListener(() {
+        countNumbersCalls += 1;
+      });
+
+      // Notify listeners.
+      state._controllers.notifyListeners();
+
+      // The listener of the registered ScrollController should be called once.
+      expect(countLettersCalls, 1);
+      expect(countNumbersCalls, 1);
+    });
   });
 }
 
