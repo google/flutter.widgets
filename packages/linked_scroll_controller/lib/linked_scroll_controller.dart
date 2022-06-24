@@ -88,6 +88,13 @@ class LinkedScrollControllerGroup {
   void resetScroll() {
     jumpTo(0.0);
   }
+
+  /// Applies the viewportDimension of all linked controllers to [value].
+  void applyViewportDimension(double value) {
+    for (final controller in _attachedControllers) {
+      controller.position.applyViewportDimension(value);
+    }
+  }
 }
 
 /// This class provides change notification for [LinkedScrollControllerGroup]'s
