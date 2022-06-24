@@ -87,7 +87,7 @@ class _CustomCheckboxState extends State<CustomCheckbox> {
       onChanged: isEnabled ? _onValueChanged : null,
       value: _localValue,
       tristate: widget.state.tristate,
-      activeColor: Theme.of(context).accentColor,
+      activeColor: Theme.of(context).colorScheme.secondary,
     );
   }
 }

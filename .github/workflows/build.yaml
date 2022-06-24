@@ -1,0 +1,72 @@
+name: Build
+
+on:
+  schedule:
+    # “At 00:00 (UTC) on Sunday.”
+    - cron: '0 0 * * 0'
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  # A jobs configuration to test all packages in `packages/`.
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/${{ matrix.package }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # Add new packages here to ensure that they're tested on the CI.
+        package:
+          - flutter_simple_treeview
+          - linked_scroll_controller
+          - scrollable_positioned_list
+          - self_storing_input
+          - visibility_detector
+        # Test against the Flutter stable and master SDKs.
+        version:
+          - stable
+          - master
+        # For now, don't test visibility_detector against Flutter stable (3.0).
+        # TODO: remove this after Flutter 3.2 ships.
+        exclude:
+          - package: visibility_detector
+            version: stable
+    name: ${{ matrix.package }} / flutter ${{ matrix.version }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2.4.0
+        with:
+          channel: ${{ matrix.version }}
+
+      - name: flutter version
+        run: flutter --version
+
+      - name: flutter pub get
+        run: flutter pub get
+
+      - name: flutter analyze
+        run: flutter analyze
+
+      - name: flutter test
+        run: flutter test
+
+      - name: flutter format
+        run: flutter format --dry-run --set-exit-if-changed .
+        # Only test formatting on one version of Flutter.
+        if: ${{ matrix.version == 'master' }}
+
+  # A job configuration to do some light validation of the CI configuration.
+  validate:
+    runs-on: ubuntu-latest
+    name: Validate .github/workflows/build.yaml
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2.4.0
+
+      - name: dart tool/validate_actions.dart
+        run: dart tool/validate_actions.dart

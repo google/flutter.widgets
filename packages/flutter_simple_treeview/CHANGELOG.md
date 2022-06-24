@@ -1,3 +1,11 @@
+# 3.0.1
+
+  * Minor fixes.
+
+# 3.0.0
+
+  * Stable release for null safety.
+
 # 3.0.0-nullsafety.1
 
   * Avoid deprecation warnings with Flutter 1.25.0-8.1.pre per

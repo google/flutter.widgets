@@ -7,8 +7,6 @@
 import 'package:flutter/material.dart';
 import 'package:self_storing_input/self_storing_input.dart';
 
-import '../primitives/overlay.dart';
-
 /// A style for [SelfStoringText].
 class SelfStoringTextStyle {
   final OverlayStyle overlayStyle;

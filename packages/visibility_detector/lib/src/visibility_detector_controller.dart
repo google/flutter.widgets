@@ -4,10 +4,9 @@
 // license that can be found in the LICENSE file or at
 // https://developers.google.com/open-source/licenses/bsd
 
-import 'dart:ui' show Rect;
 import 'package:flutter/foundation.dart';
 
-import 'visibility_detector_layer.dart';
+import 'render_visibility_detector.dart';
 
 /// A [VisibilityDetectorController] is a singleton object that can perform
 /// actions and change configuration for all [VisibilityDetector] widgets.
@@ -29,7 +28,7 @@ class VisibilityDetectorController {
   ///
   /// This might be desirable just prior to tearing down the widget tree (such
   /// as when switching views or when exiting the application).
-  void notifyNow() => VisibilityDetectorLayer.notifyNow();
+  void notifyNow() => RenderVisibilityDetectorBase.notifyNow();
 
   /// Forgets any pending visibility callbacks for the [VisibilityDetector] with
   /// the given [key].
@@ -38,12 +37,12 @@ class VisibilityDetectorController {
   ///
   /// This method can be used to cancel timers after the [VisibilityDetector]
   /// has been detached to avoid pending timers in tests.
-  void forget(Key key) => VisibilityDetectorLayer.forget(key);
+  void forget(Key key) => RenderVisibilityDetectorBase.forget(key);
 
-  /// Returns the last known bounds for the [VisibilityDetector] with the given
-  /// [key] in global coordinates.
-  ///
-  /// Returns null if the specified [VisibilityDetector] is not visible or is
-  /// not found.
-  Rect? widgetBoundsFor(Key key) => VisibilityDetectorLayer.widgetBounds[key];
+  int? get debugUpdateCount {
+    if (!kDebugMode) {
+      return null;
+    }
+    return RenderVisibilityDetectorBase.debugUpdateCount;
+  }
 }
