@@ -2,6 +2,8 @@
 
 * Add `LinkedScrollControllerGroup.applyViewportDimension` method that applies  
   the viewportDimension of all linked controllers.
+* Add `LinkedScrollControllerGroup.notifyListeners` method that notifies  
+  the listener of all linked controllers.
 
 # 0.2.0
 

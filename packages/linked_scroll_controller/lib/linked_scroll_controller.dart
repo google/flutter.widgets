@@ -95,6 +95,13 @@ class LinkedScrollControllerGroup {
       controller.position.applyViewportDimension(value);
     }
   }
+
+  /// Notifies the scroll listener of all linked controllers.
+  void notifyListeners() {
+    for (final controller in _attachedControllers) {
+      controller.position.notifyListeners();
+    }
+  }
 }
 
 /// This class provides change notification for [LinkedScrollControllerGroup]'s
