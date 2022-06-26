@@ -87,22 +87,31 @@ class _ScrollablePositionedListPageState
               Expanded(
                 child: list(orientation),
               ),
-              positionsView,
               Row(
                 children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      scrollControlButtons,
-                      const SizedBox(height: 10),
-                      jumpControlButtons,
-                      alignmentControl,
-                    ],
+                  Padding(padding: EdgeInsets.only(right: 10)),
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        positionsView,
+                        heightSized(scrollControlButtons),
+                        const SizedBox(height: 10),
+                        heightSized(jumpControlButtons),
+                        alignmentControl,
+                      ],
+                    ),
                   ),
+                  Padding(padding: EdgeInsets.only(right: 10)),
                 ],
               )
             ],
           ),
         ),
+      );
+
+  Widget heightSized(x) => SizedBox(
+        child: x,
+        height: 20,
       );
 
   Widget get alignmentControl => Row(
@@ -178,7 +187,8 @@ class _ScrollablePositionedListPageState
         },
       );
 
-  Widget get scrollControlButtons => Row(
+  Widget get scrollControlButtons => ListView(
+        scrollDirection: Axis.horizontal,
         children: <Widget>[
           const Text('scroll to'),
           scrollButton(0),
@@ -190,7 +200,8 @@ class _ScrollablePositionedListPageState
         ],
       );
 
-  Widget get jumpControlButtons => Row(
+  Widget get jumpControlButtons => ListView(
+        scrollDirection: Axis.horizontal,
         children: <Widget>[
           const Text('jump to'),
           jumpButton(0),
