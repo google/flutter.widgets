@@ -174,39 +174,51 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     }
     final transform = Matrix4.identity();
 
-    // Create a list of RenderObjects from this to the root, excluding the root
-    // since that has the DPR transform and we want to work with logical pixels.
-    // Cannot use the layer tree since some ancestor render object may have
-    // directly transformed/clipped the canvas. If there is some way to figure
-    // out how to get the RenderObjects below [layer], could take advantage of
-    // the usually shallower height of the layer tree compared to the render
-    // tree. Alternatively, if the canvas itself exposed the current matrix/clip
-    // we could use that.
-    RenderObject? ancestor = parent as RenderObject?;
-
-    final List<RenderObject> ancestors = <RenderObject>[];
-    ancestors.add(this);
-    RenderObject child = this;
-    while (ancestor != null && ancestor.parent != null) {
-      if (!ancestor.paintsChild(child)) {
-        return VisibilityInfo(key: key, size: bounds.size);
+    // Check if any ancestors decided to skip painting this RenderObject.
+    if (parent != null) {
+      RenderObject ancestor = parent! as RenderObject;
+      RenderObject child = this;
+      while (ancestor.parent != null) {
+        if (!ancestor.paintsChild(child)) {
+          return VisibilityInfo(key: key, size: bounds.size);
+        }
+        child = ancestor;
+        ancestor = ancestor.parent! as RenderObject;
       }
-      ancestors.add(ancestor);
-      child = ancestor;
-      ancestor = ancestor.parent as RenderObject?;
     }
 
-    // Determine the transform and clip from first child of root down to
-    // this.
+    if (layer == null) {
+      return VisibilityInfo(key: key, size: bounds.size);
+    }
+
+    // Create a list of Layers from layer to the root, excluding the root
+    // since that has the DPR transform and we want to work with logical pixels.
+    // Add one extra leaf layer so that we can apply the transform of `layer`
+    // to the matrix.
+    ContainerLayer? ancestor = layer;
+    final List<ContainerLayer> ancestors = <ContainerLayer>[ContainerLayer()];
+    while (ancestor != null && ancestor.parent != null) {
+      ancestors.add(ancestor);
+      ancestor = ancestor.parent;
+    }
+
     Rect clip = Rect.largest;
     for (int index = ancestors.length - 1; index > 0; index -= 1) {
       final parent = ancestors[index];
       final child = ancestors[index - 1];
-      Rect? parentClip = parent.describeApproximatePaintClip(child);
+      Rect? parentClip = parent.describeClipBounds();
       if (parentClip != null) {
         clip = clip.intersect(MatrixUtils.transformRect(transform, parentClip));
       }
-      parent.applyPaintTransform(child, transform);
+      parent.applyTransform(child, transform);
+    }
+    // Apply whatever transform/clip was on the canvas when painting.
+    if (_lastPaintTransform != null) {
+      transform.multiply(_lastPaintTransform!);
+    }
+
+    if (_lastPaintClipBounds != null) {
+      clip = clip.intersect(_lastPaintClipBounds!);
     }
     return VisibilityInfo.fromRects(
       key: key,
@@ -219,9 +231,17 @@ mixin RenderVisibilityDetectorBase on RenderObject {
   /// clients about visibility.
   Rect get bounds;
 
+  Matrix4? _lastPaintTransform;
+  Rect? _lastPaintClipBounds;
+
   @override
   void paint(PaintingContext context, Offset offset) {
     if (onVisibilityChanged != null) {
+      _lastPaintClipBounds = context.canvas.getLocalClipBounds();
+      _lastPaintTransform =
+          Matrix4.fromFloat64List(context.canvas.getTransform())
+            ..translate(offset.dx, offset.dy, 0);
+
       _compositionCallbackCanceller?.call();
       _compositionCallbackCanceller =
           context.addCompositionCallback((Layer layer) {
