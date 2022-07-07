@@ -212,13 +212,16 @@ mixin RenderVisibilityDetectorBase on RenderObject {
       }
       parent.applyTransform(child, transform);
     }
+
     // Apply whatever transform/clip was on the canvas when painting.
+    if (_lastPaintClipBounds != null) {
+      clip = clip.intersect(MatrixUtils.transformRect(
+        transform,
+        _lastPaintClipBounds!,
+      ));
+    }
     if (_lastPaintTransform != null) {
       transform.multiply(_lastPaintTransform!);
-    }
-
-    if (_lastPaintClipBounds != null) {
-      clip = clip.intersect(_lastPaintClipBounds!);
     }
     return VisibilityInfo.fromRects(
       key: key,
