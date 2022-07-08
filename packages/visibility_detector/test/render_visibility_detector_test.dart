@@ -4,8 +4,6 @@
 // license that can be found in the LICENSE file or at
 // https://developers.google.com/open-source/licenses/bsd
 
-// ignore_for_file: invalid_use_of_protected_member
-
 import 'dart:ui';
 
 import 'package:flutter/rendering.dart';
@@ -31,7 +29,7 @@ void main() {
     detector.paint(context, Offset.zero);
     detector.paint(context, Offset.zero);
 
-    context.stopRecordingIfNeeded();
+    context.stopRecordingIfNeeded(); // ignore: invalid_use_of_protected_member
 
     expect(layer.subtreeHasCompositionCallbacks, true);
 
@@ -78,7 +76,7 @@ void main() {
     expect(layer.subtreeHasCompositionCallbacks, true);
 
     expect(detector.debugScheduleUpdateCount, 0);
-    context.stopRecordingIfNeeded();
+    context.stopRecordingIfNeeded(); // ignore: invalid_use_of_protected_member
     layer.buildScene(SceneBuilder()).dispose();
 
     expect(detector.debugScheduleUpdateCount, 1);
@@ -104,7 +102,7 @@ void main() {
     expect(layer.subtreeHasCompositionCallbacks, false);
 
     expect(detector.debugScheduleUpdateCount, 0);
-    context.stopRecordingIfNeeded();
+    context.stopRecordingIfNeeded(); // ignore: invalid_use_of_protected_member
     layer.buildScene(SceneBuilder()).dispose();
 
     expect(detector.debugScheduleUpdateCount, 0);
@@ -131,7 +129,7 @@ void main() {
     expect(layer.subtreeHasCompositionCallbacks, false);
 
     expect(detector.debugScheduleUpdateCount, 0);
-    context.stopRecordingIfNeeded();
+    context.stopRecordingIfNeeded(); // ignore: invalid_use_of_protected_member
     layer.buildScene(SceneBuilder()).dispose();
 
     expect(detector.debugScheduleUpdateCount, 0);
