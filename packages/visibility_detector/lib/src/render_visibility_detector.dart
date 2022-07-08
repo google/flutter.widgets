@@ -165,7 +165,7 @@ mixin RenderVisibilityDetectorBase on RenderObject {
   }
 
   VisibilityInfo _determineVisibility(ContainerLayer? layer, Rect bounds) {
-    if (_disposed || layer?.attached == false || !attached) {
+    if (_disposed || layer == null || layer.attached == false || !attached) {
       // layer is detached and thus invisible.
       return VisibilityInfo(
         key: key,
@@ -185,10 +185,6 @@ mixin RenderVisibilityDetectorBase on RenderObject {
         child = ancestor;
         ancestor = ancestor.parent! as RenderObject;
       }
-    }
-
-    if (layer == null) {
-      return VisibilityInfo(key: key, size: bounds.size);
     }
 
     // Create a list of Layers from layer to the root, excluding the root
