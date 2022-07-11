@@ -28,6 +28,9 @@ void main() {
     detector.layout(BoxConstraints.tight(const Size(200, 200)));
     detector.paint(context, Offset.zero);
     detector.paint(context, Offset.zero);
+
+    context.stopRecordingIfNeeded(); // ignore: invalid_use_of_protected_member
+
     expect(layer.subtreeHasCompositionCallbacks, true);
 
     expect(detector.debugScheduleUpdateCount, 0);
@@ -73,6 +76,7 @@ void main() {
     expect(layer.subtreeHasCompositionCallbacks, true);
 
     expect(detector.debugScheduleUpdateCount, 0);
+    context.stopRecordingIfNeeded(); // ignore: invalid_use_of_protected_member
     layer.buildScene(SceneBuilder()).dispose();
 
     expect(detector.debugScheduleUpdateCount, 1);
@@ -98,6 +102,7 @@ void main() {
     expect(layer.subtreeHasCompositionCallbacks, false);
 
     expect(detector.debugScheduleUpdateCount, 0);
+    context.stopRecordingIfNeeded(); // ignore: invalid_use_of_protected_member
     layer.buildScene(SceneBuilder()).dispose();
 
     expect(detector.debugScheduleUpdateCount, 0);
@@ -124,6 +129,7 @@ void main() {
     expect(layer.subtreeHasCompositionCallbacks, false);
 
     expect(detector.debugScheduleUpdateCount, 0);
+    context.stopRecordingIfNeeded(); // ignore: invalid_use_of_protected_member
     layer.buildScene(SceneBuilder()).dispose();
 
     expect(detector.debugScheduleUpdateCount, 0);
