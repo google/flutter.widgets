@@ -1,3 +1,6 @@
+# 0.3.3
+* Fix potential crash when reading from RenderBox.size.
+
 # 0.3.2
 * Re-apply Flutter framework bindings' null safety calls but set SDK
   constraints correctly to 2.12.0 instead.
