@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:collection/collection.dart' show IterableExtension;
+import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
@@ -323,18 +324,18 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   void Function() startAnimationCallback = () {};
 
   bool _isTransitioning = false;
+  bool _isTouchScreen = false;
 
   var _animationController;
 
   double previousOffset = 0;
 
   void _speedUpScrollListener(ScrollController controller) {
-    if (widget.extraScrollSpeed == null || widget.extraScrollSpeed == 0) {
+    if (widget.extraScrollSpeed == null ||
+        widget.extraScrollSpeed == 0 ||
+        _isTouchScreen) {
       return;
     }
-    // if (!controller.hasClients) {
-    //   return;
-    // }
     ScrollDirection scrollDirection = controller.position.userScrollDirection;
     if (scrollDirection != ScrollDirection.idle) {
       double scrollEnd = controller.offset +
@@ -441,57 +442,34 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       builder: (context, constraints) {
         final cacheExtent = _cacheExtent(constraints);
         return Listener(
-          onPointerDown: (_) => _stopScroll(canceled: true),
-          child: Stack(
-            children: <Widget>[
-              PostMountCallback(
-                key: primary.key,
-                callback: startAnimationCallback,
-                child: FadeTransition(
-                  opacity: ReverseAnimation(opacity),
-                  child: NotificationListener<ScrollNotification>(
-                    onNotification: (_) => _isTransitioning,
-                    child: PositionedList(
-                      itemBuilder: widget.itemBuilder,
-                      separatorBuilder: widget.separatorBuilder,
-                      itemCount: widget.itemCount,
-                      positionedIndex: primary.target,
-                      controller: primary.scrollController,
-                      itemPositionsNotifier: primary.itemPositionsNotifier,
-                      scrollDirection: widget.scrollDirection,
-                      reverse: widget.reverse,
-                      cacheExtent: cacheExtent,
-                      alignment: primary.alignment,
-                      physics: widget.physics,
-                      shrinkWrap: widget.shrinkWrap,
-                      addSemanticIndexes: widget.addSemanticIndexes,
-                      semanticChildCount: widget.semanticChildCount,
-                      padding: widget.padding,
-                      addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-                      addRepaintBoundaries: widget.addRepaintBoundaries,
-                    ),
-                  ),
-                ),
-              ),
-              if (_isTransitioning)
+          onPointerMove: (event) {
+            _isTouchScreen = event.kind == PointerDeviceKind.touch;
+          },
+          onPointerHover: (event) =>
+              _isTouchScreen = event.kind == PointerDeviceKind.touch,
+          child: GestureDetector(
+            onPanDown: (_) => _stopScroll(canceled: true),
+            excludeFromSemantics: true,
+            child: Stack(
+              children: <Widget>[
                 PostMountCallback(
-                  key: secondary.key,
+                  key: primary.key,
                   callback: startAnimationCallback,
                   child: FadeTransition(
-                    opacity: opacity,
+                    opacity: ReverseAnimation(opacity),
                     child: NotificationListener<ScrollNotification>(
-                      onNotification: (_) => false,
+                      onNotification: (_) => _isTransitioning,
                       child: PositionedList(
                         itemBuilder: widget.itemBuilder,
                         separatorBuilder: widget.separatorBuilder,
                         itemCount: widget.itemCount,
-                        itemPositionsNotifier: secondary.itemPositionsNotifier,
-                        positionedIndex: secondary.target,
-                        controller: secondary.scrollController,
+                        positionedIndex: primary.target,
+                        controller: primary.scrollController,
+                        itemPositionsNotifier: primary.itemPositionsNotifier,
                         scrollDirection: widget.scrollDirection,
                         reverse: widget.reverse,
                         cacheExtent: cacheExtent,
-                        alignment: secondary.alignment,
+                        alignment: primary.alignment,
                         physics: widget.physics,
                         shrinkWrap: widget.shrinkWrap,
                         addSemanticIndexes: widget.addSemanticIndexes,
@@ -503,7 +481,39 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                     ),
                   ),
                 ),
-            ],
+                if (_isTransitioning)
+                  PostMountCallback(
+                    key: secondary.key,
+                    callback: startAnimationCallback,
+                    child: FadeTransition(
+                      opacity: opacity,
+                      child: NotificationListener<ScrollNotification>(
+                        onNotification: (_) => false,
+                        child: PositionedList(
+                          itemBuilder: widget.itemBuilder,
+                          separatorBuilder: widget.separatorBuilder,
+                          itemCount: widget.itemCount,
+                          itemPositionsNotifier:
+                              secondary.itemPositionsNotifier,
+                          positionedIndex: secondary.target,
+                          controller: secondary.scrollController,
+                          scrollDirection: widget.scrollDirection,
+                          reverse: widget.reverse,
+                          cacheExtent: cacheExtent,
+                          alignment: secondary.alignment,
+                          physics: widget.physics,
+                          shrinkWrap: widget.shrinkWrap,
+                          addSemanticIndexes: widget.addSemanticIndexes,
+                          semanticChildCount: widget.semanticChildCount,
+                          padding: widget.padding,
+                          addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+                          addRepaintBoundaries: widget.addRepaintBoundaries,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         );
       },
