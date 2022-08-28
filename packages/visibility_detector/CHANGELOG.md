@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.4.0+1
+
+* Correct Flutter SDK version dependency to 3.1.0.
+* Replace use of deprecated APIs in the example for compatibility with Flutter v3.1.0.
+
 ## 0.4.0
 
 * Refactor to avoid forcing composition in the layer/render trees.
