@@ -1,0 +1,311 @@
+@startuml
+set namespaceSeparator ::
+
+class "self_storing_input::src::self_storing_text.dart::SelfStoringText" {
+  +Saver<K> saver
+  +K itemKey
+  +String emptyText
+  +OverlayController overlayController
+  +SelfStoringTextStyle style
+  +_SelfStoringTextState createState()
+}
+
+"self_storing_input::src::self_storing_text.dart::SelfStoringText" o-- "self_storing_input::src::primitives::saver.dart::Saver<K>"
+"self_storing_input::src::self_storing_text.dart::SelfStoringText" o-- "self_storing_input::src::primitives::overlay.dart::OverlayController"
+"self_storing_input::src::self_storing_text.dart::SelfStoringText" o-- "self_storing_input::src::self_storing_text::self_storing_text_style.dart::SelfStoringTextStyle"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "self_storing_input::src::self_storing_text.dart::SelfStoringText"
+
+class "self_storing_input::src::self_storing_text.dart::_SelfStoringTextState" {
+  -SharedState _state
+  -bool _isLoading
+  +void initState()
+  +void dispose()
+  -void _onSharedStateChange()
+  -Future<void> _loadValue()
+  +Widget build()
+}
+
+"self_storing_input::src::self_storing_text.dart::_SelfStoringTextState" o-- "self_storing_input::src::self_storing_text::shared_state.dart::SharedState"
+"flutter::src::widgets::framework.dart::State" <|-- "self_storing_input::src::self_storing_text.dart::_SelfStoringTextState"
+
+class "self_storing_input::src::self_storing_radio_group.dart::SelfStoringRadioGroup" {
+  +Saver<K> saver
+  +K itemKey
+  +OverlayController overlayController
+  +SelfStoringRadioGroupStyle style
+  +Object? defaultValue
+  +bool isUnselectable
+  +Map<Object, String> items
+  +_SelfStoringRadioGroupState createState()
+}
+
+"self_storing_input::src::self_storing_radio_group.dart::SelfStoringRadioGroup" o-- "self_storing_input::src::primitives::saver.dart::Saver<K>"
+"self_storing_input::src::self_storing_radio_group.dart::SelfStoringRadioGroup" o-- "self_storing_input::src::primitives::overlay.dart::OverlayController"
+"self_storing_input::src::self_storing_radio_group.dart::SelfStoringRadioGroup" o-- "self_storing_input::src::self_storing_radio_group::self_storing_radio_group_style.dart::SelfStoringRadioGroupStyle"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "self_storing_input::src::self_storing_radio_group.dart::SelfStoringRadioGroup"
+
+class "self_storing_input::src::self_storing_radio_group.dart::_SelfStoringRadioGroupState" {
+  -bool _isLoading
+  -SharedState _state
+  +void initState()
+  +void dispose()
+  -void _emptySetState()
+  -Future<void> _loadValue()
+  +Widget build()
+  -Widget _buildRadioButton()
+}
+
+"self_storing_input::src::self_storing_radio_group.dart::_SelfStoringRadioGroupState" o-- "self_storing_input::src::self_storing_radio_group::shared_state.dart::SharedState"
+"flutter::src::widgets::framework.dart::State" <|-- "self_storing_input::src::self_storing_radio_group.dart::_SelfStoringRadioGroupState"
+
+class "self_storing_input::src::self_storing_text::self_storing_text_style.dart::SelfStoringTextStyle" {
+  +OverlayStyle overlayStyle
+  +TextInputType? keyboardType
+  +int maxLines
+}
+
+"self_storing_input::src::self_storing_text::self_storing_text_style.dart::SelfStoringTextStyle" o-- "self_storing_input::src::primitives::overlay.dart::OverlayStyle"
+"self_storing_input::src::self_storing_text::self_storing_text_style.dart::SelfStoringTextStyle" o-- "flutter::src::services::text_input.dart::TextInputType"
+
+class "self_storing_input::src::self_storing_text::overlay_box.dart::OverlayBox" {
+  +SharedState sharedState
+  +_OverlayBoxState createState()
+}
+
+"self_storing_input::src::self_storing_text::overlay_box.dart::OverlayBox" o-- "self_storing_input::src::self_storing_text::shared_state.dart::SharedState"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "self_storing_input::src::self_storing_text::overlay_box.dart::OverlayBox"
+
+class "self_storing_input::src::self_storing_text::overlay_box.dart::_OverlayBoxState" {
+  -TextEditingController _textController
+  -FocusNode _focusNode
+  -bool _isSaving
+  -String? _validationError
+  -String? _savingError
+  +void initState()
+  +void dispose()
+  +void setState()
+  -void _onTextChange()
+  -Future<OperationResult> _saveEnteredValue()
+  +Widget build()
+  +Widget buildContent()
+  -Widget _buildCancelButton()
+  -Widget _buildOkButton()
+  -Widget _buildErrorWidget()
+}
+
+"self_storing_input::src::self_storing_text::overlay_box.dart::_OverlayBoxState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"self_storing_input::src::self_storing_text::overlay_box.dart::_OverlayBoxState" o-- "flutter::src::widgets::focus_manager.dart::FocusNode"
+"flutter::src::widgets::framework.dart::State" <|-- "self_storing_input::src::self_storing_text::overlay_box.dart::_OverlayBoxState"
+
+class "self_storing_input::src::self_storing_text::edit_button.dart::EditButton" {
+  +SharedState state
+  +_EditButtonState createState()
+}
+
+"self_storing_input::src::self_storing_text::edit_button.dart::EditButton" o-- "self_storing_input::src::self_storing_text::shared_state.dart::SharedState"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "self_storing_input::src::self_storing_text::edit_button.dart::EditButton"
+
+class "self_storing_input::src::self_storing_text::edit_button.dart::_EditButtonState" {
+  -OverlayEntry? _overlay
+  +void initState()
+  +void dispose()
+  +Widget build()
+  -void _closeOverlay()
+  -OverlayEntry _buildOverlay()
+}
+
+"self_storing_input::src::self_storing_text::edit_button.dart::_EditButtonState" o-- "flutter::src::widgets::overlay.dart::OverlayEntry"
+"flutter::src::widgets::framework.dart::State" <|-- "self_storing_input::src::self_storing_text::edit_button.dart::_EditButtonState"
+
+class "self_storing_input::src::self_storing_text::shared_state.dart::SharedState" {
+  -String? _storedValue
+  +OverlayController overlayController
+  +Saver<dynamic> saver
+  +Object itemKey
+  +SelfStoringTextStyle style
+  +String? storedValue
+}
+
+"self_storing_input::src::self_storing_text::shared_state.dart::SharedState" o-- "self_storing_input::src::primitives::overlay.dart::OverlayController"
+"self_storing_input::src::self_storing_text::shared_state.dart::SharedState" o-- "self_storing_input::src::primitives::saver.dart::Saver<dynamic>"
+"self_storing_input::src::self_storing_text::shared_state.dart::SharedState" o-- "self_storing_input::src::self_storing_text::self_storing_text_style.dart::SelfStoringTextStyle"
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "self_storing_input::src::self_storing_text::shared_state.dart::SharedState"
+
+class "self_storing_input::src::primitives::message_overlay.dart::MessageOverlay" {
+  +String message
+  +OverlayStyle style
+  +double? closeIconSize
+  +OverlayController overlayController
+  +Widget build()
+  -Widget _buildButton()
+  -Widget _buildMessage()
+}
+
+"self_storing_input::src::primitives::message_overlay.dart::MessageOverlay" o-- "self_storing_input::src::primitives::overlay.dart::OverlayStyle"
+"self_storing_input::src::primitives::message_overlay.dart::MessageOverlay" o-- "self_storing_input::src::primitives::overlay.dart::OverlayController"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "self_storing_input::src::primitives::message_overlay.dart::MessageOverlay"
+
+abstract class "self_storing_input::src::primitives::saver.dart::Saver" {
+  +Future<T?> load()
+  +Future<OperationResult> save()
+  +OperationResult validate()
+}
+
+class "self_storing_input::src::primitives::saver.dart::NoOpSaver" {
+  +Future<T?> load()
+  +OperationResult validate()
+  +Future<OperationResult> save()
+}
+
+"self_storing_input::src::primitives::saver.dart::Saver" <|-- "self_storing_input::src::primitives::saver.dart::NoOpSaver"
+
+class "self_storing_input::src::primitives::the_progress_indicator.dart::_ProgressIndicator" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "self_storing_input::src::primitives::the_progress_indicator.dart::_ProgressIndicator"
+
+class "self_storing_input::src::primitives::operation_result.dart::OperationResult" {
+  +String? error
+  +bool isSuccess
+}
+
+class "self_storing_input::src::primitives::overlay.dart::OverlayController" {
+  +void close()
+}
+
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "self_storing_input::src::primitives::overlay.dart::OverlayController"
+
+class "self_storing_input::src::primitives::overlay.dart::OverlayStyle" {
+  +double elevation
+  +double width
+  +double height
+  +double margin
+}
+
+class "self_storing_input::src::self_storing_checkbox.dart::SelfStoringCheckbox" {
+  +Saver<K> saver
+  +K itemKey
+  +OverlayController overlayController
+  +SelfStoringCheckboxStyle style
+  +bool tristate
+  +Widget title
+  +_SelfStoringCheckboxState createState()
+}
+
+"self_storing_input::src::self_storing_checkbox.dart::SelfStoringCheckbox" o-- "self_storing_input::src::primitives::saver.dart::Saver<K>"
+"self_storing_input::src::self_storing_checkbox.dart::SelfStoringCheckbox" o-- "self_storing_input::src::primitives::overlay.dart::OverlayController"
+"self_storing_input::src::self_storing_checkbox.dart::SelfStoringCheckbox" o-- "self_storing_input::src::self_storing_checkbox::self_storing_checkbox_style.dart::SelfStoringCheckboxStyle"
+"self_storing_input::src::self_storing_checkbox.dart::SelfStoringCheckbox" o-- "flutter::src::widgets::framework.dart::Widget"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "self_storing_input::src::self_storing_checkbox.dart::SelfStoringCheckbox"
+
+class "self_storing_input::src::self_storing_checkbox.dart::_SelfStoringCheckboxState" {
+  -bool _isLoading
+  -SharedState _state
+  +void initState()
+  +void dispose()
+  -void _onSharedStateChange()
+  -Future<void> _loadValue()
+  +Widget build()
+}
+
+"self_storing_input::src::self_storing_checkbox.dart::_SelfStoringCheckboxState" o-- "self_storing_input::src::self_storing_checkbox::shared_state.dart::SharedState"
+"flutter::src::widgets::framework.dart::State" <|-- "self_storing_input::src::self_storing_checkbox.dart::_SelfStoringCheckboxState"
+
+class "self_storing_input::src::self_storing_checkbox::self_storing_checkbox_style.dart::SelfStoringCheckboxStyle" {
+  +OverlayStyle overlayStyle
+  +double closeIconSize
+}
+
+"self_storing_input::src::self_storing_checkbox::self_storing_checkbox_style.dart::SelfStoringCheckboxStyle" o-- "self_storing_input::src::primitives::overlay.dart::OverlayStyle"
+
+class "self_storing_input::src::self_storing_checkbox::custom_checkbox.dart::CustomCheckbox" {
+  +SharedState state
+  +_CustomCheckboxState createState()
+}
+
+"self_storing_input::src::self_storing_checkbox::custom_checkbox.dart::CustomCheckbox" o-- "self_storing_input::src::self_storing_checkbox::shared_state.dart::SharedState"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "self_storing_input::src::self_storing_checkbox::custom_checkbox.dart::CustomCheckbox"
+
+class "self_storing_input::src::self_storing_checkbox::custom_checkbox.dart::_CustomCheckboxState" {
+  -bool? _localValue
+  -OverlayEntry? _overlay
+  +void initState()
+  +void dispose()
+  -void _showOverlay()
+  -void _closeOverlay()
+  -OverlayEntry _buildOverlay()
+  -void _onValueChanged()
+  +Widget build()
+}
+
+"self_storing_input::src::self_storing_checkbox::custom_checkbox.dart::_CustomCheckboxState" o-- "flutter::src::widgets::overlay.dart::OverlayEntry"
+"flutter::src::widgets::framework.dart::State" <|-- "self_storing_input::src::self_storing_checkbox::custom_checkbox.dart::_CustomCheckboxState"
+
+class "self_storing_input::src::self_storing_checkbox::shared_state.dart::SharedState" {
+  +Saver<dynamic> saver
+  +Object itemKey
+  +OverlayController overlayController
+  +SelfStoringCheckboxStyle style
+  +bool tristate
+  +bool? storedValue
+  +OperationResult operationResult
+  -bool _isSaving
+  +bool isSaving
+}
+
+"self_storing_input::src::self_storing_checkbox::shared_state.dart::SharedState" o-- "self_storing_input::src::primitives::saver.dart::Saver<dynamic>"
+"self_storing_input::src::self_storing_checkbox::shared_state.dart::SharedState" o-- "self_storing_input::src::primitives::overlay.dart::OverlayController"
+"self_storing_input::src::self_storing_checkbox::shared_state.dart::SharedState" o-- "self_storing_input::src::self_storing_checkbox::self_storing_checkbox_style.dart::SelfStoringCheckboxStyle"
+"self_storing_input::src::self_storing_checkbox::shared_state.dart::SharedState" o-- "self_storing_input::src::primitives::operation_result.dart::OperationResult"
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "self_storing_input::src::self_storing_checkbox::shared_state.dart::SharedState"
+
+class "self_storing_input::src::self_storing_radio_group::self_storing_radio_group_style.dart::SelfStoringRadioGroupStyle" {
+  +OverlayStyle overlayStyle
+  +double closeIconSize
+}
+
+"self_storing_input::src::self_storing_radio_group::self_storing_radio_group_style.dart::SelfStoringRadioGroupStyle" o-- "self_storing_input::src::primitives::overlay.dart::OverlayStyle"
+
+class "self_storing_input::src::self_storing_radio_group::custom_radio.dart::CustomRadio" {
+  +SharedState? state
+  +Object value
+  +bool isSelected
+  +Widget build()
+  -Future<void> _onTap()
+  -void _showOverlay()
+  -OverlayEntry _buildOverlay()
+}
+
+"self_storing_input::src::self_storing_radio_group::custom_radio.dart::CustomRadio" o-- "self_storing_input::src::self_storing_radio_group::shared_state.dart::SharedState"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "self_storing_input::src::self_storing_radio_group::custom_radio.dart::CustomRadio"
+
+class "self_storing_input::src::self_storing_radio_group::shared_state.dart::SharedState" {
+  +Saver<dynamic> saver
+  +Object itemKey
+  +SelfStoringRadioGroupStyle style
+  +OverlayController overlayController
+  +Object? defaultValue
+  +bool isUnselectable
+  +OverlayEntry? overlay
+  +OperationResult operationResult
+  +Object? storedValue
+  -Object? _selectedValue
+  -Object? _pendingValue
+  -Object _isSaving
+  +Object? selectedValue
+  +Object? pendingValue
+  +Object isSaving
+  +Future<void> select()
+  +void closeOverlay()
+}
+
+"self_storing_input::src::self_storing_radio_group::shared_state.dart::SharedState" o-- "self_storing_input::src::primitives::saver.dart::Saver<dynamic>"
+"self_storing_input::src::self_storing_radio_group::shared_state.dart::SharedState" o-- "self_storing_input::src::self_storing_radio_group::self_storing_radio_group_style.dart::SelfStoringRadioGroupStyle"
+"self_storing_input::src::self_storing_radio_group::shared_state.dart::SharedState" o-- "self_storing_input::src::primitives::overlay.dart::OverlayController"
+"self_storing_input::src::self_storing_radio_group::shared_state.dart::SharedState" o-- "flutter::src::widgets::overlay.dart::OverlayEntry"
+"self_storing_input::src::self_storing_radio_group::shared_state.dart::SharedState" o-- "self_storing_input::src::primitives::operation_result.dart::OperationResult"
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "self_storing_input::src::self_storing_radio_group::shared_state.dart::SharedState"
+
+
+@enduml

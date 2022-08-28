@@ -90,3 +90,11 @@ class _Tile extends StatelessWidget {
 }
 
 ```
+
+## Architecture
+
+```sh
+% ../../tool/dcdg.sh linked_scroll_controller
+```
+
+![](linked_scroll_controller.svg)

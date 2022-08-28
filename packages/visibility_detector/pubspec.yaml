@@ -17,3 +17,4 @@ dev_dependencies:
     sdk: flutter
   visibility_detector_example:
     path: example/
+  dcdg: ^4.0.1

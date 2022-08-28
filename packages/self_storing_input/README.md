@@ -51,3 +51,11 @@ SelfStoringText(
   overlayController: _controller,
   ...
 ```
+
+## Architecture
+
+```sh
+% ../../tool/dcdg.sh self_storing_input
+```
+
+![](self_storing_input.svg)

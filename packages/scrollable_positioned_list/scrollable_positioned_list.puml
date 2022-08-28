@@ -1,0 +1,352 @@
+@startuml
+set namespaceSeparator ::
+
+class "scrollable_positioned_list::src::element_registry.dart::RegistryWidget" {
+  +Widget child
+  +ValueNotifier<Set<Element>?>? elementNotifier
+  +State<StatefulWidget> createState()
+}
+
+"scrollable_positioned_list::src::element_registry.dart::RegistryWidget" o-- "flutter::src::widgets::framework.dart::Widget"
+"scrollable_positioned_list::src::element_registry.dart::RegistryWidget" o-- "flutter::src::foundation::change_notifier.dart::ValueNotifier<Set<Element>>"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "scrollable_positioned_list::src::element_registry.dart::RegistryWidget"
+
+class "scrollable_positioned_list::src::element_registry.dart::RegisteredElementWidget" {
+  +Element createElement()
+}
+
+"flutter::src::widgets::framework.dart::ProxyWidget" <|-- "scrollable_positioned_list::src::element_registry.dart::RegisteredElementWidget"
+
+class "scrollable_positioned_list::src::element_registry.dart::_RegistryWidgetState" {
+  +Set<Element> registeredElements
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "scrollable_positioned_list::src::element_registry.dart::_RegistryWidgetState"
+
+class "scrollable_positioned_list::src::element_registry.dart::_InheritedRegistryWidget" {
+  +_RegistryWidgetState state
+  +bool updateShouldNotify()
+}
+
+"scrollable_positioned_list::src::element_registry.dart::_InheritedRegistryWidget" o-- "scrollable_positioned_list::src::element_registry.dart::_RegistryWidgetState"
+"flutter::src::widgets::framework.dart::InheritedWidget" <|-- "scrollable_positioned_list::src::element_registry.dart::_InheritedRegistryWidget"
+
+class "scrollable_positioned_list::src::element_registry.dart::_RegisteredElement" {
+  -_RegistryWidgetState _registryWidgetState
+  +void notifyClients()
+  +void mount()
+  +void didChangeDependencies()
+  +void unmount()
+}
+
+"scrollable_positioned_list::src::element_registry.dart::_RegisteredElement" o-- "scrollable_positioned_list::src::element_registry.dart::_RegistryWidgetState"
+"flutter::src::widgets::framework.dart::ProxyElement" <|-- "scrollable_positioned_list::src::element_registry.dart::_RegisteredElement"
+
+class "scrollable_positioned_list::src::scrollable_positioned_list.dart::ScrollablePositionedList" {
+  +int itemCount
+  +Widget Function(BuildContext, int) itemBuilder
+  +Widget Function(BuildContext, int)? separatorBuilder
+  +ItemScrollController? itemScrollController
+  +ItemPositionsNotifier? itemPositionsNotifier
+  +int initialScrollIndex
+  +double initialAlignment
+  +Axis scrollDirection
+  +bool reverse
+  +bool shrinkWrap
+  +ScrollPhysics? physics
+  +int? semanticChildCount
+  +EdgeInsets? padding
+  +bool addSemanticIndexes
+  +bool addAutomaticKeepAlives
+  +bool addRepaintBoundaries
+  +double? minCacheExtent
+  +State<StatefulWidget> createState()
+}
+
+"scrollable_positioned_list::src::scrollable_positioned_list.dart::ScrollablePositionedList" o-- "flutter::src::widgets::framework.dart::Widget Function(BuildContext, int)"
+"scrollable_positioned_list::src::scrollable_positioned_list.dart::ScrollablePositionedList" o-- "scrollable_positioned_list::src::scrollable_positioned_list.dart::ItemScrollController"
+"scrollable_positioned_list::src::scrollable_positioned_list.dart::ScrollablePositionedList" o-- "scrollable_positioned_list::src::item_positions_notifier.dart::ItemPositionsNotifier"
+"scrollable_positioned_list::src::scrollable_positioned_list.dart::ScrollablePositionedList" o-- "flutter::src::painting::basic_types.dart::Axis"
+"scrollable_positioned_list::src::scrollable_positioned_list.dart::ScrollablePositionedList" o-- "flutter::src::widgets::scroll_physics.dart::ScrollPhysics"
+"scrollable_positioned_list::src::scrollable_positioned_list.dart::ScrollablePositionedList" o-- "flutter::src::painting::edge_insets.dart::EdgeInsets"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "scrollable_positioned_list::src::scrollable_positioned_list.dart::ScrollablePositionedList"
+
+class "scrollable_positioned_list::src::scrollable_positioned_list.dart::ItemScrollController" {
+  -_ScrollablePositionedListState? _scrollableListState
+  +bool isAttached
+  +void jumpTo()
+  +Future<void> scrollTo()
+  -void _attach()
+  -void _detach()
+}
+
+"scrollable_positioned_list::src::scrollable_positioned_list.dart::ItemScrollController" o-- "scrollable_positioned_list::src::scrollable_positioned_list.dart::_ScrollablePositionedListState"
+
+class "scrollable_positioned_list::src::scrollable_positioned_list.dart::_ScrollablePositionedListState" {
+  +_ListDisplayDetails primary
+  +_ListDisplayDetails secondary
+  +ProxyAnimation opacity
+  +void Function() startAnimationCallback
+  -bool _isTransitioning
+  +void initState()
+  +void deactivate()
+  +void dispose()
+  +void didUpdateWidget()
+  +Widget build()
+  -double _cacheExtent()
+  -void _jumpTo()
+  -Future<void> _scrollTo()
+  -Future<void> _startScroll()
+  -void _stopScroll()
+  -Animatable<double> _opacityAnimation()
+  -void _updatePositions()
+}
+
+"scrollable_positioned_list::src::scrollable_positioned_list.dart::_ScrollablePositionedListState" o-- "scrollable_positioned_list::src::scrollable_positioned_list.dart::_ListDisplayDetails"
+"scrollable_positioned_list::src::scrollable_positioned_list.dart::_ScrollablePositionedListState" o-- "flutter::src::animation::animations.dart::ProxyAnimation"
+"scrollable_positioned_list::src::scrollable_positioned_list.dart::_ScrollablePositionedListState" o-- "null::void Function()"
+"flutter::src::widgets::framework.dart::State" <|-- "scrollable_positioned_list::src::scrollable_positioned_list.dart::_ScrollablePositionedListState"
+"flutter::src::widgets::ticker_provider.dart::TickerProviderStateMixin" <|-- "scrollable_positioned_list::src::scrollable_positioned_list.dart::_ScrollablePositionedListState"
+
+class "scrollable_positioned_list::src::scrollable_positioned_list.dart::_ListDisplayDetails" {
+  +ItemPositionsNotifier itemPositionsNotifier
+  +ScrollController scrollController
+  +int target
+  +double alignment
+  +Key key
+}
+
+"scrollable_positioned_list::src::scrollable_positioned_list.dart::_ListDisplayDetails" o-- "scrollable_positioned_list::src::item_positions_notifier.dart::ItemPositionsNotifier"
+"scrollable_positioned_list::src::scrollable_positioned_list.dart::_ListDisplayDetails" o-- "flutter::src::widgets::scroll_controller.dart::ScrollController"
+"scrollable_positioned_list::src::scrollable_positioned_list.dart::_ListDisplayDetails" o-- "flutter::src::foundation::key.dart::Key"
+
+class "scrollable_positioned_list::src::positioned_list.dart::PositionedList" {
+  +int itemCount
+  +Widget Function(BuildContext, int) itemBuilder
+  +Widget Function(BuildContext, int)? separatorBuilder
+  +ScrollController? controller
+  +ItemPositionsNotifier? itemPositionsNotifier
+  +int positionedIndex
+  +double alignment
+  +Axis scrollDirection
+  +bool reverse
+  +bool shrinkWrap
+  +ScrollPhysics? physics
+  +double? cacheExtent
+  +int? semanticChildCount
+  +bool addSemanticIndexes
+  +EdgeInsets? padding
+  +bool addRepaintBoundaries
+  +bool addAutomaticKeepAlives
+  +State<StatefulWidget> createState()
+}
+
+"scrollable_positioned_list::src::positioned_list.dart::PositionedList" o-- "flutter::src::widgets::framework.dart::Widget Function(BuildContext, int)"
+"scrollable_positioned_list::src::positioned_list.dart::PositionedList" o-- "flutter::src::widgets::scroll_controller.dart::ScrollController"
+"scrollable_positioned_list::src::positioned_list.dart::PositionedList" o-- "scrollable_positioned_list::src::item_positions_notifier.dart::ItemPositionsNotifier"
+"scrollable_positioned_list::src::positioned_list.dart::PositionedList" o-- "flutter::src::painting::basic_types.dart::Axis"
+"scrollable_positioned_list::src::positioned_list.dart::PositionedList" o-- "flutter::src::widgets::scroll_physics.dart::ScrollPhysics"
+"scrollable_positioned_list::src::positioned_list.dart::PositionedList" o-- "flutter::src::painting::edge_insets.dart::EdgeInsets"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "scrollable_positioned_list::src::positioned_list.dart::PositionedList"
+
+class "scrollable_positioned_list::src::positioned_list.dart::_PositionedListState" {
+  -Key _centerKey
+  +ValueNotifier<Set<Element>?> registeredElements
+  +ScrollController scrollController
+  +bool updateScheduled
+  -EdgeInsets _leadingSliverPadding
+  -EdgeInsets _centerSliverPadding
+  -EdgeInsets _trailingSliverPadding
+  +void initState()
+  +void dispose()
+  +void didUpdateWidget()
+  +Widget build()
+  -Widget _buildSeparatedListElement()
+  -Widget _buildItem()
+  -void _schedulePositionNotificationUpdate()
+}
+
+"scrollable_positioned_list::src::positioned_list.dart::_PositionedListState" o-- "flutter::src::foundation::key.dart::Key"
+"scrollable_positioned_list::src::positioned_list.dart::_PositionedListState" o-- "flutter::src::foundation::change_notifier.dart::ValueNotifier<Set<Element>>"
+"scrollable_positioned_list::src::positioned_list.dart::_PositionedListState" o-- "flutter::src::widgets::scroll_controller.dart::ScrollController"
+"scrollable_positioned_list::src::positioned_list.dart::_PositionedListState" o-- "flutter::src::painting::edge_insets.dart::EdgeInsets"
+"flutter::src::widgets::framework.dart::State" <|-- "scrollable_positioned_list::src::positioned_list.dart::_PositionedListState"
+
+abstract class "scrollable_positioned_list::src::item_positions_listener.dart::ItemPositionsListener" {
+  +ValueListenable<Iterable<ItemPosition>> itemPositions
+}
+
+"scrollable_positioned_list::src::item_positions_listener.dart::ItemPositionsListener" o-- "flutter::src::foundation::change_notifier.dart::ValueListenable<Iterable<ItemPosition>>"
+
+class "scrollable_positioned_list::src::item_positions_listener.dart::ItemPosition" {
+  +int index
+  +double itemLeadingEdge
+  +double itemTrailingEdge
+  +int hashCode
+  +bool ==()
+  +String toString()
+}
+
+class "scrollable_positioned_list::src::viewport.dart::UnboundedViewport" {
+  -double _anchor
+  +double anchor
+  +RenderViewport createRenderObject()
+}
+
+"flutter::src::widgets::viewport.dart::Viewport" <|-- "scrollable_positioned_list::src::viewport.dart::UnboundedViewport"
+
+class "scrollable_positioned_list::src::viewport.dart::UnboundedRenderViewport" {
+  {static} -int _maxLayoutCycles
+  -double _anchor
+  -double _minScrollExtent
+  -double _maxScrollExtent
+  -bool _hasVisualOverflow
+  -double? _calculatedCacheExtent
+  +double anchor
+  +bool hasVisualOverflow
+  +void performResize()
+  +Rect describeSemanticsClip()
+  +void performLayout()
+  -double _attemptLayout()
+  +void updateOutOfBandData()
+}
+
+"flutter::src::rendering::viewport.dart::RenderViewport" <|-- "scrollable_positioned_list::src::viewport.dart::UnboundedRenderViewport"
+
+class "scrollable_positioned_list::src::wrapping.dart::CustomShrinkWrappingViewport" {
+  -double _anchor
+  +double anchor
+  +CustomRenderShrinkWrappingViewport createRenderObject()
+  +void updateRenderObject()
+}
+
+"scrollable_positioned_list::src::wrapping.dart::CustomViewport" <|-- "scrollable_positioned_list::src::wrapping.dart::CustomShrinkWrappingViewport"
+
+class "scrollable_positioned_list::src::wrapping.dart::CustomRenderShrinkWrappingViewport" {
+  -double _anchor
+  +double lastMainAxisExtent
+  -double _shrinkWrapExtent
+  -double? _calculatedCacheExtent
+  -double _maxMainAxisExtent
+  +double anchor
+  +bool sizedByParent
+  +bool hasVisualOverflow
+  +void performLayout()
+  -double _attemptLayout()
+  +void updateOutOfBandData()
+  +String labelForChild()
+}
+
+"scrollable_positioned_list::src::wrapping.dart::CustomRenderViewport" <|-- "scrollable_positioned_list::src::wrapping.dart::CustomRenderShrinkWrappingViewport"
+
+abstract class "scrollable_positioned_list::src::wrapping.dart::CustomViewport" {
+  +AxisDirection axisDirection
+  +AxisDirection? crossAxisDirection
+  +double anchor
+  +ViewportOffset offset
+  +Key? center
+  +double? cacheExtent
+  +CacheExtentStyle cacheExtentStyle
+  +Clip clipBehavior
+  {static} +AxisDirection getDefaultCrossAxisDirection()
+  +CustomRenderViewport createRenderObject()
+  +_ViewportElement createElement()
+  +void debugFillProperties()
+}
+
+"scrollable_positioned_list::src::wrapping.dart::CustomViewport" o-- "flutter::src::painting::basic_types.dart::AxisDirection"
+"scrollable_positioned_list::src::wrapping.dart::CustomViewport" o-- "flutter::src::rendering::viewport_offset.dart::ViewportOffset"
+"scrollable_positioned_list::src::wrapping.dart::CustomViewport" o-- "flutter::src::foundation::key.dart::Key"
+"scrollable_positioned_list::src::wrapping.dart::CustomViewport" o-- "flutter::src::rendering::viewport.dart::CacheExtentStyle"
+"scrollable_positioned_list::src::wrapping.dart::CustomViewport" o-- "dart::ui::Clip"
+"flutter::src::widgets::framework.dart::MultiChildRenderObjectWidget" <|-- "scrollable_positioned_list::src::wrapping.dart::CustomViewport"
+
+class "scrollable_positioned_list::src::wrapping.dart::_ViewportElement" {
+  +CustomViewport widget
+  +CustomRenderViewport renderObject
+  +void mount()
+  +void update()
+  -void _updateCenter()
+  +void debugVisitOnstageChildren()
+}
+
+"scrollable_positioned_list::src::wrapping.dart::_ViewportElement" o-- "scrollable_positioned_list::src::wrapping.dart::CustomViewport"
+"scrollable_positioned_list::src::wrapping.dart::_ViewportElement" o-- "scrollable_positioned_list::src::wrapping.dart::CustomRenderViewport"
+"flutter::src::widgets::framework.dart::MultiChildRenderObjectElement" <|-- "scrollable_positioned_list::src::wrapping.dart::_ViewportElement"
+
+class "scrollable_positioned_list::src::wrapping.dart::CustomSliverPhysicalContainerParentData" {
+  +double? layoutOffset
+  +GrowthDirection? growthDirection
+}
+
+"scrollable_positioned_list::src::wrapping.dart::CustomSliverPhysicalContainerParentData" o-- "flutter::src::rendering::sliver.dart::GrowthDirection"
+"flutter::src::rendering::sliver.dart::SliverPhysicalContainerParentData" <|-- "scrollable_positioned_list::src::wrapping.dart::CustomSliverPhysicalContainerParentData"
+
+abstract class "scrollable_positioned_list::src::wrapping.dart::CustomRenderViewport" {
+  {static} +SemanticsTag useTwoPaneSemantics
+  {static} +SemanticsTag excludeFromScrolling
+  -RenderSliver? _center
+  -double _minScrollExtent
+  -double _maxScrollExtent
+  -bool _hasVisualOverflow
+  +double growSize
+  +double anchor
+  +RenderSliver? center
+  +bool sizedByParent
+  +bool hasVisualOverflow
+  +int indexOfFirstChild
+  +Iterable<RenderSliver> childrenInPaintOrder
+  +Iterable<RenderSliver> childrenInHitTestOrder
+  +void setupParentData()
+  +Size computeDryLayout()
+  +void updateOutOfBandData()
+  +void updateChildLayoutOffset()
+  +Offset paintOffsetOf()
+  +double scrollOffsetOf()
+  +double maxScrollObstructionExtentBefore()
+  +void applyPaintTransform()
+  +double computeChildMainAxisPosition()
+  +String labelForChild()
+  +void debugFillProperties()
+}
+
+"scrollable_positioned_list::src::wrapping.dart::CustomRenderViewport" o-- "flutter::src::semantics::semantics.dart::SemanticsTag"
+"scrollable_positioned_list::src::wrapping.dart::CustomRenderViewport" o-- "flutter::src::rendering::sliver.dart::RenderSliver"
+"flutter::src::rendering::viewport.dart::RenderViewportBase" <|-- "scrollable_positioned_list::src::wrapping.dart::CustomRenderViewport"
+
+class "scrollable_positioned_list::src::post_mount_callback.dart::PostMountCallback" {
+  +Widget child
+  +void Function()? callback
+  +StatelessElement createElement()
+  +Widget build()
+}
+
+"scrollable_positioned_list::src::post_mount_callback.dart::PostMountCallback" o-- "flutter::src::widgets::framework.dart::Widget"
+"scrollable_positioned_list::src::post_mount_callback.dart::PostMountCallback" o-- "null::void Function()"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "scrollable_positioned_list::src::post_mount_callback.dart::PostMountCallback"
+
+class "scrollable_positioned_list::src::post_mount_callback.dart::_PostMountCallbackElement" {
+  +void mount()
+}
+
+"flutter::src::widgets::framework.dart::StatelessElement" <|-- "scrollable_positioned_list::src::post_mount_callback.dart::_PostMountCallbackElement"
+
+class "scrollable_positioned_list::src::item_positions_notifier.dart::ItemPositionsNotifier" {
+  +ValueNotifier<Iterable<ItemPosition>> itemPositions
+}
+
+"scrollable_positioned_list::src::item_positions_notifier.dart::ItemPositionsNotifier" o-- "flutter::src::foundation::change_notifier.dart::ValueNotifier<Iterable<ItemPosition>>"
+"scrollable_positioned_list::src::item_positions_listener.dart::ItemPositionsListener" <|-- "scrollable_positioned_list::src::item_positions_notifier.dart::ItemPositionsNotifier"
+
+class "scrollable_positioned_list::src::scroll_view.dart::UnboundedCustomScrollView" {
+  -bool _shrinkWrap
+  -double _anchor
+  +double anchor
+  #Widget buildViewport()
+}
+
+"flutter::src::widgets::scroll_view.dart::CustomScrollView" <|-- "scrollable_positioned_list::src::scroll_view.dart::UnboundedCustomScrollView"
+
+
+@enduml

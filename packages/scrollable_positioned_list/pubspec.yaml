@@ -17,3 +17,4 @@ dev_dependencies:
   pedantic: ^1.10.0-0
   flutter_test:
     sdk: flutter
+  dcdg: ^4.0.1

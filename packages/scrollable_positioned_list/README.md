@@ -48,6 +48,14 @@ itemPositionsListener.itemPositions.addListener(() => ...);
 
 A full example can be found in the example folder.
 
+## Architecture
+
+```sh
+% ../../tool/dcdg.sh scrollable_positioned_list
+```
+
+![](scrollable_positioned_list.svg)
+
 --------------------------------------------------------------------------------
 
 This is not an officially supported Google product.
