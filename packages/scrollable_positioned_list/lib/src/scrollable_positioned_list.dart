@@ -51,9 +51,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
-  })  : assert(itemCount != null),
-        assert(itemBuilder != null),
-        itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
+  })  : itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
         separatorBuilder = null,
         super(key: key);
 
@@ -78,9 +76,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
-  })  : assert(itemCount != null),
-        assert(itemBuilder != null),
-        assert(separatorBuilder != null),
+  })  : assert(separatorBuilder != null),
         itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
         super(key: key);
 
@@ -270,9 +266,12 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
 
   bool _isTransitioning = false;
 
+  late AnimationController _animationController;
+
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(vsync: this);
     ItemPosition? initialPosition = PageStorage.of(context)!.readState(context);
     primary.target = initialPosition?.index ?? widget.initialScrollIndex;
     primary.alignment =
@@ -293,6 +292,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
 
   @override
   void dispose() {
+    _animationController.dispose();
     primary.itemPositionsNotifier.itemPositions
         .removeListener(_updatePositions);
     secondary.itemPositionsNotifier.itemPositions
@@ -435,7 +435,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     }
     if (_isTransitioning) {
       _stopScroll(canceled: true);
-      SchedulerBinding.instance.addPostFrameCallback((_) {
+      SchedulerBinding.instance!.addPostFrameCallback((_) {
         _startScroll(
           index: index,
           alignment: alignment,
@@ -445,13 +445,15 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
         );
       });
     } else {
-      await _startScroll(
-        index: index,
-        alignment: alignment,
-        duration: duration,
-        curve: curve,
-        opacityAnimationWeights: opacityAnimationWeights,
-      );
+      if (mounted) {
+        await _startScroll(
+          index: index,
+          alignment: alignment,
+          duration: duration,
+          curve: curve,
+          opacityAnimationWeights: opacityAnimationWeights,
+        );
+      }
     }
   }
 
@@ -481,35 +483,39 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
           primary.scrollController.position.viewportDimension;
       final startCompleter = Completer<void>();
       final endCompleter = Completer<void>();
-      startAnimationCallback = () {
-        SchedulerBinding.instance.addPostFrameCallback((_) {
-          startAnimationCallback = () {};
+      if (mounted) {
+        startAnimationCallback = () {
+          SchedulerBinding.instance!.addPostFrameCallback((_) {
+            startAnimationCallback = () {};
 
-          opacity.parent = _opacityAnimation(opacityAnimationWeights).animate(
-              AnimationController(vsync: this, duration: duration)..forward());
-          secondary.scrollController.jumpTo(-direction *
-              (_screenScrollCount *
-                      primary.scrollController.position.viewportDimension -
-                  alignment *
-                      secondary.scrollController.position.viewportDimension));
+            opacity.parent = _opacityAnimation(opacityAnimationWeights).animate(
+                _animationController..duration = duration..forward());
+            secondary.scrollController.jumpTo(-direction *
+                (_screenScrollCount *
+                    primary.scrollController.position.viewportDimension -
+                    alignment *
+                        secondary.scrollController.position.viewportDimension));
 
-          startCompleter.complete(primary.scrollController.animateTo(
-              primary.scrollController.offset + direction * scrollAmount,
-              duration: duration,
-              curve: curve));
-          endCompleter.complete(secondary.scrollController
-              .animateTo(0, duration: duration, curve: curve));
+            startCompleter.complete(primary.scrollController.animateTo(
+                primary.scrollController.offset + direction * scrollAmount,
+                duration: duration,
+                curve: curve));
+            endCompleter.complete(secondary.scrollController
+                .animateTo(0, duration: duration, curve: curve));
+          });
+        };
+        setState(() {
+          // TODO: _startScroll can be re-entrant, which invalidates this assert.
+          // assert(!_isTransitioning);
+          secondary.target = index;
+          secondary.alignment = alignment;
+          _isTransitioning = true;
         });
-      };
-      setState(() {
-        // TODO: _startScroll can be re-entrant, which invalidates this assert.
-        // assert(!_isTransitioning);
-        secondary.target = index;
-        secondary.alignment = alignment;
-        _isTransitioning = true;
-      });
+      }
       await Future.wait<void>([startCompleter.future, endCompleter.future]);
-      _stopScroll();
+      if (mounted) {
+        _stopScroll();
+      }
     }
   }
 
@@ -527,17 +533,19 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       }
     }
 
-    setState(() {
-      if (opacity.value >= 0.5) {
-        // Secondary [ListView] is more visible than the primary; make it the
-        // new primary.
-        var temp = primary;
-        primary = secondary;
-        secondary = temp;
-      }
-      _isTransitioning = false;
-      opacity.parent = const AlwaysStoppedAnimation<double>(0);
-    });
+    if (mounted) {
+      setState(() {
+        if (opacity.value >= 0.5) {
+          // Secondary [ListView] is more visible than the primary; make it the
+          // new primary.
+          var temp = primary;
+          primary = secondary;
+          secondary = temp;
+        }
+        _isTransitioning = false;
+        opacity.parent = const AlwaysStoppedAnimation<double>(0);
+      });
+    }
   }
 
   Animatable<double> _opacityAnimation(List<double> opacityAnimationWeights) {
