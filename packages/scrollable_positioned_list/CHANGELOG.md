@@ -1,3 +1,6 @@
+# 0.3.4
+* Disposed the animation controller when disposing the scrollable list.
+
 # 0.3.3
 * Fix potential crash when reading from RenderBox.size.
 
