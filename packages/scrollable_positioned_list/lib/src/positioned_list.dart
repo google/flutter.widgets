@@ -307,13 +307,14 @@ class _PositionedListState extends State<PositionedList> {
     if (!updateScheduled) {
       updateScheduled = true;
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        if (registeredElements.value == null) {
+        final elements = registeredElements.value;
+        if (elements == null) {
           updateScheduled = false;
           return;
         }
         final positions = <ItemPosition>[];
         RenderViewportBase? viewport;
-        for (var element in registeredElements.value!) {
+        for (var element in elements) {
           final RenderBox box = element.renderObject as RenderBox;
           viewport ??= RenderAbstractViewport.of(box) as RenderViewportBase?;
           var anchor = 0.0;
@@ -326,6 +327,8 @@ class _PositionedListState extends State<PositionedList> {
           }
 
           final ValueKey<int> key = element.widget.key as ValueKey<int>;
+          // Skip this element if `box` has never been laid out.
+          if (!box.hasSize) continue;
           if (widget.scrollDirection == Axis.vertical) {
             final reveal = viewport!.getOffsetToReveal(box, 0).offset;
             if (!reveal.isFinite) continue;

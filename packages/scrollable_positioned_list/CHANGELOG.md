@@ -1,3 +1,9 @@
+# 0.3.4
+* Disposed the animation controller when disposing the scrollable list.
+
+# 0.3.3
+* Fix potential crash when reading from RenderBox.size.
+
 # 0.3.2
 * Re-apply Flutter framework bindings' null safety calls but set SDK
   constraints correctly to 2.12.0 instead.
