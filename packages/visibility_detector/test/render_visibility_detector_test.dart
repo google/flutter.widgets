@@ -134,4 +134,44 @@ void main() {
 
     expect(detector.debugScheduleUpdateCount, 0);
   });
+
+  testWidgets('RVS can schedule an update for a RO that is not laid out',
+      (WidgetTester tester) async {
+    final RenderVisibilityDetector detector = RenderVisibilityDetector(
+      key: Key('test'),
+      onVisibilityChanged: (_) {
+        fail('should not get called');
+      },
+    );
+
+    // Force an out of band update to get scheduled without laying out.
+    detector.onVisibilityChanged = (_) {
+      fail('This should also not get called');
+    };
+
+    expect(detector.debugScheduleUpdateCount, 1);
+
+    detector.dispose();
+  });
+
+  testWidgets(
+      'RVS (Sliver) can schedule an update for a RO that is not laid out',
+      (WidgetTester tester) async {
+    final RenderSliverVisibilityDetector detector =
+        RenderSliverVisibilityDetector(
+      key: Key('test'),
+      onVisibilityChanged: (_) {
+        fail('should not get called');
+      },
+    );
+
+    // Force an out of band update to get scheduled without laying out.
+    detector.onVisibilityChanged = (_) {
+      fail('This should also not get called');
+    };
+
+    expect(detector.debugScheduleUpdateCount, 1);
+
+    detector.dispose();
+  });
 }

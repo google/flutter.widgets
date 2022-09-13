@@ -140,7 +140,14 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     }
     bool isFirstUpdate = _updates.isEmpty;
     _updates[key] = () {
-      _fireCallback(layer, bounds);
+      if (bounds == null) {
+        // This can happen if set onVisibilityChanged was called with a non-null
+        // value but this render object has not been laid out. In that case,
+        // it has no size or geometry, and we should not worry about firing
+        // an update since it never has been visible.
+        return;
+      }
+      _fireCallback(layer, bounds!);
     };
     final updateInterval = VisibilityDetectorController.instance.updateInterval;
     if (updateInterval == Duration.zero) {
@@ -228,7 +235,9 @@ mixin RenderVisibilityDetectorBase on RenderObject {
 
   /// Used to get the bounds of the render object when it is time to update
   /// clients about visibility.
-  Rect get bounds;
+  ///
+  /// A null value means bounds are not available.
+  Rect? get bounds;
 
   Matrix4? _lastPaintTransform;
   Rect? _lastPaintClipBounds;
@@ -280,7 +289,7 @@ class RenderVisibilityDetector extends RenderProxyBox
   final Key key;
 
   @override
-  Rect get bounds => semanticBounds;
+  Rect? get bounds => hasSize ? semanticBounds : null;
 }
 
 /// The [RenderObject] corresponding to the [SliverVisibilityDetector] widget.
@@ -302,7 +311,11 @@ class RenderSliverVisibilityDetector extends RenderProxySliver
   final Key key;
 
   @override
-  Rect get bounds {
+  Rect? get bounds {
+    if (geometry == null) {
+      return null;
+    }
+
     Size widgetSize;
     Offset widgetOffset;
     switch (applyGrowthDirectionToAxisDirection(
