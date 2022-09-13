@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.4.0+2
+
+* Fix a bug for updates to render objects that have not been laid out yet.
+
 ## 0.4.0+1
 
 * Correct Flutter SDK version dependency to 3.1.0.
