@@ -141,6 +141,10 @@ mixin RenderVisibilityDetectorBase on RenderObject {
     bool isFirstUpdate = _updates.isEmpty;
     _updates[key] = () {
       if (bounds == null) {
+        // This can happen if set onVisibilityChanged was called with a non-null
+        // value but this render object has not been laid out. In that case,
+        // it has no size or geometry, and we should not worry about firing
+        // an update since it never has been visible.
         return;
       }
       _fireCallback(layer, bounds!);
