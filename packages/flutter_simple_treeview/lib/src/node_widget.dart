@@ -67,7 +67,7 @@ class _NodeWidgetState extends State<NodeWidget> {
         ),
         if (_isExpanded && !_isLeaf)
           Padding(
-            padding: EdgeInsets.only(left: widget.indent!),
+            padding: EdgeInsetsDirectional.only(start: widget.indent!),
             child: buildNodes(widget.treeNode.children!, widget.indent,
                 widget.state, widget.iconSize),
           )
