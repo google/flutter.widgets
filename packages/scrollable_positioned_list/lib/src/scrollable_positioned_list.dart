@@ -443,10 +443,11 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
         final cacheExtent = _cacheExtent(constraints);
         return Listener(
           onPointerMove: (event) {
-            _isTouchScreen = event.kind == PointerDeviceKind.touch;
+            _isTouchScreen = event.kind == PointerDeviceKind.touch || event.kind == PointerDeviceKind.trackpad;
           },
-          onPointerHover: (event) =>
-              _isTouchScreen = event.kind == PointerDeviceKind.touch,
+          onPointerHover: (event) {
+            _isTouchScreen = event.kind == PointerDeviceKind.touch || event.kind == PointerDeviceKind.trackpad;
+          },
           child: GestureDetector(
             onPanDown: (_) => _stopScroll(canceled: true),
             excludeFromSemantics: true,
