@@ -1,3 +1,6 @@
+# 0.3.5
+* Fix extraneous animation controller declaration in 0.3.4.
+
 # 0.3.4
 * Disposed the animation controller when disposing the scrollable list.
 
