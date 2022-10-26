@@ -442,11 +442,29 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       builder: (context, constraints) {
         final cacheExtent = _cacheExtent(constraints);
         return Listener(
+          onPointerDown: (event) {
+            // here we're checking if it's tap by touchscreen
+            _isTouchScreen = event.kind == PointerDeviceKind.touch ||
+                event.kind == PointerDeviceKind.trackpad;
+          },
           onPointerMove: (event) {
-            _isTouchScreen = event.kind == PointerDeviceKind.touch || event.kind == PointerDeviceKind.trackpad;
+            // onPointerMove triggers when finger are dragging to scroll
+            _isTouchScreen = event.kind == PointerDeviceKind.touch ||
+                event.kind == PointerDeviceKind.trackpad; 
           },
           onPointerHover: (event) {
-            _isTouchScreen = event.kind == PointerDeviceKind.touch || event.kind == PointerDeviceKind.trackpad;
+            _isTouchScreen = event.kind == PointerDeviceKind.touch ||
+                event.kind == PointerDeviceKind.trackpad;
+          },
+          onPointerPanZoomStart: (event) {
+            // onPointerPanZoomStart triggers when scrolling by touchpad
+            _isTouchScreen = event.kind == PointerDeviceKind.touch ||
+                event.kind == PointerDeviceKind.trackpad;
+          },
+          onPointerSignal: (event) {
+            if (event is PointerScrollEvent) {
+              _isTouchScreen = event.kind != PointerDeviceKind.mouse;
+            }
           },
           child: GestureDetector(
             onPanDown: (_) => _stopScroll(canceled: true),
