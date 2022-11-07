@@ -14,9 +14,6 @@ import 'item_positions_notifier.dart';
 import 'positioned_list.dart';
 import 'post_mount_callback.dart';
 
-/// Number of screens to scroll when scrolling a long distance.
-const int _screenScrollCount = 2;
-
 /// A scrollable list of widgets similar to [ListView], except scroll control
 /// and position reporting is based on index rather than pixel offset.
 ///
@@ -51,6 +48,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
+    this.screenScrollCount = 2,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
@@ -78,11 +76,15 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
+    this.screenScrollCount = 2,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         assert(separatorBuilder != null),
         itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
         super(key: key);
+
+  /// Number of screens to scroll when scrolling a long distance.
+  final int screenScrollCount;
 
   /// Number of items the [itemBuilder] can produce.
   final int itemCount;
@@ -410,7 +412,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   }
 
   double _cacheExtent(BoxConstraints constraints) => max(
-        constraints.maxHeight * _screenScrollCount,
+        constraints.maxHeight * widget.screenScrollCount,
         widget.minCacheExtent ?? 0,
       );
 
@@ -480,7 +482,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
           duration: duration,
           curve: curve);
     } else {
-      final scrollAmount = _screenScrollCount *
+      final scrollAmount = widget.screenScrollCount *
           primary.scrollController.position.viewportDimension;
       final startCompleter = Completer<void>();
       final endCompleter = Completer<void>();
@@ -493,7 +495,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
           opacity.parent = _opacityAnimation(opacityAnimationWeights)
               .animate(_animationController);
           secondary.scrollController.jumpTo(-direction *
-              (_screenScrollCount *
+              (widget.screenScrollCount *
                       primary.scrollController.position.viewportDimension -
                   alignment *
                       secondary.scrollController.position.viewportDimension));
