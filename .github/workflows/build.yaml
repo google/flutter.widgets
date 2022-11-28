@@ -27,7 +27,7 @@ jobs:
           - scrollable_positioned_list
           - self_storing_input
           - visibility_detector
-        # Test against the Flutter stable and master SDKs.
+        # Test against the Flutter stable SDK.
         version:
           - stable
         # For now, don't test visibility_detector against Flutter stable (3.0).
