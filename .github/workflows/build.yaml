@@ -27,10 +27,9 @@ jobs:
           - scrollable_positioned_list
           - self_storing_input
           - visibility_detector
-        # Test against the Flutter stable and master SDKs.
+        # Test against the Flutter stable SDK.
         version:
           - stable
-          - master
         # For now, don't test visibility_detector against Flutter stable (3.0).
         # TODO: remove this after Flutter 3.2 ships.
         exclude:
@@ -58,7 +57,7 @@ jobs:
       - name: flutter format
         run: flutter format --dry-run --set-exit-if-changed .
         # Only test formatting on one version of Flutter.
-        if: ${{ matrix.version == 'master' }}
+        if: ${{ matrix.version == 'stable' }}
 
   # A job configuration to do some light validation of the CI configuration.
   validate:
