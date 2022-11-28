@@ -42,7 +42,7 @@ class _EditButtonState extends State<EditButton> {
       onPressed: () {
         widget.state.overlayController.close();
         _overlay = _buildOverlay(context);
-        Overlay.of(context).insert(_overlay!);
+        Overlay.of(context)!.insert(_overlay!);
       },
     );
   }
