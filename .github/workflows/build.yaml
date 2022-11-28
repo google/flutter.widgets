@@ -30,7 +30,6 @@ jobs:
         # Test against the Flutter stable and master SDKs.
         version:
           - stable
-          - master
         # For now, don't test visibility_detector against Flutter stable (3.0).
         # TODO: remove this after Flutter 3.2 ships.
         exclude:
