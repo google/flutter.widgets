@@ -41,7 +41,7 @@ class _CustomCheckboxState extends State<CustomCheckbox> {
   void _showOverlay() {
     widget.state.overlayController.close();
     _overlay = _buildOverlay(context);
-    Overlay.of(context)!.insert(_overlay!);
+    Overlay.of(context).insert(_overlay!);
   }
 
   void _closeOverlay() {
