@@ -19,6 +19,6 @@ dev_dependencies:
 
 screenshots:
   - description: 'Example of tree controller usage.'
-    path: example/screenshots/treeview_demo.webp
+    path: example/screenshots/treeview_demo.png
   - description: 'Example of tree from JSON.'
-    path: example/screenshots/treeview_demo_JSON.webp
+    path: example/screenshots/treeview_demo_JSON.png
