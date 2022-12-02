@@ -345,6 +345,7 @@ class _PositionedListState extends State<PositionedList> {
           } else {
             final itemOffset =
                 box.localToGlobal(Offset.zero, ancestor: viewport).dx;
+            if (!itemOffset.isFinite) continue;
             positions.add(ItemPosition(
                 index: key.value,
                 itemLeadingEdge: (widget.reverse
