@@ -1,3 +1,7 @@
+# 3.0.2
+
+  * Add screenshots
+
 # 3.0.1
 
   * Minor fixes.
