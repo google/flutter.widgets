@@ -30,11 +30,6 @@ jobs:
         # Test against the Flutter stable SDK.
         version:
           - stable
-        # For now, don't test visibility_detector against Flutter stable (3.0).
-        # TODO: remove this after Flutter 3.2 ships.
-        exclude:
-          - package: visibility_detector
-            version: stable
     name: ${{ matrix.package }} / flutter ${{ matrix.version }}
     steps:
       - uses: actions/checkout@v3
