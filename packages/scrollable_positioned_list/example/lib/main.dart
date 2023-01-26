@@ -6,7 +6,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-const numberOfItems = 5001;
 const minItemHeight = 20.0;
 const maxItemHeight = 150.0;
 const scrollDuration = Duration(seconds: 2);
@@ -58,9 +57,12 @@ class _ScrollablePositionedListPageState
   /// Listener that reports the position of items when the list is scrolled.
   final ItemPositionsListener itemPositionsListener =
       ItemPositionsListener.create();
+  late List<int> items;
   late List<double> itemHeights;
   late List<Color> itemColors;
+
   bool reversed = false;
+  bool _keepPosition = false;
 
   /// The alignment to be used next time the user scrolls or jumps to an item.
   double alignment = 0;
@@ -68,8 +70,10 @@ class _ScrollablePositionedListPageState
   @override
   void initState() {
     super.initState();
+    const numberOfItems = 5001;
     final heightGenerator = Random(328902348);
     final colorGenerator = Random(42490823);
+    items = List<int>.generate(numberOfItems, (int i) => i);
     itemHeights = List<double>.generate(
         numberOfItems,
         (int _) =>
@@ -82,26 +86,81 @@ class _ScrollablePositionedListPageState
   @override
   Widget build(BuildContext context) => Material(
         child: OrientationBuilder(
-          builder: (context, orientation) => Column(
-            children: <Widget>[
-              Expanded(
-                child: list(orientation),
-              ),
-              positionsView,
-              Row(
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      scrollControlButtons,
-                      const SizedBox(height: 10),
-                      jumpControlButtons,
-                      alignmentControl,
-                    ],
-                  ),
-                ],
-              )
-            ],
+          builder: (context, orientation) => SafeArea(
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  child: list(orientation),
+                ),
+                positionsView,
+                Row(
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        scrollControlButtons,
+                        const SizedBox(height: 10),
+                        jumpControlButtons,
+                        alignmentControl,
+                        keepPositionWidget
+                      ],
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
+        ),
+      );
+
+  _insertToFirst() {
+    final heightGenerator = Random(328902348);
+    final colorGenerator = Random(42490823);
+    items.insert(0, items[0] - 1);
+    itemHeights.insert(
+        0,
+        heightGenerator.nextDouble() * (maxItemHeight - minItemHeight) +
+            minItemHeight);
+    itemColors.insert(
+        0, Color(colorGenerator.nextInt(randomMax)).withOpacity(1));
+  }
+
+  _insertToLast() {
+    final heightGenerator = Random(328902348);
+    final colorGenerator = Random(42490823);
+    items.add(items.last + 1);
+    itemHeights.add(
+        heightGenerator.nextDouble() * (maxItemHeight - minItemHeight) +
+            minItemHeight);
+    itemColors.add(Color(colorGenerator.nextInt(randomMax)).withOpacity(1));
+  }
+
+  Widget get keepPositionWidget => SizedBox(
+        height: 40,
+        child: Row(
+          children: [
+            Text("Keep Position"),
+            Checkbox(
+                value: _keepPosition,
+                onChanged: (value) {
+                  this.setState(() {
+                    _keepPosition = value ?? false;
+                  });
+                }),
+            ElevatedButton(
+                onPressed: () {
+                  _insertToFirst();
+                  _insertToFirst();
+                  setState(() {});
+                },
+                child: Text("Add to First")),
+            ElevatedButton(
+                onPressed: () {
+                  _insertToLast();
+                  _insertToLast();
+                  setState(() {});
+                },
+                child: Text("Add to Last"))
+          ],
         ),
       );
 
@@ -126,7 +185,7 @@ class _ScrollablePositionedListPageState
       );
 
   Widget list(Orientation orientation) => ScrollablePositionedList.builder(
-        itemCount: numberOfItems,
+        itemCount: items.length,
         itemBuilder: (context, index) => item(index, orientation),
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener,
@@ -134,6 +193,8 @@ class _ScrollablePositionedListPageState
         scrollDirection: orientation == Orientation.portrait
             ? Axis.vertical
             : Axis.horizontal,
+        keepPositionWithoutScroll: _keepPosition,
+        onItemKey: (i) => items[i].toString(),
       );
 
   Widget get positionsView => ValueListenableBuilder<Iterable<ItemPosition>>(
@@ -241,7 +302,7 @@ class _ScrollablePositionedListPageState
       child: Container(
         color: itemColors[i],
         child: Center(
-          child: Text('Item $i'),
+          child: Text('Item ${items[i]}'),
         ),
       ),
     );
