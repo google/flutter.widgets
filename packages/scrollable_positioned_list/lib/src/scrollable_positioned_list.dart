@@ -251,11 +251,21 @@ class ItemScrollController {
     );
   }
 
-  /// Immediately jump the list to the provided [value] via
-  /// [scrollController.jumpTo].
+  /// Immediately jump the list to the provided [value] via [scrollController.jumpTo].
   /// Also see [currentScrollControllerOffset].
   void jumpToPixel(double value) {
     _scrollableListState!.primary.scrollController.jumpTo(value);
+  }
+
+  /// Calls [primary.scrollController.animateTo] with the given values.
+  /// See [currentScrollControllerOffset] to get the current offset.
+  void scrollToPixel({
+    required double offset,
+    required Duration duration,
+    required Curve curve,
+  }) {
+    _scrollableListState!.primary.scrollController
+        .animateTo(offset, duration: duration, curve: curve);
   }
 
   void _attach(_ScrollablePositionedListState scrollableListState) {
