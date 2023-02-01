@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 0.4.0+2
+
+* Fix a bug for updates to render objects that have not been laid out yet.
+
+## 0.4.0+1
+
+* Correct Flutter SDK version dependency to 3.1.0.
+* Replace use of deprecated APIs in the example for compatibility with Flutter v3.1.0.
+
 ## 0.4.0
 
 * Refactor to avoid forcing composition in the layer/render trees.

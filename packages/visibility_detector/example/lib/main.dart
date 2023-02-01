@@ -368,7 +368,10 @@ class DemoPageCell extends StatelessWidget {
       alignment: Alignment.center,
       child: FittedBox(
         fit: BoxFit.scaleDown,
-        child: Text(_cellName, style: Theme.of(context).textTheme.headline4),
+        child: Text(
+          _cellName,
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
       ),
     );
 
@@ -411,7 +414,7 @@ class VisibilityReport extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final headingTextStyle =
-        Theme.of(context).textTheme.headline6!.copyWith(color: Colors.white);
+        Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white);
 
     final heading = Container(
       padding: const EdgeInsets.all(_reportPadding),
@@ -529,7 +532,7 @@ class RowColumn extends Comparable<RowColumn> {
   }
 
   @override
-  int get hashCode => hashValues(row, column);
+  int get hashCode => Object.hash(row, column);
 
   /// See [Comparable.compareTo].  Sorts [RowColumn] objects in row-major order.
   @override

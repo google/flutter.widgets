@@ -1,4 +1,6 @@
-# VisibilityDetector
+[![pub package](https://img.shields.io/pub/v/visibility_detector.svg)](https://pub.dev/packages/visibility_detector)
+
+## VisibilityDetector
 
 A `VisibilityDetector` widget wraps an existing Flutter widget and fires a
 callback when the widget's visibility changes. (It actually reports when the

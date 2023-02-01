@@ -25,6 +25,73 @@ void main() {
 
   tearDown(_positionToVisibilityInfo.clear);
 
+  testWidgets('Offset coming into paint applied to clip',
+      (WidgetTester tester) async {
+    VisibilityInfo? lastInfo;
+    await tester.pumpWidget(
+      Center(
+        child: SizedBox(
+          height: 400,
+          width: 400,
+          child: Transform(
+            transform: Matrix4.identity()..translate(0.0, -300.0),
+            child: ClipRect(
+              clipBehavior: Clip.hardEdge,
+              child: VisibilityDetector(
+                key: UniqueKey(),
+                onVisibilityChanged: (info) {
+                  lastInfo = info;
+                },
+                child: Container(width: 200, height: 350, color: Colors.red),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump(VisibilityDetectorController.instance.updateInterval);
+    expect(lastInfo, isNotNull);
+    expect(lastInfo!.visibleFraction, 1.0);
+    await tester.pumpWidget(const Placeholder());
+    await tester.pump(VisibilityDetectorController.instance.updateInterval);
+  });
+
+  testWidgets('Transform in layer tree, clip on canvas gets transformed',
+      (WidgetTester tester) async {
+    VisibilityInfo? lastInfo;
+    await tester.pumpWidget(
+      Center(
+        child: SizedBox(
+          height: 400,
+          width: 400,
+          child: Transform(
+            transform: Matrix4.identity()
+              ..translate(0.0, -300.0)
+              ..scale(-.9, -.9),
+            child: Opacity(
+              opacity: .8,
+              child: ClipRect(
+                clipBehavior: Clip.hardEdge,
+                child: VisibilityDetector(
+                  key: UniqueKey(),
+                  onVisibilityChanged: (info) {
+                    lastInfo = info;
+                  },
+                  child: Container(width: 200, height: 350, color: Colors.red),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump(VisibilityDetectorController.instance.updateInterval);
+    expect(lastInfo, isNotNull);
+    expect(lastInfo!.visibleFraction, 1.0);
+    await tester.pumpWidget(const Placeholder());
+    await tester.pump(VisibilityDetectorController.instance.updateInterval);
+  });
+
   _wrapTest(
     'VisibilityDetector properly builds',
     callback: (tester) async {

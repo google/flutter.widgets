@@ -293,6 +293,8 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
 
   bool _isTransitioning = false;
 
+  var _animationController;
+
   @override
   void initState() {
     super.initState();
@@ -320,6 +322,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
         .removeListener(_updatePositions);
     secondary.itemPositionsNotifier.itemPositions
         .removeListener(_updatePositions);
+    _animationController?.dispose();
     super.dispose();
   }
 
@@ -507,9 +510,11 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       startAnimationCallback = () {
         SchedulerBinding.instance.addPostFrameCallback((_) {
           startAnimationCallback = () {};
-
-          opacity.parent = _opacityAnimation(opacityAnimationWeights).animate(
-              AnimationController(vsync: this, duration: duration)..forward());
+          _animationController?.dispose();
+          _animationController =
+              AnimationController(vsync: this, duration: duration)..forward();
+          opacity.parent = _opacityAnimation(opacityAnimationWeights)
+              .animate(_animationController);
           secondary.scrollController.jumpTo(-direction *
               (_screenScrollCount *
                       primary.scrollController.position.viewportDimension -
@@ -550,17 +555,19 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       }
     }
 
-    setState(() {
-      if (opacity.value >= 0.5) {
-        // Secondary [ListView] is more visible than the primary; make it the
-        // new primary.
-        var temp = primary;
-        primary = secondary;
-        secondary = temp;
-      }
-      _isTransitioning = false;
-      opacity.parent = const AlwaysStoppedAnimation<double>(0);
-    });
+    if (mounted) {
+      setState(() {
+        if (opacity.value >= 0.5) {
+          // Secondary [ListView] is more visible than the primary; make it the
+          // new primary.
+          var temp = primary;
+          primary = secondary;
+          secondary = temp;
+        }
+        _isTransitioning = false;
+        opacity.parent = const AlwaysStoppedAnimation<double>(0);
+      });
+    }
   }
 
   Animatable<double> _opacityAnimation(List<double> opacityAnimationWeights) {
