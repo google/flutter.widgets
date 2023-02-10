@@ -16,14 +16,18 @@ class NodeWidget extends StatefulWidget {
   final double? indent;
   final double? iconSize;
   final TreeController state;
+  final Widget? primaryIcon;
+  final Widget? secondaryIcon;
 
-  const NodeWidget(
-      {Key? key,
-      required this.treeNode,
-      this.indent,
-      required this.state,
-      this.iconSize})
-      : super(key: key);
+  const NodeWidget({
+    Key? key,
+    required this.treeNode,
+    this.indent,
+    required this.state,
+    this.iconSize,
+    this.primaryIcon,
+    this.secondaryIcon,
+  }) : super(key: key);
 
   @override
   _NodeWidgetState createState() => _NodeWidgetState();
@@ -31,8 +35,7 @@ class NodeWidget extends StatefulWidget {
 
 class _NodeWidgetState extends State<NodeWidget> {
   bool get _isLeaf {
-    return widget.treeNode.children == null ||
-        widget.treeNode.children!.isEmpty;
+    return widget.treeNode.children == null || widget.treeNode.children!.isEmpty;
   }
 
   bool get _isExpanded {
@@ -44,23 +47,25 @@ class _NodeWidgetState extends State<NodeWidget> {
     var icon = _isLeaf
         ? null
         : _isExpanded
-            ? Icons.expand_more
-            : Icons.chevron_right;
+            ? widget.secondaryIcon ?? Icon(Icons.expand_more)
+            : widget.primaryIcon ?? Icon(Icons.chevron_right);
 
-    var onIconPressed = _isLeaf
-        ? null
-        : () => setState(
-            () => widget.state.toggleNodeExpanded(widget.treeNode.key!));
+    var onIconPressed = _isLeaf ? null : () => setState(() => widget.state.toggleNodeExpanded(widget.treeNode.key!));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            IconButton(
-              iconSize: widget.iconSize ?? 24.0,
-              icon: Icon(icon),
-              onPressed: onIconPressed,
+            Material(
+              child: InkWell(
+                borderRadius: BorderRadius.circular(2.00),
+                child: SizedBox.square(
+                  dimension: widget.iconSize ?? 24.0,
+                  child: icon,
+                ),
+                onTap: onIconPressed,
+              ),
             ),
             widget.treeNode.content,
           ],
@@ -68,8 +73,14 @@ class _NodeWidgetState extends State<NodeWidget> {
         if (_isExpanded && !_isLeaf)
           Padding(
             padding: EdgeInsets.only(left: widget.indent!),
-            child: buildNodes(widget.treeNode.children!, widget.indent,
-                widget.state, widget.iconSize),
+            child: buildNodes(
+              widget.treeNode.children!,
+              widget.indent,
+              widget.state,
+              widget.iconSize,
+              widget.primaryIcon,
+              widget.secondaryIcon,
+            ),
           )
       ],
     );
