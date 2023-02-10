@@ -59,10 +59,12 @@ class _ControllerUsageState extends State<ControllerUsage> {
   Widget buildTree() {
     return TreeView(
       treeController: _controller,
+      primaryIcon: Icon(Icons.check_box_outline_blank),
+      secondaryIcon: Icon(Icons.check_box),
       nodes: [
         TreeNode(content: Text("node 1")),
         TreeNode(
-          content: Icon(Icons.audiotrack),
+          content: Text("Icons.audiotrack"),
           children: [
             TreeNode(content: Text("node 21")),
             TreeNode(
@@ -70,7 +72,7 @@ class _ControllerUsageState extends State<ControllerUsage> {
               key: _key,
               children: [
                 TreeNode(
-                  content: Icon(Icons.sentiment_very_satisfied),
+                  content: Text("Icons.sentiment_very_satisfied"),
                 ),
               ],
             ),
