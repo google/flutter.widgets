@@ -410,7 +410,10 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   }
 
   double _cacheExtent(BoxConstraints constraints) => max(
-        constraints.maxHeight * _screenScrollCount,
+        (widget.scrollDirection == Axis.vertical
+                ? constraints.maxHeight
+                : constraints.maxWidth) *
+            _screenScrollCount,
         widget.minCacheExtent ?? 0,
       );
 
