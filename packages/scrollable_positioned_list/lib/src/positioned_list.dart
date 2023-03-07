@@ -29,6 +29,7 @@ class PositionedList extends StatefulWidget {
     Key? key,
     required this.itemCount,
     required this.itemBuilder,
+    this.sliverAppBar,
     this.separatorBuilder,
     this.controller,
     this.itemPositionsNotifier,
@@ -48,6 +49,9 @@ class PositionedList extends StatefulWidget {
         assert(itemBuilder != null),
         assert((positionedIndex == 0) || (positionedIndex < itemCount)),
         super(key: key);
+
+  /// Provide an appbar to the build
+  final SliverAppBar? sliverAppBar;
 
   /// Number of items the [itemBuilder] can produce.
   final int itemCount;
@@ -178,6 +182,7 @@ class _PositionedListState extends State<PositionedList> {
           shrinkWrap: widget.shrinkWrap,
           semanticChildCount: widget.semanticChildCount ?? widget.itemCount,
           slivers: <Widget>[
+            if (widget.sliverAppBar != null) widget.sliverAppBar!,
             if (widget.positionedIndex > 0)
               SliverPadding(
                 padding: _leadingSliverPadding,

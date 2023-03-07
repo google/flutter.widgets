@@ -6,10 +6,10 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:collection/collection.dart' show IterableExtension;
+import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/widgets.dart';
-
 import 'item_positions_listener.dart';
+
 import 'item_positions_notifier.dart';
 import 'positioned_list.dart';
 import 'post_mount_callback.dart';
@@ -34,6 +34,7 @@ class ScrollablePositionedList extends StatefulWidget {
   /// Create a [ScrollablePositionedList] whose items are provided by
   /// [itemBuilder].
   const ScrollablePositionedList.builder({
+    required this.sliverAppBar,
     required this.itemCount,
     required this.itemBuilder,
     Key? key,
@@ -60,6 +61,7 @@ class ScrollablePositionedList extends StatefulWidget {
   /// Create a [ScrollablePositionedList] whose items are provided by
   /// [itemBuilder] and separators provided by [separatorBuilder].
   const ScrollablePositionedList.separated({
+    this.sliverAppBar,
     required this.itemCount,
     required this.itemBuilder,
     required this.separatorBuilder,
@@ -83,6 +85,9 @@ class ScrollablePositionedList extends StatefulWidget {
         assert(separatorBuilder != null),
         itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
         super(key: key);
+
+  /// Provide an appbar to the build
+  final SliverAppBar? sliverAppBar;
 
   /// Number of items the [itemBuilder] can produce.
   final int itemCount;
@@ -368,6 +373,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                   child: NotificationListener<ScrollNotification>(
                     onNotification: (_) => _isTransitioning,
                     child: PositionedList(
+                      sliverAppBar: widget.sliverAppBar,
                       itemBuilder: widget.itemBuilder,
                       separatorBuilder: widget.separatorBuilder,
                       itemCount: widget.itemCount,
@@ -398,6 +404,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                     child: NotificationListener<ScrollNotification>(
                       onNotification: (_) => false,
                       child: PositionedList(
+                        sliverAppBar: widget.sliverAppBar,
                         itemBuilder: widget.itemBuilder,
                         separatorBuilder: widget.separatorBuilder,
                         itemCount: widget.itemCount,
