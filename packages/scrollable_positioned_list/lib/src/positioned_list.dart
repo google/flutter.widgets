@@ -5,7 +5,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/widgets.dart';
 
 import 'element_registry.dart';
 import 'item_positions_listener.dart';
@@ -29,7 +28,9 @@ class PositionedList extends StatefulWidget {
     Key? key,
     required this.itemCount,
     required this.itemBuilder,
-    this.sliverAppBar,
+    required this.hasAppBar,
+    this.appBarTitle,
+    this.appBarBackgroundColor,
     this.separatorBuilder,
     this.controller,
     this.itemPositionsNotifier,
@@ -50,8 +51,14 @@ class PositionedList extends StatefulWidget {
         assert((positionedIndex == 0) || (positionedIndex < itemCount)),
         super(key: key);
 
-  /// Provide an appbar to the build
-  final SliverAppBar? sliverAppBar;
+  /// If an app bar is required
+  final bool hasAppBar;
+
+  /// Title of the app bar
+  final Widget? appBarTitle;
+
+  /// Color of the app bar
+  final Color? appBarBackgroundColor;
 
   /// Number of items the [itemBuilder] can produce.
   final int itemCount;
@@ -182,7 +189,13 @@ class _PositionedListState extends State<PositionedList> {
           shrinkWrap: widget.shrinkWrap,
           semanticChildCount: widget.semanticChildCount ?? widget.itemCount,
           slivers: <Widget>[
-            if (widget.sliverAppBar != null) widget.sliverAppBar!,
+            if (widget.hasAppBar != null)
+              SliverAppBar(
+                  backgroundColor: widget.appBarBackgroundColor,
+                  pinned: false,
+                  snap: true,
+                  floating: true,
+                  title: widget.appBarTitle),
             if (widget.positionedIndex > 0)
               SliverPadding(
                 padding: _leadingSliverPadding,
