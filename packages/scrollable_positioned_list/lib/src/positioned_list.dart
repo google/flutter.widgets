@@ -191,11 +191,11 @@ class _PositionedListState extends State<PositionedList> {
           slivers: <Widget>[
             if (widget.hasAppBar != null)
               SliverAppBar(
-                  backgroundColor: widget.appBarBackgroundColor,
+                  backgroundColor: Theme.of(context).colorScheme.background,
                   pinned: false,
                   snap: true,
                   floating: true,
-                  title: widget.appBarTitle),
+                  title: const Text('Post')),
             if (widget.positionedIndex > 0)
               SliverPadding(
                 padding: _leadingSliverPadding,
