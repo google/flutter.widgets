@@ -180,7 +180,7 @@ class _PositionedListState extends State<PositionedList> {
         elementNotifier: registeredElements,
         child: UnboundedCustomScrollView(
           anchor: widget.alignment,
-          center: _centerKey,
+          //center: _centerKey,
           controller: scrollController,
           scrollDirection: widget.scrollDirection,
           reverse: widget.reverse,
@@ -215,7 +215,7 @@ class _PositionedListState extends State<PositionedList> {
                 ),
               ),
             SliverPadding(
-              key: _centerKey,
+              //key: _centerKey,
               padding: _centerSliverPadding,
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
