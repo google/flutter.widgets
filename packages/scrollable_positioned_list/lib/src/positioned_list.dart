@@ -182,7 +182,7 @@ class _PositionedListState extends State<PositionedList> {
                 floating: true,
                 title: widget.appBarTitle != null
                     ? widget.appBarTitle
-                    : const Text('Post')),
+                    : const Text('Posts')),
           ],
           body: UnboundedCustomScrollView(
             anchor: widget.alignment,
