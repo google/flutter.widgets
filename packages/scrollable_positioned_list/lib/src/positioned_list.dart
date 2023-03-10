@@ -171,6 +171,7 @@ class _PositionedListState extends State<PositionedList> {
   Widget build(BuildContext context) => RegistryWidget(
         elementNotifier: registeredElements,
         child: NestedScrollView(
+          controller: scrollController,
           floatHeaderSlivers: true,
           headerSliverBuilder: (context, innerBoxIsScrolled) => <Widget>[
             SliverAppBar(
@@ -186,7 +187,7 @@ class _PositionedListState extends State<PositionedList> {
           body: UnboundedCustomScrollView(
             anchor: widget.alignment,
             center: _centerKey,
-            controller: scrollController,
+            //controller: scrollController,
             scrollDirection: widget.scrollDirection,
             reverse: widget.reverse,
             cacheExtent: widget.cacheExtent,
