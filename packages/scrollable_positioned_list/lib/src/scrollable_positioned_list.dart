@@ -34,11 +34,9 @@ class ScrollablePositionedList extends StatefulWidget {
   /// Create a [ScrollablePositionedList] whose items are provided by
   /// [itemBuilder].
   const ScrollablePositionedList.builder({
-    required this.hasAppBar,
     required this.itemCount,
     required this.itemBuilder,
     Key? key,
-    this.appBarBackgroundColor,
     this.appBarTitle,
     this.itemScrollController,
     this.shrinkWrap = false,
@@ -63,12 +61,10 @@ class ScrollablePositionedList extends StatefulWidget {
   /// Create a [ScrollablePositionedList] whose items are provided by
   /// [itemBuilder] and separators provided by [separatorBuilder].
   const ScrollablePositionedList.separated({
-    required this.hasAppBar,
     required this.itemCount,
     required this.itemBuilder,
     required this.separatorBuilder,
     Key? key,
-    this.appBarBackgroundColor,
     this.appBarTitle,
     this.shrinkWrap = false,
     this.itemScrollController,
@@ -90,14 +86,8 @@ class ScrollablePositionedList extends StatefulWidget {
         itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
         super(key: key);
 
-  /// If an app bar is required
-  final bool hasAppBar;
-
   /// Title of the app bar
   final Widget? appBarTitle;
-
-  /// Color of the app bar
-  final Color? appBarBackgroundColor;
 
   /// Number of items the [itemBuilder] can produce.
   final int itemCount;
@@ -383,8 +373,6 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                   child: NotificationListener<ScrollNotification>(
                     onNotification: (_) => _isTransitioning,
                     child: PositionedList(
-                      hasAppBar: widget.hasAppBar,
-                      appBarBackgroundColor: widget.appBarBackgroundColor,
                       appBarTitle: widget.appBarTitle,
                       itemBuilder: widget.itemBuilder,
                       separatorBuilder: widget.separatorBuilder,
@@ -416,8 +404,6 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                     child: NotificationListener<ScrollNotification>(
                       onNotification: (_) => false,
                       child: PositionedList(
-                        hasAppBar: widget.hasAppBar,
-                        appBarBackgroundColor: widget.appBarBackgroundColor,
                         appBarTitle: widget.appBarTitle,
                         itemBuilder: widget.itemBuilder,
                         separatorBuilder: widget.separatorBuilder,

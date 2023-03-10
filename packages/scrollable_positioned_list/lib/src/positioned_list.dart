@@ -28,9 +28,7 @@ class PositionedList extends StatefulWidget {
     Key? key,
     required this.itemCount,
     required this.itemBuilder,
-    required this.hasAppBar,
     this.appBarTitle,
-    this.appBarBackgroundColor,
     this.separatorBuilder,
     this.controller,
     this.itemPositionsNotifier,
@@ -51,14 +49,8 @@ class PositionedList extends StatefulWidget {
         assert((positionedIndex == 0) || (positionedIndex < itemCount)),
         super(key: key);
 
-  /// If an app bar is required
-  final bool hasAppBar;
-
   /// Title of the app bar
   final Widget? appBarTitle;
-
-  /// Color of the app bar
-  final Color? appBarBackgroundColor;
 
   /// Number of items the [itemBuilder] can produce.
   final int itemCount;
@@ -178,78 +170,85 @@ class _PositionedListState extends State<PositionedList> {
   @override
   Widget build(BuildContext context) => RegistryWidget(
         elementNotifier: registeredElements,
-        child: UnboundedCustomScrollView(
-          anchor: widget.alignment,
-          //center: _centerKey,
-          controller: scrollController,
-          scrollDirection: widget.scrollDirection,
-          reverse: widget.reverse,
-          cacheExtent: widget.cacheExtent,
-          physics: widget.physics,
-          shrinkWrap: widget.shrinkWrap,
-          semanticChildCount: widget.semanticChildCount ?? widget.itemCount,
-          slivers: <Widget>[
-            if (widget.hasAppBar != null)
-              SliverAppBar(
-                  backgroundColor: Theme.of(context).colorScheme.background,
-                  pinned: false,
-                  snap: true,
-                  floating: true,
-                  title: const Text('Post')),
-            if (widget.positionedIndex > 0)
-              SliverPadding(
-                padding: _leadingSliverPadding,
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) => widget.separatorBuilder == null
-                        ? _buildItem(widget.positionedIndex - (index + 1))
-                        : _buildSeparatedListElement(
-                            2 * widget.positionedIndex - (index + 1)),
-                    childCount: widget.separatorBuilder == null
-                        ? widget.positionedIndex
-                        : 2 * widget.positionedIndex,
-                    addSemanticIndexes: false,
-                    addRepaintBoundaries: widget.addRepaintBoundaries,
-                    addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-                  ),
-                ),
-              ),
-            SliverPadding(
-              //key: _centerKey,
-              padding: _centerSliverPadding,
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) => widget.separatorBuilder == null
-                      ? _buildItem(index + widget.positionedIndex)
-                      : _buildSeparatedListElement(
-                          index + 2 * widget.positionedIndex),
-                  childCount: widget.itemCount != 0 ? 1 : 0,
-                  addSemanticIndexes: false,
-                  addRepaintBoundaries: widget.addRepaintBoundaries,
-                  addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-                ),
-              ),
-            ),
-            if (widget.positionedIndex >= 0 &&
-                widget.positionedIndex < widget.itemCount - 1)
-              SliverPadding(
-                padding: _trailingSliverPadding,
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) => widget.separatorBuilder == null
-                        ? _buildItem(index + widget.positionedIndex + 1)
-                        : _buildSeparatedListElement(
-                            index + 2 * widget.positionedIndex + 1),
-                    childCount: widget.separatorBuilder == null
-                        ? widget.itemCount - widget.positionedIndex - 1
-                        : 2 * (widget.itemCount - widget.positionedIndex - 1),
-                    addSemanticIndexes: false,
-                    addRepaintBoundaries: widget.addRepaintBoundaries,
-                    addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-                  ),
-                ),
-              ),
+        child: NestedScrollView(
+          floatHeaderSlivers: true,
+          headerSliverBuilder: (context, innerBoxIsScrolled) => <Widget>[
+            SliverAppBar(
+                backgroundColor: Theme.of(context).colorScheme.background,
+                surfaceTintColor: Colors.transparent,
+                pinned: false,
+                snap: true,
+                floating: true,
+                title: widget.appBarTitle != null
+                    ? widget.appBarTitle
+                    : const Text('Post')),
           ],
+          body: UnboundedCustomScrollView(
+            anchor: widget.alignment,
+            center: _centerKey,
+            controller: scrollController,
+            scrollDirection: widget.scrollDirection,
+            reverse: widget.reverse,
+            cacheExtent: widget.cacheExtent,
+            physics: widget.physics,
+            shrinkWrap: widget.shrinkWrap,
+            semanticChildCount: widget.semanticChildCount ?? widget.itemCount,
+            slivers: <Widget>[
+              if (widget.positionedIndex > 0)
+                SliverPadding(
+                  padding: _leadingSliverPadding,
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) => widget.separatorBuilder == null
+                          ? _buildItem(widget.positionedIndex - (index + 1))
+                          : _buildSeparatedListElement(
+                              2 * widget.positionedIndex - (index + 1)),
+                      childCount: widget.separatorBuilder == null
+                          ? widget.positionedIndex
+                          : 2 * widget.positionedIndex,
+                      addSemanticIndexes: false,
+                      addRepaintBoundaries: widget.addRepaintBoundaries,
+                      addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+                    ),
+                  ),
+                ),
+              SliverPadding(
+                key: _centerKey,
+                padding: _centerSliverPadding,
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) => widget.separatorBuilder == null
+                        ? _buildItem(index + widget.positionedIndex)
+                        : _buildSeparatedListElement(
+                            index + 2 * widget.positionedIndex),
+                    childCount: widget.itemCount != 0 ? 1 : 0,
+                    addSemanticIndexes: false,
+                    addRepaintBoundaries: widget.addRepaintBoundaries,
+                    addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+                  ),
+                ),
+              ),
+              if (widget.positionedIndex >= 0 &&
+                  widget.positionedIndex < widget.itemCount - 1)
+                SliverPadding(
+                  padding: _trailingSliverPadding,
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) => widget.separatorBuilder == null
+                          ? _buildItem(index + widget.positionedIndex + 1)
+                          : _buildSeparatedListElement(
+                              index + 2 * widget.positionedIndex + 1),
+                      childCount: widget.separatorBuilder == null
+                          ? widget.itemCount - widget.positionedIndex - 1
+                          : 2 * (widget.itemCount - widget.positionedIndex - 1),
+                      addSemanticIndexes: false,
+                      addRepaintBoundaries: widget.addRepaintBoundaries,
+                      addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       );
 
