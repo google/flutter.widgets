@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
@@ -10,8 +11,6 @@ const numberOfItems = 5001;
 const minItemHeight = 20.0;
 const maxItemHeight = 150.0;
 const scrollDuration = Duration(seconds: 2);
-
-const randomMax = 1 << 32;
 
 void main() {
   runApp(ScrollablePositionedListExample());
@@ -46,7 +45,7 @@ class ScrollablePositionedListPage extends StatefulWidget {
   const ScrollablePositionedListPage({Key? key}) : super(key: key);
 
   @override
-  _ScrollablePositionedListPageState createState() =>
+  State<ScrollablePositionedListPage> createState() =>
       _ScrollablePositionedListPageState();
 }
 
@@ -69,14 +68,16 @@ class _ScrollablePositionedListPageState
   void initState() {
     super.initState();
     final heightGenerator = Random(328902348);
-    final colorGenerator = Random(42490823);
     itemHeights = List<double>.generate(
         numberOfItems,
         (int _) =>
             heightGenerator.nextDouble() * (maxItemHeight - minItemHeight) +
             minItemHeight);
-    itemColors = List<Color>.generate(numberOfItems,
-        (int _) => Color(colorGenerator.nextInt(randomMax)).withOpacity(1));
+    itemColors = List<Color>.generate(
+        numberOfItems,
+        (int _) => Color(
+              (Random().nextDouble() * 0xFFFFFF).toInt() << 0,
+            ).withOpacity(1.0));
   }
 
   @override
