@@ -440,16 +440,19 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       index = widget.itemCount - 1;
     }
     if (_isTransitioning) {
+      final scrollCompleter = Completer<void>();
       _stopScroll(canceled: true);
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        _startScroll(
+      SchedulerBinding.instance.addPostFrameCallback((_) async {
+        await _startScroll(
           index: index,
           alignment: alignment,
           duration: duration,
           curve: curve,
           opacityAnimationWeights: opacityAnimationWeights,
         );
+        scrollCompleter.complete();
       });
+      await scrollCompleter.future;
     } else {
       await _startScroll(
         index: index,
