@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-const screenHeight = 400.0;
+const screenHeight = 100.0;
 const screenWidth = 400.0;
 const itemWidth = screenWidth / 10.0;
 const itemCount = 500;
@@ -44,6 +44,11 @@ void main() {
       ),
     );
   }
+
+  final Finder fadeTransitionFinder = find.descendant(
+    of: find.byType(ScrollablePositionedList),
+    matching: find.byType(FadeTransition),
+  );
 
   testWidgets('List positioned with 0 at left', (WidgetTester tester) async {
     final itemPositionsListener = ItemPositionsListener.create();
@@ -171,7 +176,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.getTopLeft(find.text('Item 100')).dx, 0);
-    expect(tester.getBottomRight(find.text('Item 109')).dy, screenWidth);
+    expect(tester.getBottomRight(find.text('Item 109')).dy, screenHeight);
 
     expect(
         itemPositionsListener.itemPositions.value
@@ -193,6 +198,31 @@ void main() {
             .firstWhere((position) => position.index == 109)
             .itemTrailingEdge,
         1);
+  });
+
+  testWidgets('Scroll to 20 without fading', (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    final itemPositionsListener = ItemPositionsListener.create();
+    await setUpWidgetTest(tester,
+        itemScrollController: itemScrollController,
+        itemPositionsListener: itemPositionsListener);
+
+    var fadeTransition = tester.widget<FadeTransition>(fadeTransitionFinder);
+    final initialOpacity = fadeTransition.opacity;
+
+    unawaited(
+        itemScrollController.scrollTo(index: 20, duration: scrollDuration));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(scrollDuration ~/ 2);
+
+    fadeTransition = tester.widget<FadeTransition>(fadeTransitionFinder);
+    expect(fadeTransition.opacity, initialOpacity);
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('Item 14'), findsNothing);
+    expect(find.text('Item 20'), findsOneWidget);
   });
 
   testWidgets('padding test - centered sliver at left',

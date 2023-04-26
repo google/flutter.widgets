@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:collection/collection.dart' show IterableExtension;
+import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 
@@ -410,7 +411,10 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   }
 
   double _cacheExtent(BoxConstraints constraints) => max(
-        constraints.maxHeight * _screenScrollCount,
+        (widget.scrollDirection == Axis.vertical
+                ? constraints.maxHeight
+                : constraints.maxWidth) *
+            _screenScrollCount,
         widget.minCacheExtent ?? 0,
       );
 
