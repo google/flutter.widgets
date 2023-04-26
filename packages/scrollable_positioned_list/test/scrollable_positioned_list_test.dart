@@ -1069,7 +1069,7 @@ void main() {
     await tester.pump();
     await tester.pump(scrollDuration ~/ 2);
 
-    final scrollFuture2 = 
+    final scrollFuture2 =
         itemScrollController.scrollTo(index: 250, duration: scrollDuration);
 
     var futureComplete = false;
