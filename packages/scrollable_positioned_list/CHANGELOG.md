@@ -1,3 +1,7 @@
+# 0.3.6
+* Fix cache extents for horizontal lists
+* scrollTo future doesn't complete until scrolling is done.
+
 # 0.3.5
 * Fix extraneous animation controller declaration in 0.3.4.
 
