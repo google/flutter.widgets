@@ -13,6 +13,7 @@ import 'item_positions_listener.dart';
 import 'item_positions_notifier.dart';
 import 'positioned_list.dart';
 import 'post_mount_callback.dart';
+import 'scroll_offset_listener.dart';
 
 /// Number of screens to scroll when scrolling a long distance.
 const int _screenScrollCount = 2;
@@ -40,6 +41,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.itemScrollController,
     this.shrinkWrap = false,
     ItemPositionsListener? itemPositionsListener,
+    ScrollOffsetListener? scrollOffsetListener,
     this.initialScrollIndex = 0,
     this.initialAlignment = 0,
     this.scrollDirection = Axis.vertical,
@@ -54,6 +56,7 @@ class ScrollablePositionedList extends StatefulWidget {
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
+        scrollOffsetNotifier = scrollOffsetListener as ScrollOffsetNotifier?,
         separatorBuilder = null,
         super(key: key);
 
@@ -67,6 +70,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.shrinkWrap = false,
     this.itemScrollController,
     ItemPositionsListener? itemPositionsListener,
+    ScrollOffsetListener? scrollOffsetListener,
     this.initialScrollIndex = 0,
     this.initialAlignment = 0,
     this.scrollDirection = Axis.vertical,
@@ -82,6 +86,7 @@ class ScrollablePositionedList extends StatefulWidget {
         assert(itemBuilder != null),
         assert(separatorBuilder != null),
         itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
+        scrollOffsetNotifier = scrollOffsetListener as ScrollOffsetNotifier?,
         super(key: key);
 
   /// Number of items the [itemBuilder] can produce.
@@ -100,6 +105,8 @@ class ScrollablePositionedList extends StatefulWidget {
 
   /// Notifier that reports the items laid out in the list after each frame.
   final ItemPositionsNotifier? itemPositionsNotifier;
+
+  final ScrollOffsetNotifier? scrollOffsetNotifier;
 
   /// Index of an item to initially align within the viewport.
   final int initialScrollIndex;
@@ -272,6 +279,8 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
 
   var _animationController;
 
+  double previousOffset = 0;
+
   @override
   void initState() {
     super.initState();
@@ -285,6 +294,12 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     widget.itemScrollController?._attach(this);
     primary.itemPositionsNotifier.itemPositions.addListener(_updatePositions);
     secondary.itemPositionsNotifier.itemPositions.addListener(_updatePositions);
+    primary.scrollController.addListener(() {
+      final currentOffset = primary.scrollController.offset;
+      final offsetChange = currentOffset - previousOffset;
+      previousOffset = currentOffset;
+      widget.scrollOffsetNotifier?.changeController.add(offsetChange);
+    });
   }
 
   @override
