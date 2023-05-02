@@ -2266,6 +2266,24 @@ void main() {
     expect(find.text('Item 70'), findsOneWidget);
     expect(find.text('Item 50'), findsOneWidget);
   });
+
+  testWidgets('List positioned with 5 at top then scroll up so item 3 is at top',
+      (WidgetTester tester) async {
+    // debugPrintGestureArenaDiagnostics = true;
+    final itemPositionsListener = ItemPositionsListener.create();
+    await setUpWidgetTest(tester,
+        initialIndex: 5, itemPositionsListener: itemPositionsListener);
+
+    await tester.drag(
+        find.byType(ScrollablePositionedList), const Offset(0, 2 * itemHeight));
+    await tester.pumpAndSettle();
+
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 3)
+            .itemLeadingEdge,
+        0);
+  });
 }
 
 bool collectSemanticNodes(SemanticsNode root, List<SemanticsNode> nodes) {
