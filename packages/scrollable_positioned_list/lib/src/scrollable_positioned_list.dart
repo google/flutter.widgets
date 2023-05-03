@@ -30,6 +30,9 @@ const int _screenScrollCount = 2;
 /// in the list.  The [itemPositionsNotifier] can be used to get a list of items
 /// currently laid out by the list.
 ///
+/// The [scrollOffsetListener] can be used to get updates about scroll position
+/// changes.
+///
 /// All other parameters are the same as specified in [ListView].
 class ScrollablePositionedList extends StatefulWidget {
   /// Create a [ScrollablePositionedList] whose items are provided by
@@ -106,6 +109,7 @@ class ScrollablePositionedList extends StatefulWidget {
   /// Notifier that reports the items laid out in the list after each frame.
   final ItemPositionsNotifier? itemPositionsNotifier;
 
+  /// Notifier that reports the changes to the scroll offset.
   final ScrollOffsetNotifier? scrollOffsetNotifier;
 
   /// Index of an item to initially align within the viewport.

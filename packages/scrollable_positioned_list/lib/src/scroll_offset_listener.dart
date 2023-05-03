@@ -1,6 +1,9 @@
 import 'dart:async';
 
+// Provides an affordance for listening to scroll offset changes.
 abstract class ScrollOffsetListener {
+
+  // Stream of scroll offset deltas.
   Stream<double> get changes;
 
   factory ScrollOffsetListener.create() => ScrollOffsetNotifier();
