@@ -14,6 +14,7 @@ import 'item_positions_notifier.dart';
 import 'positioned_list.dart';
 import 'post_mount_callback.dart';
 import 'scroll_offset_listener.dart';
+import 'scroll_offset_notifier.dart';
 
 /// Number of screens to scroll when scrolling a long distance.
 const int _screenScrollCount = 2;
