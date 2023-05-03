@@ -1,21 +1,29 @@
 import 'dart:async';
 
-// Provides an affordance for listening to scroll offset changes.
+/// Provides an affordance for listening to scroll offset changes.
 abstract class ScrollOffsetListener {
-
-  // Stream of scroll offset deltas.
+  /// Stream of scroll offset deltas.
   Stream<double> get changes;
 
-  factory ScrollOffsetListener.create() => ScrollOffsetNotifier();
+  /// Construct a ScrollOffsetListener.
+  ///
+  /// Set [recordProgrammaticScrolls] to false to prevent reporting of 
+  /// programmatic scrolls.
+  factory ScrollOffsetListener.create(
+          {bool recordProgrammaticScrolls = true}) =>
+      ScrollOffsetNotifier(
+          recordProgrammaticScrolls: recordProgrammaticScrolls);
 }
 
-class ScrollOffsetNotifier 
-    implements ScrollOffsetListener {
+class ScrollOffsetNotifier implements ScrollOffsetListener {
+  final bool recordProgrammaticScrolls;
+
+  ScrollOffsetNotifier({this.recordProgrammaticScrolls = true});
 
   final _streamController = StreamController<double>();
 
   @override
-  Stream<double> get changes => _streamController.stream; 
+  Stream<double> get changes => _streamController.stream;
 
   StreamController get changeController => _streamController;
 

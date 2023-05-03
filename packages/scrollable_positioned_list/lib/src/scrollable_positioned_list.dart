@@ -302,7 +302,10 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       final currentOffset = primary.scrollController.offset;
       final offsetChange = currentOffset - previousOffset;
       previousOffset = currentOffset;
-      widget.scrollOffsetNotifier?.changeController.add(offsetChange);
+      if (!_isTransitioning |
+          (widget.scrollOffsetNotifier?.recordProgrammaticScrolls ?? false)) {
+        widget.scrollOffsetNotifier?.changeController.add(offsetChange);
+      }
     });
   }
 
