@@ -2270,7 +2270,6 @@ void main() {
   testWidgets(
       'List positioned with 5 at top then scroll up so item 3 is at top',
       (WidgetTester tester) async {
-    // debugPrintGestureArenaDiagnostics = true;
     final itemPositionsListener = ItemPositionsListener.create();
     await setUpWidgetTest(tester,
         initialIndex: 5, itemPositionsListener: itemPositionsListener);
