@@ -9,11 +9,10 @@ abstract class ScrollOffsetListener {
 
   /// Construct a ScrollOffsetListener.
   ///
-  /// Set [recordProgrammaticScrolls] to false to prevent reporting of 
+  /// Set [recordProgrammaticScrolls] to false to prevent reporting of
   /// programmatic scrolls.
   factory ScrollOffsetListener.create(
           {bool recordProgrammaticScrolls = true}) =>
       ScrollOffsetNotifier(
           recordProgrammaticScrolls: recordProgrammaticScrolls);
 }
-
