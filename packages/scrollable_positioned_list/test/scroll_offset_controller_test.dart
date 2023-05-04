@@ -79,8 +79,11 @@ void main() {
 
     ScrollOffsetController scrollOffsetController = ScrollOffsetController();
 
-    await setUpWidgetTest(tester,
-        scrollOffsetController: scrollOffsetController, initialIndex: 5);
+    await setUpWidgetTest(
+      tester,
+      scrollOffsetController: scrollOffsetController,
+      initialIndex: 5,
+    );
 
     final originalOffest = tester.getTopLeft(find.text('Item 5')).dy;
 
@@ -95,113 +98,98 @@ void main() {
     expect(newOffset - originalOffest, scrollDistance);
   });
 
-  // testWidgets('Manual scroll left 10 pixels', (WidgetTester tester) async {
-  //   final scrollDistance = 50.0;
+  testWidgets('Programtically scroll left 50 pixels',
+      (WidgetTester tester) async {
+    final scrollDistance = 50.0;
 
-  //   final itemScrollController = ItemScrollController();
-  //   final itemPositionsListener = ItemPositionsListener.create();
-  //   final ScrollSum scrollSummer = ScrollSum();
+    ScrollOffsetController scrollOffsetController = ScrollOffsetController();
 
-  //   await setUpWidgetTest(tester,
-  //       itemScrollController: itemScrollController,
-  //       itemPositionsListener: itemPositionsListener,
-  //       scrollOffsetListener: scrollSummer.scrollOffsetListener,
-  //       scrollDirection: Axis.horizontal,
-  //       initialIndex: 5);
+    await setUpWidgetTest(
+      tester,
+      scrollOffsetController: scrollOffsetController,
+      initialIndex: 5,
+      scrollDirection: Axis.horizontal,
+    );
 
-  //   expect(
-  //       itemPositionsListener.itemPositions.value
-  //           .firstWhere((position) => position.index == 5)
-  //           .itemLeadingEdge,
-  //       0);
+    final originalOffest = tester.getTopLeft(find.text('Item 5')).dx;
 
-  //   await tester.drag(
-  //       find.byType(ScrollablePositionedList), Offset(-scrollDistance, 0));
-  //   await tester.pumpAndSettle();
+    unawaited(scrollOffsetController.animateScroll(
+      offset: -scrollDistance,
+      duration: scrollDuration,
+    ));
+    await tester.pumpAndSettle();
 
-  //   expect(scrollSummer.totalScroll, scrollDistance);
-  // });
+    final newOffset = tester.getTopLeft(find.text('Item 5')).dx;
 
-  // testWidgets('Programmatic scroll to item 100 with programmatic recording on',
-  //     (WidgetTester tester) async {
-  //   final itemScrollController = ItemScrollController();
-  //   final itemPositionsListener = ItemPositionsListener.create();
-  //   final ScrollSum scrollSummer = ScrollSum();
+    expect(newOffset - originalOffest, scrollDistance);
+  });
 
-  //   await setUpWidgetTest(tester,
-  //       itemScrollController: itemScrollController,
-  //       itemPositionsListener: itemPositionsListener,
-  //       scrollOffsetListener: scrollSummer.scrollOffsetListener,
-  //       scrollDirection: Axis.horizontal,
-  //       initialIndex: 5);
+  testWidgets('Programtically scroll down 50 pixels, stop half way',
+      (WidgetTester tester) async {
+    final scrollDistance = 50.0;
 
-  //   unawaited(
-  //       itemScrollController.scrollTo(index: 100, duration: scrollDuration));
+    ScrollOffsetController scrollOffsetController = ScrollOffsetController();
 
-  //   await tester.pumpAndSettle();
+    await setUpWidgetTest(
+      tester,
+      scrollOffsetController: scrollOffsetController,
+      initialIndex: 5,
+    );
 
-  //   expect(scrollSummer.totalScroll, 2 * screenHeight);
-  // });
+    final originalOffest = tester.getTopLeft(find.text('Item 5')).dy;
 
-  // testWidgets('Programmatic scroll to item 100 with programmatic recording off',
-  //     (WidgetTester tester) async {
-  //   final itemScrollController = ItemScrollController();
-  //   final itemPositionsListener = ItemPositionsListener.create();
-  //   final ScrollSum scrollSummer = ScrollSum(recordProgrammaticScrolls: false);
+    unawaited(scrollOffsetController.animateScroll(
+      offset: -scrollDistance,
+      duration: scrollDuration,
+    ));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(scrollDuration ~/ 2);
 
-  //   await setUpWidgetTest(tester,
-  //       itemScrollController: itemScrollController,
-  //       itemPositionsListener: itemPositionsListener,
-  //       scrollOffsetListener: scrollSummer.scrollOffsetListener,
-  //       scrollDirection: Axis.horizontal,
-  //       initialIndex: 5);
+    await tester.tap(find.byType(ScrollablePositionedList));
+    await tester.pumpAndSettle();
 
-  //   unawaited(
-  //       itemScrollController.scrollTo(index: 100, duration: scrollDuration));
+    final newOffset = tester.getTopLeft(find.text('Item 5')).dy;
 
-  //   await tester.pumpAndSettle();
+    expect(newOffset - originalOffest, scrollDistance ~/ 2);
 
-  //   expect(scrollSummer.totalScroll, 0);
-  // });
+    await tester.pumpAndSettle();
+  });
 
-  // testWidgets('Manual scroll up 10 pixels with programmatic recording off',
-  //     (WidgetTester tester) async {
-  //   final scrollDistance = 50.0;
+  testWidgets(
+      'Programtically scroll down 50 pixels, stop half way and go back 12',
+      (WidgetTester tester) async {
+    final scrollDistance = 50.0;
+    final scrollBack = 12.0;
 
-  //   final itemScrollController = ItemScrollController();
-  //   final itemPositionsListener = ItemPositionsListener.create();
-  //   final ScrollSum scrollSummer = ScrollSum(recordProgrammaticScrolls: false);
+    ScrollOffsetController scrollOffsetController = ScrollOffsetController();
 
-  //   await setUpWidgetTest(tester,
-  //       itemScrollController: itemScrollController,
-  //       itemPositionsListener: itemPositionsListener,
-  //       scrollOffsetListener: scrollSummer.scrollOffsetListener,
-  //       initialIndex: 5);
+    await setUpWidgetTest(
+      tester,
+      scrollOffsetController: scrollOffsetController,
+      initialIndex: 5,
+    );
 
-  //   expect(
-  //       itemPositionsListener.itemPositions.value
-  //           .firstWhere((position) => position.index == 5)
-  //           .itemLeadingEdge,
-  //       0);
+    final originalOffest = tester.getTopLeft(find.text('Item 5')).dy;
 
-  //   await tester.drag(
-  //       find.byType(ScrollablePositionedList), Offset(0, -scrollDistance));
-  //   await tester.pumpAndSettle();
+    unawaited(scrollOffsetController.animateScroll(
+      offset: -scrollDistance,
+      duration: scrollDuration,
+    ));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(scrollDuration ~/ 2);
 
-  //   expect(scrollSummer.totalScroll, scrollDistance);
-  // });
-}
+    unawaited(scrollOffsetController.animateScroll(
+      offset: scrollBack,
+      duration: scrollDuration,
+    ));
+    await tester.pumpAndSettle();
 
-class ScrollSum {
-  final bool recordProgrammaticScrolls;
-  double totalScroll = 0.0;
-  final scrollOffsetListener;
+    final newOffset = tester.getTopLeft(find.text('Item 5')).dy;
 
-  ScrollSum({this.recordProgrammaticScrolls = true})
-      : scrollOffsetListener = ScrollOffsetListener.create(
-            recordProgrammaticScrolls: recordProgrammaticScrolls) {
-    scrollOffsetListener.changes.listen((event) {
-      totalScroll += event;
-    });
-  }
+    expect(newOffset - originalOffest, (scrollDistance ~/ 2) - scrollBack);
+
+    await tester.pumpAndSettle();
+  });
 }
