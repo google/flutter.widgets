@@ -1,3 +1,6 @@
+# 0.3.7
+* Add ScrollOffsetListener to allow listening to changes in scroll offset.
+
 # 0.3.6
 * Fix cache extents for horizontal lists
 * scrollTo future doesn't complete until scrolling is done.
