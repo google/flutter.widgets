@@ -198,7 +198,7 @@ class _ScrollablePositionedListPageState
         ],
       );
 
-    Widget get scrollOffsetControlButtons =>  Row(
+  Widget get scrollOffsetControlButtons => Row(
         children: <Widget>[
           const Text('scroll by'),
           scrollOffsetButton(-1000),
@@ -222,14 +222,14 @@ class _ScrollablePositionedListPageState
         ],
       );
 
-  ButtonStyle _scrollButtonStyle({required double horizonalPadding}) => ButtonStyle(
-    padding: MaterialStateProperty.all(
-      EdgeInsets.symmetric(horizontal: horizonalPadding, vertical: 0),
-    ),
-    minimumSize: MaterialStateProperty.all(Size.zero),
-    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-  );
-
+  ButtonStyle _scrollButtonStyle({required double horizonalPadding}) =>
+      ButtonStyle(
+        padding: MaterialStateProperty.all(
+          EdgeInsets.symmetric(horizontal: horizonalPadding, vertical: 0),
+        ),
+        minimumSize: MaterialStateProperty.all(Size.zero),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      );
 
   Widget scrollItemButton(int value) => TextButton(
         key: ValueKey<String>('Scroll$value'),
