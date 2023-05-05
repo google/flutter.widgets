@@ -111,7 +111,6 @@ class ScrollablePositionedList extends StatefulWidget {
   /// Notifier that reports the items laid out in the list after each frame.
   final ItemPositionsNotifier? itemPositionsNotifier;
 
-
   final ScrollOffsetController? scrollOffsetController;
 
   /// Notifier that reports the changes to the scroll offset.
@@ -271,28 +270,28 @@ class ItemScrollController {
   }
 }
 
-
 /// Controller to scroll a certain number of pixels relative to the current
 /// scroll offset.
-/// 
+///
 /// Scrolls [offset] pixels relative to the current scroll offset. [offset] can
 /// be positive or negative.
-/// 
-/// This is an experimental API and is subject to change.  
+///
+/// This is an experimental API and is subject to change.
 /// Behavior may be ill-defined in some cases.  Please file bugs.
 class ScrollOffsetController {
   Future<void> animateScroll(
       {required double offset,
       required Duration duration,
       Curve curve = Curves.linear}) async {
-        final currentPosition = _scrollableListState!.primary.scrollController.offset;
-        final newPosition = currentPosition + offset;
-        await _scrollableListState!.primary.scrollController.animateTo(
-          newPosition,
-          duration: duration,
-          curve: curve,
-        );
-      }
+    final currentPosition =
+        _scrollableListState!.primary.scrollController.offset;
+    final newPosition = currentPosition + offset;
+    await _scrollableListState!.primary.scrollController.animateTo(
+      newPosition,
+      duration: duration,
+      curve: curve,
+    );
+  }
 
   _ScrollablePositionedListState? _scrollableListState;
 
