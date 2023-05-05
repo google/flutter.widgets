@@ -1,5 +1,6 @@
 # 0.3.8
 * Add ScrollOffsetController to allow pixel-based changes in offset.
+* Bump min sdk version to 2.15.0
 
 # 0.3.7
 * Add ScrollOffsetListener to allow listening to changes in scroll offset.
