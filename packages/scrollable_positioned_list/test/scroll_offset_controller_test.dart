@@ -227,40 +227,4 @@ void main() {
 
     await tester.pumpAndSettle();
   });
-
-  // TODO: Figure out the expected behavior here.
-  // testWidgets(
-  //     'Programtically scroll to item 100, stop half way and then programtically scroll down 50 pixels',
-  //     (WidgetTester tester) async {
-  //   final scrollDistance = 50.0;
-
-  //   ScrollOffsetController scrollOffsetController = ScrollOffsetController();
-  //   ItemScrollController itemScrollController = ItemScrollController();
-  //   ItemPositionsListener itemPositionsListener =
-  //       ItemPositionsListener.create();
-
-  //   await setUpWidgetTest(
-  //     tester,
-  //     scrollOffsetController: scrollOffsetController,
-  //     itemScrollController: itemScrollController,
-  //     itemPositionsListener: itemPositionsListener,
-  //     initialIndex: 5,
-  //   );
-
-  //   unawaited(
-  //       itemScrollController.scrollTo(index: 100, duration: scrollDuration));
-  //   await tester.pump();
-  //   await tester.pump();
-  //   await tester.pump(scrollDuration ~/ 2);
-
-  //   unawaited(scrollOffsetController.animateScroll(
-  //     offset: -scrollDistance,
-  //     duration: scrollDuration,
-  //   ));
-  //   await tester.pumpAndSettle();
-
-  //   print(itemPositionsListener.itemPositions.value);
-
-  //   // expect(tester.getTopLeft(find.text('Item 15')).dy, 0);
-  // });
 }

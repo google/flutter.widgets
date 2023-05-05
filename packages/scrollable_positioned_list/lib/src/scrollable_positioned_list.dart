@@ -274,6 +274,13 @@ class ItemScrollController {
 }
 
 
+/// Controller to scroll a certain number of pixels relative to the current
+/// scroll offset.
+/// 
+/// Scrolls [offset] pixels relative to the current scroll offset. [offset] can
+/// be positive or negative.
+/// 
+/// This is an experimental API and is subject to change.
 class ScrollOffsetController {
   Future<void> animateScroll(
       {required double offset,
