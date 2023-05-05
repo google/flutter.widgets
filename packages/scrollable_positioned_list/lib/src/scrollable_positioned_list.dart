@@ -10,11 +10,9 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-import 'item_positions_listener.dart';
 import 'item_positions_notifier.dart';
 import 'positioned_list.dart';
 import 'post_mount_callback.dart';
-import 'scroll_offset_listener.dart';
 import 'scroll_offset_notifier.dart';
 
 /// Number of screens to scroll when scrolling a long distance.
@@ -280,7 +278,8 @@ class ItemScrollController {
 /// Scrolls [offset] pixels relative to the current scroll offset. [offset] can
 /// be positive or negative.
 /// 
-/// This is an experimental API and is subject to change.
+/// This is an experimental API and is subject to change.  
+/// Behavior may be ill-defined in some cases.  Please file bugs.
 class ScrollOffsetController {
   Future<void> animateScroll(
       {required double offset,

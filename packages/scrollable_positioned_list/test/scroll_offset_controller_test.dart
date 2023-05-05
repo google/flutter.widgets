@@ -197,7 +197,6 @@ void main() {
       'Programtically scroll down 50 pixels, stop half way and then programtically scroll to iten 100',
       (WidgetTester tester) async {
     final scrollDistance = 50.0;
-    final scrollBack = 12.0;
 
     ScrollOffsetController scrollOffsetController = ScrollOffsetController();
     ItemScrollController itemScrollController = ItemScrollController();
