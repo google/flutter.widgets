@@ -8,12 +8,11 @@ import 'dart:math';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-import 'item_positions_listener.dart';
 import 'item_positions_notifier.dart';
 import 'positioned_list.dart';
 import 'post_mount_callback.dart';
-import 'scroll_offset_listener.dart';
 import 'scroll_offset_notifier.dart';
 
 /// Number of screens to scroll when scrolling a long distance.
@@ -45,6 +44,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.itemScrollController,
     this.shrinkWrap = false,
     ItemPositionsListener? itemPositionsListener,
+    this.scrollOffsetController,
     ScrollOffsetListener? scrollOffsetListener,
     this.initialScrollIndex = 0,
     this.initialAlignment = 0,
@@ -74,6 +74,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.shrinkWrap = false,
     this.itemScrollController,
     ItemPositionsListener? itemPositionsListener,
+    this.scrollOffsetController,
     ScrollOffsetListener? scrollOffsetListener,
     this.initialScrollIndex = 0,
     this.initialAlignment = 0,
@@ -109,6 +110,8 @@ class ScrollablePositionedList extends StatefulWidget {
 
   /// Notifier that reports the items laid out in the list after each frame.
   final ItemPositionsNotifier? itemPositionsNotifier;
+
+  final ScrollOffsetController? scrollOffsetController;
 
   /// Notifier that reports the changes to the scroll offset.
   final ScrollOffsetNotifier? scrollOffsetNotifier;
@@ -267,6 +270,41 @@ class ItemScrollController {
   }
 }
 
+/// Controller to scroll a certain number of pixels relative to the current
+/// scroll offset.
+///
+/// Scrolls [offset] pixels relative to the current scroll offset. [offset] can
+/// be positive or negative.
+///
+/// This is an experimental API and is subject to change.
+/// Behavior may be ill-defined in some cases.  Please file bugs.
+class ScrollOffsetController {
+  Future<void> animateScroll(
+      {required double offset,
+      required Duration duration,
+      Curve curve = Curves.linear}) async {
+    final currentPosition =
+        _scrollableListState!.primary.scrollController.offset;
+    final newPosition = currentPosition + offset;
+    await _scrollableListState!.primary.scrollController.animateTo(
+      newPosition,
+      duration: duration,
+      curve: curve,
+    );
+  }
+
+  _ScrollablePositionedListState? _scrollableListState;
+
+  void _attach(_ScrollablePositionedListState scrollableListState) {
+    assert(_scrollableListState == null);
+    _scrollableListState = scrollableListState;
+  }
+
+  void _detach() {
+    _scrollableListState = null;
+  }
+}
+
 class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     with TickerProviderStateMixin {
   /// Details for the primary (active) [ListView].
@@ -297,6 +335,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       primary.target = widget.itemCount - 1;
     }
     widget.itemScrollController?._attach(this);
+    widget.scrollOffsetController?._attach(this);
     primary.itemPositionsNotifier.itemPositions.addListener(_updatePositions);
     secondary.itemPositionsNotifier.itemPositions.addListener(_updatePositions);
     primary.scrollController.addListener(() {
@@ -311,8 +350,16 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   }
 
   @override
+  void activate() {
+    super.activate();
+    widget.itemScrollController?._attach(this);
+    widget.scrollOffsetController?._attach(this);
+  }
+
+  @override
   void deactivate() {
     widget.itemScrollController?._detach();
+    widget.scrollOffsetController?._detach();
     super.deactivate();
   }
 
