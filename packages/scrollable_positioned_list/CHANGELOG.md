@@ -1,3 +1,14 @@
+# 0.3.8
+* Add ScrollOffsetController to allow pixel-based changes in offset.
+* Bump min sdk version to 2.15.0
+
+# 0.3.7
+* Add ScrollOffsetListener to allow listening to changes in scroll offset.
+
+# 0.3.6
+* Fix cache extents for horizontal lists
+* scrollTo future doesn't complete until scrolling is done.
+
 # 0.3.5
 * Fix extraneous animation controller declaration in 0.3.4.
 

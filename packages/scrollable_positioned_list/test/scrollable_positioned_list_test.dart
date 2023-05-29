@@ -1058,6 +1058,34 @@ void main() {
     expect(find.text('Item 100'), findsNothing);
   });
 
+  testWidgets("Second scroll future doesn't complete until scroll is done",
+      (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
+
+    unawaited(
+        itemScrollController.scrollTo(index: 100, duration: scrollDuration));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(scrollDuration ~/ 2);
+
+    final scrollFuture2 =
+        itemScrollController.scrollTo(index: 250, duration: scrollDuration);
+
+    var futureComplete = false;
+    unawaited(scrollFuture2.then((_) => futureComplete = true));
+
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(scrollDuration ~/ 2);
+
+    expect(futureComplete, isFalse);
+
+    await tester.pumpAndSettle();
+
+    expect(futureComplete, isTrue);
+  });
+
   testWidgets('Scroll to 250, scroll to 100, scroll to 0 half way',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
@@ -2237,6 +2265,24 @@ void main() {
 
     expect(find.text('Item 70'), findsOneWidget);
     expect(find.text('Item 50'), findsOneWidget);
+  });
+
+  testWidgets(
+      'List positioned with 5 at top then scroll up so item 3 is at top',
+      (WidgetTester tester) async {
+    final itemPositionsListener = ItemPositionsListener.create();
+    await setUpWidgetTest(tester,
+        initialIndex: 5, itemPositionsListener: itemPositionsListener);
+
+    await tester.drag(
+        find.byType(ScrollablePositionedList), const Offset(0, 2 * itemHeight));
+    await tester.pumpAndSettle();
+
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 3)
+            .itemLeadingEdge,
+        0);
   });
 }
 
