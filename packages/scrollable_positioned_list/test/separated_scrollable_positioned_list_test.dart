@@ -33,9 +33,8 @@ void main() {
     bool addRepaintBoundaries = true,
     bool addAutomaticKeepAlives = true,
   }) async {
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
 
     await tester.pumpWidget(
       MaterialApp(
@@ -100,9 +99,8 @@ void main() {
   testWidgets('List positioned with 0 at top - use default values',
       (WidgetTester tester) async {
     final itemPositionsListener = ItemPositionsListener.create();
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
 
     await tester.pumpWidget(
       MaterialApp(
@@ -484,9 +482,8 @@ void main() {
 
   testWidgets('Empty list then update to single item list',
       (WidgetTester tester) async {
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
 
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
@@ -528,9 +525,8 @@ void main() {
 
   testWidgets('ItemPositions: Empty list then update to 10 items list',
       (WidgetTester tester) async {
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
 
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();

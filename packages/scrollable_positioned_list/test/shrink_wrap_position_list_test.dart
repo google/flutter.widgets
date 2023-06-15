@@ -25,9 +25,8 @@ void main() {
     int itemCount = defaultItemCount,
     bool reverse = false,
   }) async {
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
 
     await tester.pumpWidget(
       MaterialApp(
@@ -418,9 +417,8 @@ void main() {
   testWidgets('test nested positioned list', (WidgetTester tester) async {
     var itemCount = 50;
     var key = const Key('short_list');
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
 
     await tester.pumpWidget(
       MaterialApp(
