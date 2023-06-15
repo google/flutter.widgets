@@ -138,7 +138,9 @@ class _DemoState extends State<Demo> {
     return [
       TextButton(
         onPressed: () async => await launchUrl(
-            Uri.parse('https://github.com/google/flutter.widgets/tree/master/packages/self_storing_input/example'),),
+          Uri.parse(
+              'https://github.com/google/flutter.widgets/tree/master/packages/self_storing_input/example'),
+        ),
         child: Text(
           'Source Code',
           style: TextStyle(
