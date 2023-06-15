@@ -1,3 +1,7 @@
+# 4.0.2
+
+* Migrate the example to null safety.
+
 # 4.0.1
 
   * Minor fixes.
