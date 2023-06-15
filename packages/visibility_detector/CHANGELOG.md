@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.4.0+3
+
+* Correct minimum Dart SDK constraints to 2.14.0.
+* Add ignores for unnecessary casts due to upcoming changes in Flutter.
+
 ## 0.4.0+2
 
 * Fix a bug for updates to render objects that have not been laid out yet.
