@@ -1,3 +1,7 @@
+# 0.3.8+1
+* Migrate tests off deprecated APIs.
+* Bump min Flutter version to 3.1.0.
+
 # 0.3.8
 * Add ScrollOffsetController to allow pixel-based changes in offset.
 * Bump min sdk version to 2.15.0

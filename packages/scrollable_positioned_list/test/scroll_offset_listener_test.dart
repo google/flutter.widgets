@@ -36,9 +36,8 @@ void main() {
     double? minCacheExtent,
     bool variableHeight = false,
   }) async {
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
 
     await tester.pumpWidget(
       MaterialApp(
