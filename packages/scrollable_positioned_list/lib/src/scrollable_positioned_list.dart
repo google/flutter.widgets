@@ -260,6 +260,11 @@ class ItemScrollController {
     );
   }
 
+  /// stop scroll
+  void stopScroll({bool canceled = false}) {
+    _scrollableListState!._stopScroll(canceled: canceled);
+  }
+
   void _attach(_ScrollablePositionedListState scrollableListState) {
     assert(_scrollableListState == null);
     _scrollableListState = scrollableListState;
