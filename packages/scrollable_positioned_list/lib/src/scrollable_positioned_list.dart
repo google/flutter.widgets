@@ -279,12 +279,21 @@ class ItemScrollController {
 /// This is an experimental API and is subject to change.
 /// Behavior may be ill-defined in some cases.  Please file bugs.
 class ScrollOffsetController {
-  Future<void> animateScroll(
-      {required double offset,
-      required Duration duration,
-      Curve curve = Curves.linear}) async {
-    final currentPosition =
-        _scrollableListState!.primary.scrollController.offset;
+  _ScrollablePositionedListState? _scrollableListState;
+
+  void _attach(_ScrollablePositionedListState scrollableListState) {
+    assert(_scrollableListState == null);
+    _scrollableListState = scrollableListState;
+  }
+
+  double get currentPosition =>
+      _scrollableListState!.primary.scrollController.offset;
+
+  Future<void> animateScroll({
+    required double offset,
+    required Duration duration,
+    Curve curve = Curves.linear,
+  }) async {
     final newPosition = currentPosition + offset;
     await _scrollableListState!.primary.scrollController.animateTo(
       newPosition,
@@ -293,11 +302,13 @@ class ScrollOffsetController {
     );
   }
 
-  _ScrollablePositionedListState? _scrollableListState;
-
-  void _attach(_ScrollablePositionedListState scrollableListState) {
-    assert(_scrollableListState == null);
-    _scrollableListState = scrollableListState;
+  void moveScroll({
+    required double offset,
+  }) {
+    final newPosition = currentPosition + offset;
+    _scrollableListState!.primary.scrollController.jumpTo(
+      newPosition,
+    );
   }
 
   void _detach() {
