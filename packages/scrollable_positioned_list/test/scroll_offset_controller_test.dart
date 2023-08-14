@@ -72,7 +72,7 @@ void main() {
     );
   }
 
-  testWidgets('Programtically scroll down 50 pixels',
+  testWidgets('Programmatically scroll down 50 pixels',
       (WidgetTester tester) async {
     final scrollDistance = 50.0;
 
@@ -84,7 +84,7 @@ void main() {
       initialIndex: 5,
     );
 
-    final originalOffest = tester.getTopLeft(find.text('Item 5')).dy;
+    final originalOffset = tester.getTopLeft(find.text('Item 5')).dy;
 
     unawaited(scrollOffsetController.animateScroll(
       offset: -scrollDistance,
@@ -94,10 +94,10 @@ void main() {
 
     final newOffset = tester.getTopLeft(find.text('Item 5')).dy;
 
-    expect(newOffset - originalOffest, scrollDistance);
+    expect(newOffset - originalOffset, scrollDistance);
   });
 
-  testWidgets('Programtically scroll left 50 pixels',
+  testWidgets('Programmatically scroll left 50 pixels',
       (WidgetTester tester) async {
     final scrollDistance = 50.0;
 
@@ -110,7 +110,7 @@ void main() {
       scrollDirection: Axis.horizontal,
     );
 
-    final originalOffest = tester.getTopLeft(find.text('Item 5')).dx;
+    final originalOffset = tester.getTopLeft(find.text('Item 5')).dx;
 
     unawaited(scrollOffsetController.animateScroll(
       offset: -scrollDistance,
@@ -120,10 +120,10 @@ void main() {
 
     final newOffset = tester.getTopLeft(find.text('Item 5')).dx;
 
-    expect(newOffset - originalOffest, scrollDistance);
+    expect(newOffset - originalOffset, scrollDistance);
   });
 
-  testWidgets('Programtically scroll down 50 pixels, stop half way',
+  testWidgets('Programmatically scroll down 50 pixels, stop half way',
       (WidgetTester tester) async {
     final scrollDistance = 50.0;
 
@@ -135,7 +135,7 @@ void main() {
       initialIndex: 5,
     );
 
-    final originalOffest = tester.getTopLeft(find.text('Item 5')).dy;
+    final originalOffset = tester.getTopLeft(find.text('Item 5')).dy;
 
     unawaited(scrollOffsetController.animateScroll(
       offset: -scrollDistance,
@@ -150,13 +150,13 @@ void main() {
 
     final newOffset = tester.getTopLeft(find.text('Item 5')).dy;
 
-    expect(newOffset - originalOffest, scrollDistance ~/ 2);
+    expect(newOffset - originalOffset, scrollDistance ~/ 2);
 
     await tester.pumpAndSettle();
   });
 
   testWidgets(
-      'Programtically scroll down 50 pixels, stop half way and go back 12',
+      'Programmatically scroll down 50 pixels, stop half way and go back 12',
       (WidgetTester tester) async {
     final scrollDistance = 50.0;
     final scrollBack = 12.0;
@@ -169,7 +169,7 @@ void main() {
       initialIndex: 5,
     );
 
-    final originalOffest = tester.getTopLeft(find.text('Item 5')).dy;
+    final originalOffset = tester.getTopLeft(find.text('Item 5')).dy;
 
     unawaited(scrollOffsetController.animateScroll(
       offset: -scrollDistance,
@@ -187,13 +187,13 @@ void main() {
 
     final newOffset = tester.getTopLeft(find.text('Item 5')).dy;
 
-    expect(newOffset - originalOffest, (scrollDistance ~/ 2) - scrollBack);
+    expect(newOffset - originalOffset, (scrollDistance ~/ 2) - scrollBack);
 
     await tester.pumpAndSettle();
   });
 
   testWidgets(
-      'Programtically scroll down 50 pixels, stop half way and then programtically scroll to iten 100',
+      'Programmatically scroll down 50 pixels, stop half way and then programmatically scroll to item 100',
       (WidgetTester tester) async {
     final scrollDistance = 50.0;
 
@@ -224,5 +224,50 @@ void main() {
     expect(tester.getTopLeft(find.text('Item 100')).dy, 0);
 
     await tester.pumpAndSettle();
+  });
+
+  testWidgets('Programmatically move down 50 pixels',
+      (WidgetTester tester) async {
+    final scrollDistance = 50.0;
+
+    ScrollOffsetController scrollOffsetController = ScrollOffsetController();
+
+    await setUpWidgetTest(
+      tester,
+      scrollOffsetController: scrollOffsetController,
+      initialIndex: 5,
+    );
+
+    final originalOffset = tester.getTopLeft(find.text('Item 5')).dy;
+
+    scrollOffsetController.moveScroll(
+      offset: -scrollDistance,
+    );
+    await tester.pumpAndSettle();
+
+    final newOffset = tester.getTopLeft(find.text('Item 5')).dy;
+
+    expect(newOffset - originalOffset, scrollDistance);
+  });
+
+  testWidgets('Fetch scroll position', (WidgetTester tester) async {
+    final scrollDistance = 100.0;
+
+    ScrollOffsetController scrollOffsetController = ScrollOffsetController();
+
+    await setUpWidgetTest(
+      tester,
+      scrollOffsetController: scrollOffsetController,
+      initialIndex: 5,
+    );
+
+    expect(scrollOffsetController.currentPosition, isZero);
+
+    scrollOffsetController.moveScroll(
+      offset: scrollDistance,
+    );
+    await tester.pumpAndSettle();
+
+    expect(scrollOffsetController.currentPosition, equals(scrollDistance));
   });
 }
