@@ -338,7 +338,15 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     widget.scrollOffsetController?._attach(this);
     primary.itemPositionsNotifier.itemPositions.addListener(_updatePositions);
     secondary.itemPositionsNotifier.itemPositions.addListener(_updatePositions);
-    primary.scrollController.addListener(_scrollListener);
+    primary.scrollController.addListener(() {
+      final currentOffset = primary.scrollController.offset;
+      final offsetChange = currentOffset - previousOffset;
+      previousOffset = currentOffset;
+      if (!_isTransitioning |
+          (widget.scrollOffsetNotifier?.recordProgrammaticScrolls ?? false)) {
+        widget.scrollOffsetNotifier?.changeController.add(offsetChange);
+      }
+    });
   }
 
   @override
@@ -361,7 +369,6 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
         .removeListener(_updatePositions);
     secondary.itemPositionsNotifier.itemPositions
         .removeListener(_updatePositions);
-    primary.scrollController.removeListener(_scrollListener);
     _animationController?.dispose();
     super.dispose();
   }
@@ -605,11 +612,9 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
         if (opacity.value >= 0.5) {
           // Secondary [ListView] is more visible than the primary; make it the
           // new primary.
-          primary.scrollController.removeListener(_scrollListener);
           var temp = primary;
           primary = secondary;
           secondary = temp;
-          primary.scrollController.addListener(_scrollListener);
         }
         _isTransitioning = false;
         opacity.parent = const AlwaysStoppedAnimation<double>(0);
@@ -646,16 +651,6 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                   : element));
     }
     widget.itemPositionsNotifier?.itemPositions.value = itemPositions;
-  }
-
-  void _scrollListener() {
-    final currentOffset = primary.scrollController.offset;
-    final offsetChange = currentOffset - previousOffset;
-    previousOffset = currentOffset;
-    if (!_isTransitioning |
-        (widget.scrollOffsetNotifier?.recordProgrammaticScrolls ?? false)) {
-      widget.scrollOffsetNotifier?.changeController.add(offsetChange);
-    }
   }
 }
 
