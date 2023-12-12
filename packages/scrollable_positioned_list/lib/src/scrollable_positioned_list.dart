@@ -351,9 +351,10 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       if (!_isTransitioning |
           (widget.scrollOffsetNotifier?.recordProgrammaticScrolls ?? false)) {
         widget.scrollOffsetNotifier?.changeController.add(offsetChange);
-      widget.controllerListener?.call(primary.scrollController);
+        widget.controllerListener?.call(primary.scrollController);
+      }
     });
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.controllerListener?.call(primary.scrollController);
     });
   }
