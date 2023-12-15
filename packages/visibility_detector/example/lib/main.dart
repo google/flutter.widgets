@@ -517,7 +517,7 @@ class VisibilityReportGridState extends State<VisibilityReportGrid> {
 }
 
 /// A class for storing a [row, column] pair.
-class RowColumn extends Comparable<RowColumn> {
+class RowColumn implements Comparable<RowColumn> {
   RowColumn(this.row, this.column);
 
   final int row;
