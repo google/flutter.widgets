@@ -419,25 +419,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                   opacity: ReverseAnimation(opacity),
                   child: NotificationListener<ScrollNotification>(
                     onNotification: (_) => _isTransitioning,
-                    child: PositionedList(
-                      itemBuilder: widget.itemBuilder,
-                      separatorBuilder: widget.separatorBuilder,
-                      itemCount: widget.itemCount,
-                      positionedIndex: primary.target,
-                      controller: primary.scrollController,
-                      itemPositionsNotifier: primary.itemPositionsNotifier,
-                      scrollDirection: widget.scrollDirection,
-                      reverse: widget.reverse,
-                      cacheExtent: cacheExtent,
-                      alignment: primary.alignment,
-                      physics: widget.physics,
-                      shrinkWrap: widget.shrinkWrap,
-                      addSemanticIndexes: widget.addSemanticIndexes,
-                      semanticChildCount: widget.semanticChildCount,
-                      padding: widget.padding,
-                      addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-                      addRepaintBoundaries: widget.addRepaintBoundaries,
-                    ),
+                    child: _buildPositionedList(primary, cacheExtent),
                   ),
                 ),
               ),
@@ -449,25 +431,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                     opacity: opacity,
                     child: NotificationListener<ScrollNotification>(
                       onNotification: (_) => false,
-                      child: PositionedList(
-                        itemBuilder: widget.itemBuilder,
-                        separatorBuilder: widget.separatorBuilder,
-                        itemCount: widget.itemCount,
-                        itemPositionsNotifier: secondary.itemPositionsNotifier,
-                        positionedIndex: secondary.target,
-                        controller: secondary.scrollController,
-                        scrollDirection: widget.scrollDirection,
-                        reverse: widget.reverse,
-                        cacheExtent: cacheExtent,
-                        alignment: secondary.alignment,
-                        physics: widget.physics,
-                        shrinkWrap: widget.shrinkWrap,
-                        addSemanticIndexes: widget.addSemanticIndexes,
-                        semanticChildCount: widget.semanticChildCount,
-                        padding: widget.padding,
-                        addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-                        addRepaintBoundaries: widget.addRepaintBoundaries,
-                      ),
+                      child: _buildPositionedList(secondary, cacheExtent),
                     ),
                   ),
                 ),
@@ -475,6 +439,31 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
           ),
         );
       },
+    );
+  }
+
+  PositionedList _buildPositionedList(
+    _ListDisplayDetails listDisplayDetails,
+    double cacheExtent,
+  ) {
+    return PositionedList(
+      itemBuilder: widget.itemBuilder,
+      separatorBuilder: widget.separatorBuilder,
+      itemCount: widget.itemCount,
+      positionedIndex: listDisplayDetails.target,
+      controller: listDisplayDetails.scrollController,
+      itemPositionsNotifier: listDisplayDetails.itemPositionsNotifier,
+      scrollDirection: widget.scrollDirection,
+      reverse: widget.reverse,
+      cacheExtent: cacheExtent,
+      alignment: listDisplayDetails.alignment,
+      physics: widget.physics,
+      shrinkWrap: widget.shrinkWrap,
+      addSemanticIndexes: widget.addSemanticIndexes,
+      semanticChildCount: widget.semanticChildCount,
+      padding: widget.padding,
+      addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+      addRepaintBoundaries: widget.addRepaintBoundaries,
     );
   }
 
