@@ -57,6 +57,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
+    this.controllerListener,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
@@ -87,12 +88,17 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
+    this.controllerListener,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         assert(separatorBuilder != null),
         itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
         scrollOffsetNotifier = scrollOffsetListener as ScrollOffsetNotifier?,
         super(key: key);
+
+  /// Optional listener for the primary scroll controller.
+  /// Called once after first frame.
+  final void Function(ScrollController controller)? controllerListener;
 
   /// Number of items the [itemBuilder] can produce.
   final int itemCount;
@@ -345,7 +351,11 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       if (!_isTransitioning |
           (widget.scrollOffsetNotifier?.recordProgrammaticScrolls ?? false)) {
         widget.scrollOffsetNotifier?.changeController.add(offsetChange);
+        widget.controllerListener?.call(primary.scrollController);
       }
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.controllerListener?.call(primary.scrollController);
     });
   }
 
