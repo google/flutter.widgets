@@ -42,6 +42,7 @@ class ScrollablePositionedList extends StatefulWidget {
     required this.itemBuilder,
     Key? key,
     this.itemScrollController,
+    this.scrollController,
     this.shrinkWrap = false,
     ItemPositionsListener? itemPositionsListener,
     this.scrollOffsetController,
@@ -73,6 +74,7 @@ class ScrollablePositionedList extends StatefulWidget {
     Key? key,
     this.shrinkWrap = false,
     this.itemScrollController,
+    this.scrollController,
     ItemPositionsListener? itemPositionsListener,
     this.scrollOffsetController,
     ScrollOffsetListener? scrollOffsetListener,
@@ -93,6 +95,8 @@ class ScrollablePositionedList extends StatefulWidget {
         itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
         scrollOffsetNotifier = scrollOffsetListener as ScrollOffsetNotifier?,
         super(key: key);
+
+  final ScrollController? scrollController;
 
   /// Number of items the [itemBuilder] can produce.
   final int itemCount;
@@ -405,6 +409,11 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.scrollController?.positions.isEmpty == true)
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        widget.scrollController?.attach(primary.scrollController.position);
+      });
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final cacheExtent = _cacheExtent(constraints);
@@ -610,6 +619,9 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     if (mounted) {
       setState(() {
         if (opacity.value >= 0.5) {
+          if (widget.scrollController?.position != null) {
+            widget.scrollController?.detach(widget.scrollController!.position);
+          }
           // Secondary [ListView] is more visible than the primary; make it the
           // new primary.
           var temp = primary;
