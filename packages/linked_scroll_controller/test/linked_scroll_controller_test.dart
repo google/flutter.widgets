@@ -161,6 +161,28 @@ void main() {
       expect(state._controllers.offset, equals(state._letters.offset));
     });
 
+    testWidgets('initialOffset within range', (tester) async {
+      await tester.pumpWidget(Test(initialOffset: 300.0));
+
+      final state = tester.state<TestState>(find.byType(Test));
+      expect(state._controllers.offset, equals(300.0));
+    });
+
+    testWidgets('initialOffset out of range', (tester) async {
+      await tester.pumpWidget(Test(initialOffset: 1000.0));
+
+      final state = tester.state<TestState>(find.byType(Test));
+      expect(state._controllers.offset, equals(1000.0));
+      
+      // waiting for ballistic activity
+      await tester.pumpAndSettle();
+
+      final state2 = tester.state<TestState>(find.byType(Test));
+      // max scroll extent is
+      // widgets height - window height = 266 * 5 - 600 = 1330 - 600 = 730
+      expect(state2._controllers.offset, equals(730.0));
+    });
+
     testWidgets('onOffsetChanged fires on scroll', (tester) async {
       await tester.pumpWidget(Test());
       final state = tester.state<TestState>(find.byType(Test));
@@ -334,6 +356,9 @@ class TestEmptyGroupState extends State<TestEmptyGroup> {
 }
 
 class Test extends StatefulWidget {
+  final double initialOffset;
+
+  const Test({this.initialOffset = 0.0});
   @override
   TestState createState() => TestState();
 }
@@ -347,7 +372,7 @@ class TestState extends State<Test> {
   @override
   void initState() {
     super.initState();
-    _controllers = LinkedScrollControllerGroup();
+    _controllers = LinkedScrollControllerGroup(initialOffset: widget.initialOffset);
     _letters = _controllers.addAndGet();
     _numbers = _controllers.addAndGet();
   }
