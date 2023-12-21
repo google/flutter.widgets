@@ -25,13 +25,21 @@ class TreeView extends StatefulWidget {
   /// Tree controller to manage the tree state.
   final TreeController? treeController;
 
-  TreeView(
-      {Key? key,
-      required List<TreeNode> nodes,
-      this.indent = 40,
-      this.iconSize,
-      this.treeController})
-      : nodes = copyTreeNodes(nodes),
+  /// This widget will be takes place of default icon when Node will not be in expanded state
+  final Widget? primaryIcon;
+
+  /// This widget will be takes place of default icon when Node will be in expanded state
+  final Widget? secondaryIcon;
+
+  TreeView({
+    Key? key,
+    required List<TreeNode> nodes,
+    this.indent = 40,
+    this.iconSize,
+    this.treeController,
+    this.primaryIcon,
+    this.secondaryIcon,
+  })  : nodes = copyTreeNodes(nodes),
         super(key: key);
 
   @override
@@ -50,6 +58,12 @@ class _TreeViewState extends State<TreeView> {
   @override
   Widget build(BuildContext context) {
     return buildNodes(
-        widget.nodes, widget.indent, _controller!, widget.iconSize);
+      widget.nodes,
+      widget.indent,
+      _controller!,
+      widget.iconSize,
+      widget.primaryIcon,
+      widget.secondaryIcon,
+    );
   }
 }
