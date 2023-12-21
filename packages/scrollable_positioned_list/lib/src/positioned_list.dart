@@ -44,6 +44,7 @@ class PositionedList extends StatefulWidget {
     this.addSemanticIndexes = true,
     this.addRepaintBoundaries = true,
     this.addAutomaticKeepAlives = true,
+    this.clipBehavior = Clip.hardEdge,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         assert((positionedIndex == 0) || (positionedIndex < itemCount)),
@@ -132,6 +133,11 @@ class PositionedList extends StatefulWidget {
   /// See [SliverChildBuilderDelegate.addAutomaticKeepAlives].
   final bool addAutomaticKeepAlives;
 
+  /// {@macro flutter.material.Material.clipBehavior}
+  ///
+  /// Defaults to [Clip.hardEdge].
+  final Clip clipBehavior;
+
   @override
   State<StatefulWidget> createState() => _PositionedListState();
 }
@@ -177,6 +183,7 @@ class _PositionedListState extends State<PositionedList> {
           physics: widget.physics,
           shrinkWrap: widget.shrinkWrap,
           semanticChildCount: widget.semanticChildCount ?? widget.itemCount,
+          clipBehavior: widget.clipBehavior,
           slivers: <Widget>[
             if (widget.positionedIndex > 0)
               SliverPadding(

@@ -45,6 +45,7 @@ class CustomShrinkWrappingViewport extends CustomViewport {
     List<RenderSliver>? children,
     Key? center,
     double? cacheExtent,
+    Clip clipBehavior = Clip.hardEdge,
     List<Widget> slivers = const <Widget>[],
   })  : _anchor = anchor,
         super(
@@ -54,6 +55,7 @@ class CustomShrinkWrappingViewport extends CustomViewport {
             offset: offset,
             center: center,
             cacheExtent: cacheExtent,
+            clipBehavior: clipBehavior,
             slivers: slivers);
 
   // [Viewport] enforces constraints on [Viewport.anchor], so we need our own
