@@ -310,6 +310,52 @@ void main() {
       expect(state._controllers.offset, equals(state._letters.offset));
       expect(state._controllers.offset, equals(state._numbers.offset));
     });
+
+    testWidgets('applyViewportDimensions.', (tester) async {
+      await tester.pumpWidget(Test());
+      final state = tester.state<TestState>(find.byType(Test));
+
+      final viewportDimension = state._letters.position.viewportDimension;
+
+      // Change the viewportDimension.
+      final double changedViewportDimension = viewportDimension - 100;
+      state._controllers.applyViewportDimension(changedViewportDimension);
+
+      await tester.pumpAndSettle();
+
+      // The viewportDimension of the connected controllers should change.
+      expect(
+        state._letters.position.viewportDimension,
+        changedViewportDimension,
+      );
+      expect(
+        state._numbers.position.viewportDimension,
+        changedViewportDimension,
+      );
+    });
+
+    testWidgets('notifyListeners.', (tester) async {
+      await tester.pumpWidget(Test());
+      final state = tester.state<TestState>(find.byType(Test));
+
+      int countLettersCalls = 0;
+      int countNumbersCalls = 0;
+
+      // Add listeners.
+      state._letters.addListener(() {
+        countLettersCalls += 1;
+      });
+      state._letters.addListener(() {
+        countNumbersCalls += 1;
+      });
+
+      // Notify listeners.
+      state._controllers.notifyListeners();
+
+      // The listener of the registered ScrollController should be called once.
+      expect(countLettersCalls, 1);
+      expect(countNumbersCalls, 1);
+    });
   });
 }
 
