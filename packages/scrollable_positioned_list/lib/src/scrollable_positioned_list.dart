@@ -217,7 +217,7 @@ class ItemScrollController {
   /// * 1 aligns the left edge of the item with the right edge of the view.
   /// * 0.5 aligns the left edge of the item with the center of the view.
   void jumpTo({required int index, double alignment = 0}) {
-    _scrollableListState!._jumpTo(index: index, alignment: alignment);
+    _scrollableListState?._jumpTo(index: index, alignment: alignment);
   }
 
   /// Animate the list over [duration] using the given [curve] such that the
