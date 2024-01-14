@@ -247,6 +247,10 @@ class _LinkedScrollPosition extends ScrollPositionWithSingleContext {
     if (newPixels == pixels) {
       return 0.0;
     }
+    // Detect overscroll
+    if (newPixels > maxScrollExtent) {
+      newPixels = maxScrollExtent;
+    }
     updateUserScrollDirection(newPixels - pixels > 0.0
         ? ScrollDirection.forward
         : ScrollDirection.reverse);
