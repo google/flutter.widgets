@@ -22,7 +22,7 @@ class KeyProvider {
       return _TreeNodeKey(_nextIndex++);
     }
     if (_keys.contains(originalKey)) {
-      throw ArgumentError('There should not be nodes with the same kays. '
+      throw ArgumentError('There should not be nodes with the same keys. '
           'Duplicate value found: $originalKey.');
     }
     _keys.add(originalKey);
