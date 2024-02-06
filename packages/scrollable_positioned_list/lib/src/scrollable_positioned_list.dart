@@ -279,6 +279,9 @@ class ItemScrollController {
 /// This is an experimental API and is subject to change.
 /// Behavior may be ill-defined in some cases.  Please file bugs.
 class ScrollOffsetController {
+
+  ScrollPosition get position => _scrollableListState!.primary.scrollController.position;
+
   Future<void> animateScroll(
       {required double offset,
       required Duration duration,
@@ -291,6 +294,12 @@ class ScrollOffsetController {
       duration: duration,
       curve: curve,
     );
+  }
+
+  void jumpToOffset(double offset){
+    final currentPosition = _scrollableListState!.primary.scrollController.offset;
+    final newPosition = currentPosition + offset;
+    _scrollableListState!.primary.scrollController.jumpTo(newPosition);
   }
 
   _ScrollablePositionedListState? _scrollableListState;
