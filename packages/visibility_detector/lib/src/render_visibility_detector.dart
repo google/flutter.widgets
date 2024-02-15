@@ -183,14 +183,17 @@ mixin RenderVisibilityDetectorBase on RenderObject {
 
     // Check if any ancestors decided to skip painting this RenderObject.
     if (parent != null) {
-      RenderObject ancestor = parent! as RenderObject;
+      // TODO(goderbauer): Remove ignore and cast when https://github.com/flutter/flutter/pull/128973 has reached stable.
+      RenderObject ancestor =
+          parent! as RenderObject; // ignore: unnecessary_cast
       RenderObject child = this;
       while (ancestor.parent != null) {
         if (!ancestor.paintsChild(child)) {
           return VisibilityInfo(key: key, size: bounds.size);
         }
         child = ancestor;
-        ancestor = ancestor.parent! as RenderObject;
+        // TODO(goderbauer): Remove ignore and cast when https://github.com/flutter/flutter/pull/128973 has reached stable.
+        ancestor = ancestor.parent! as RenderObject; // ignore: unnecessary_cast
       }
     }
 

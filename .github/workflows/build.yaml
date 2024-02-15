@@ -49,8 +49,8 @@ jobs:
       - name: flutter test
         run: flutter test
 
-      - name: flutter format
-        run: flutter format --dry-run --set-exit-if-changed .
+      - name: dart format
+        run: dart format -o none --set-exit-if-changed .
         # Only test formatting on one version of Flutter.
         if: ${{ matrix.version == 'stable' }}
 

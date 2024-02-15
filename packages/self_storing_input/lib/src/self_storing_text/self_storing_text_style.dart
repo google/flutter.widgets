@@ -15,7 +15,7 @@ class SelfStoringTextStyle {
   /// Maximum number of lines. Infinite if null.
   ///
   /// Behaves the same way as [Text.maxLines].
-  final int maxLines;
+  final int? maxLines;
 
   const SelfStoringTextStyle(
       {this.overlayStyle = const OverlayStyle.forTextEditor(),

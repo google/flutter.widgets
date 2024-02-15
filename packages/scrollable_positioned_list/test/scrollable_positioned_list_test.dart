@@ -37,9 +37,8 @@ void main() {
     double? minCacheExtent,
     bool variableHeight = false,
   }) async {
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
 
     await tester.pumpWidget(
       MaterialApp(
@@ -102,9 +101,8 @@ void main() {
   testWidgets('List positioned with 0 at top - use default values',
       (WidgetTester tester) async {
     final itemPositionsListener = ItemPositionsListener.create();
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
 
     await tester.pumpWidget(
       MaterialApp(
@@ -1058,6 +1056,34 @@ void main() {
     expect(find.text('Item 100'), findsNothing);
   });
 
+  testWidgets("Second scroll future doesn't complete until scroll is done",
+      (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+    await setUpWidgetTest(tester, itemScrollController: itemScrollController);
+
+    unawaited(
+        itemScrollController.scrollTo(index: 100, duration: scrollDuration));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(scrollDuration ~/ 2);
+
+    final scrollFuture2 =
+        itemScrollController.scrollTo(index: 250, duration: scrollDuration);
+
+    var futureComplete = false;
+    unawaited(scrollFuture2.then((_) => futureComplete = true));
+
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(scrollDuration ~/ 2);
+
+    expect(futureComplete, isFalse);
+
+    await tester.pumpAndSettle();
+
+    expect(futureComplete, isTrue);
+  });
+
   testWidgets('Scroll to 250, scroll to 100, scroll to 0 half way',
       (WidgetTester tester) async {
     final itemScrollController = ItemScrollController();
@@ -1511,9 +1537,8 @@ void main() {
     final itemPositionsListener = ItemPositionsListener.create();
     final itemScrollController = ItemScrollController();
 
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
 
     await tester.pumpWidget(
       MaterialApp(
@@ -1568,9 +1593,8 @@ void main() {
     final itemPositionsListener = ItemPositionsListener.create();
     final itemScrollController = ItemScrollController();
 
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
 
     await tester.pumpWidget(
       MaterialApp(
@@ -1629,9 +1653,8 @@ void main() {
     final itemPositionsListener = ItemPositionsListener.create();
     final itemScrollController = ItemScrollController();
 
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
 
     await tester.pumpWidget(
       MaterialApp(
@@ -1699,9 +1722,8 @@ void main() {
 
   testWidgets('Jump to 100 then set itemCount to 0',
       (WidgetTester tester) async {
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
 
     final itemScrollController = ItemScrollController();
     final itemPositionsListener = ItemPositionsListener.create();
@@ -1746,9 +1768,8 @@ void main() {
 
   testWidgets('List positioned with 100 at top then set itemCount to 100',
       (WidgetTester tester) async {
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
 
     final itemCount = ValueNotifier<int>(defaultItemCount);
 
@@ -1786,9 +1807,8 @@ void main() {
 
   testWidgets('List positioned with 499 at bottom then set itemCount to 100',
       (WidgetTester tester) async {
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
 
     final itemCount = ValueNotifier<int>(defaultItemCount);
 
@@ -1904,9 +1924,8 @@ void main() {
   });
 
   testWidgets('Rebuild with scroll controller', (WidgetTester tester) async {
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
     final key = ValueNotifier<Key>(ValueKey('key'));
     final itemScrollController = ItemScrollController();
 
@@ -1947,9 +1966,8 @@ void main() {
 
   testWidgets('Double rebuild with scroll controller',
       (WidgetTester tester) async {
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
     final outerKey = ValueNotifier<Key>(ValueKey('outerKey'));
     final innerKey = GlobalKey();
     final listKey = ValueNotifier<Key>(ValueKey(null));
@@ -1997,9 +2015,8 @@ void main() {
   });
 
   testWidgets('Key change with scroll controller', (WidgetTester tester) async {
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
     final key = ValueNotifier<Key>(ValueKey('key'));
     final itemScrollController = ItemScrollController();
 
@@ -2031,9 +2048,8 @@ void main() {
   });
 
   testWidgets('Scroll after rebuild', (WidgetTester tester) async {
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
     final key = ValueNotifier<Key>(ValueKey('key'));
     final itemScrollController = ItemScrollController();
 
@@ -2074,9 +2090,8 @@ void main() {
 
   testWidgets('Scroll after rebuild when resusing state',
       (WidgetTester tester) async {
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
     final containerKey = ValueNotifier<Key>(ValueKey('key'));
     final scrollKey = GlobalKey();
     final itemScrollController = ItemScrollController();
@@ -2119,9 +2134,8 @@ void main() {
 
   testWidgets('Scroll after changing scroll controller',
       (WidgetTester tester) async {
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
 
     final itemScrollController0 = ItemScrollController();
     final itemScrollController1 = ItemScrollController();
@@ -2166,9 +2180,8 @@ void main() {
 
   testWidgets('Scroll after swapping scroll controllers',
       (WidgetTester tester) async {
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
-    tester.binding.window.physicalSizeTestValue =
-        const Size(screenWidth, screenHeight);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(screenWidth, screenHeight);
 
     final itemScrollController0 = ItemScrollController();
     final itemScrollController1 = ItemScrollController();
@@ -2237,6 +2250,24 @@ void main() {
 
     expect(find.text('Item 70'), findsOneWidget);
     expect(find.text('Item 50'), findsOneWidget);
+  });
+
+  testWidgets(
+      'List positioned with 5 at top then scroll up so item 3 is at top',
+      (WidgetTester tester) async {
+    final itemPositionsListener = ItemPositionsListener.create();
+    await setUpWidgetTest(tester,
+        initialIndex: 5, itemPositionsListener: itemPositionsListener);
+
+    await tester.drag(
+        find.byType(ScrollablePositionedList), const Offset(0, 2 * itemHeight));
+    await tester.pumpAndSettle();
+
+    expect(
+        itemPositionsListener.itemPositions.value
+            .firstWhere((position) => position.index == 3)
+            .itemLeadingEdge,
+        0);
   });
 }
 
