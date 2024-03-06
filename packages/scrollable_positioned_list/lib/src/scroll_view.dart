@@ -28,6 +28,8 @@ class UnboundedCustomScrollView extends CustomScrollView {
     List<Widget> slivers = const <Widget>[],
     int? semanticChildCount,
     DragStartBehavior dragStartBehavior = DragStartBehavior.start,
+    ScrollViewKeyboardDismissBehavior keyboardDismissBehavior =
+        ScrollViewKeyboardDismissBehavior.manual,
   })  : _shrinkWrap = shrinkWrap,
         _anchor = anchor,
         super(
@@ -43,6 +45,7 @@ class UnboundedCustomScrollView extends CustomScrollView {
           semanticChildCount: semanticChildCount,
           dragStartBehavior: dragStartBehavior,
           slivers: slivers,
+          keyboardDismissBehavior: keyboardDismissBehavior,
         );
 
   // [CustomScrollView] enforces constraints on [CustomScrollView.anchor], so
