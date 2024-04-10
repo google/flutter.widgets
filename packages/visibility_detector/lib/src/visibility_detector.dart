@@ -31,6 +31,7 @@ class VisibilityDetector extends SingleChildRenderObjectWidget {
     required Key key,
     required Widget child,
     required this.onVisibilityChanged,
+    this.customVisibleBounds,
   })  : assert(key != null),
         assert(child != null),
         super(key: key, child: child);
@@ -38,12 +39,16 @@ class VisibilityDetector extends SingleChildRenderObjectWidget {
   /// The callback to invoke when this widget's visibility changes.
   final VisibilityChangedCallback? onVisibilityChanged;
 
+  /// Custom visible bounds to use for this widget.
+  final Rect? customVisibleBounds;
+
   /// See [RenderObjectWidget.createRenderObject].
   @override
   RenderVisibilityDetector createRenderObject(BuildContext context) {
     return RenderVisibilityDetector(
       key: key!,
       onVisibilityChanged: onVisibilityChanged,
+      customVisibleBounds: customVisibleBounds,
     );
   }
 
@@ -52,7 +57,9 @@ class VisibilityDetector extends SingleChildRenderObjectWidget {
   void updateRenderObject(
       BuildContext context, RenderVisibilityDetector renderObject) {
     assert(renderObject.key == key);
-    renderObject.onVisibilityChanged = onVisibilityChanged;
+    renderObject
+      ..onVisibilityChanged = onVisibilityChanged
+      ..customVisibleBounds = customVisibleBounds;
   }
 }
 
@@ -68,6 +75,7 @@ class SliverVisibilityDetector extends SingleChildRenderObjectWidget {
     required Key key,
     required Widget sliver,
     required this.onVisibilityChanged,
+    this.customVisibleBounds,
   })  : assert(key != null),
         assert(sliver != null),
         super(key: key, child: sliver);
@@ -75,12 +83,16 @@ class SliverVisibilityDetector extends SingleChildRenderObjectWidget {
   /// The callback to invoke when this widget's visibility changes.
   final VisibilityChangedCallback? onVisibilityChanged;
 
+  /// Custom visible bounds to use for this widget.
+  final Rect? customVisibleBounds;
+
   /// See [RenderObjectWidget.createRenderObject].
   @override
   RenderSliverVisibilityDetector createRenderObject(BuildContext context) {
     return RenderSliverVisibilityDetector(
       key: key!,
       onVisibilityChanged: onVisibilityChanged,
+      customVisibleBounds: customVisibleBounds,
     );
   }
 
@@ -89,7 +101,9 @@ class SliverVisibilityDetector extends SingleChildRenderObjectWidget {
   void updateRenderObject(
       BuildContext context, RenderSliverVisibilityDetector renderObject) {
     assert(renderObject.key == key);
-    renderObject.onVisibilityChanged = onVisibilityChanged;
+    renderObject
+      ..onVisibilityChanged = onVisibilityChanged
+      ..customVisibleBounds = customVisibleBounds;
   }
 }
 

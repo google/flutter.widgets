@@ -90,6 +90,9 @@ mixin RenderVisibilityDetectorBase on RenderObject {
   /// The key for the corresponding [VisibilityDetector] widget.
   Key get key;
 
+  /// The customVisibleBounds for the corresponding [VisibilityDetector] widget.
+  Rect? get customVisibleBounds;
+
   VoidCallback? _compositionCallbackCanceller;
 
   VisibilityChangedCallback? _onVisibilityChanged;
@@ -208,7 +211,7 @@ mixin RenderVisibilityDetectorBase on RenderObject {
       ancestor = ancestor.parent;
     }
 
-    Rect clip = Rect.largest;
+    var clip = customVisibleBounds ?? Rect.largest;
     for (int index = ancestors.length - 1; index > 0; index -= 1) {
       final parent = ancestors[index];
       final child = ancestors[index - 1];
@@ -283,6 +286,7 @@ class RenderVisibilityDetector extends RenderProxyBox
     RenderBox? child,
     required this.key,
     required VisibilityChangedCallback? onVisibilityChanged,
+    this.customVisibleBounds,
   })  : assert(key != null),
         super(child) {
     _onVisibilityChanged = onVisibilityChanged;
@@ -290,6 +294,9 @@ class RenderVisibilityDetector extends RenderProxyBox
 
   @override
   final Key key;
+
+  @override
+  Rect? customVisibleBounds;
 
   @override
   Rect? get bounds => hasSize ? semanticBounds : null;
@@ -306,12 +313,16 @@ class RenderSliverVisibilityDetector extends RenderProxySliver
     RenderSliver? sliver,
     required this.key,
     required VisibilityChangedCallback? onVisibilityChanged,
+    this.customVisibleBounds,
   }) : super(sliver) {
     _onVisibilityChanged = onVisibilityChanged;
   }
 
   @override
   final Key key;
+
+  @override
+  Rect? customVisibleBounds;
 
   @override
   Rect? get bounds {
