@@ -11,7 +11,7 @@ const minItemHeight = 20.0;
 const maxItemHeight = 150.0;
 const scrollDuration = Duration(seconds: 2);
 
-const randomMax = 1 << 32;
+const randomMax = 1 << 32 - 1;
 
 void main() {
   runApp(ScrollablePositionedListExample());
