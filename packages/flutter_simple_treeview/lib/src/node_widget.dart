@@ -17,13 +17,13 @@ class NodeWidget extends StatefulWidget {
   final double? iconSize;
   final TreeController state;
 
-  const NodeWidget(
-      {Key? key,
-      required this.treeNode,
-      this.indent,
-      required this.state,
-      this.iconSize})
-      : super(key: key);
+  const NodeWidget({
+    Key? key,
+    required this.treeNode,
+    this.indent,
+    required this.state,
+    this.iconSize,
+  }) : super(key: key);
 
   @override
   _NodeWidgetState createState() => _NodeWidgetState();
@@ -39,29 +39,37 @@ class _NodeWidgetState extends State<NodeWidget> {
     return widget.state.isNodeExpanded(widget.treeNode.key!);
   }
 
+  Widget buildButtonOrPlaceholder() {
+    var icon = _isExpanded ? Icons.expand_more : Icons.chevron_right;
+    double defaultSize = 24;
+    double iconSize = widget.iconSize ?? defaultSize;
+
+    IconButton iconButton = IconButton(
+      key: Key('NodeWidget.IconButton'),
+      iconSize: iconSize,
+      icon: Icon(icon),
+      onPressed: () => setState(
+        () => widget.state.toggleNodeExpanded(widget.treeNode.key!),
+      ),
+    );
+    double spacerSize = iconSize + iconButton.padding.horizontal;
+
+    return _isLeaf
+        ? SizedBox(
+            key: Key('NodeWidget.Spacer'),
+            width: spacerSize,
+          )
+        : iconButton;
+  }
+
   @override
   Widget build(BuildContext context) {
-    var icon = _isLeaf
-        ? null
-        : _isExpanded
-            ? Icons.expand_more
-            : Icons.chevron_right;
-
-    var onIconPressed = _isLeaf
-        ? null
-        : () => setState(
-            () => widget.state.toggleNodeExpanded(widget.treeNode.key!));
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            IconButton(
-              iconSize: widget.iconSize ?? 24.0,
-              icon: Icon(icon),
-              onPressed: onIconPressed,
-            ),
+            buildButtonOrPlaceholder(),
             widget.treeNode.content,
           ],
         ),
