@@ -225,4 +225,30 @@ void main() {
 
     await tester.pumpAndSettle();
   });
+
+  testWidgets('Programtically jump down 50 pixels',
+      (WidgetTester tester) async {
+    final scrollDistance = 50.0;
+
+    ScrollOffsetController scrollOffsetController = ScrollOffsetController();
+
+    await setUpWidgetTest(
+      tester,
+      scrollOffsetController: scrollOffsetController,
+      initialIndex: 5,
+    );
+
+    final originalOffset = tester.getTopLeft(find.text('Item 5')).dy;
+
+    final currentPosition =
+        scrollOffsetController.unstableScrollPosition.pixels;
+    final newPosition = currentPosition - scrollDistance;
+
+    scrollOffsetController.unstableScrollPosition.jumpTo(newPosition);
+    await tester.pumpAndSettle();
+
+    final newOffset = tester.getTopLeft(find.text('Item 5')).dy;
+
+    expect(newOffset - originalOffset, scrollDistance);
+  });
 }

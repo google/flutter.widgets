@@ -279,6 +279,15 @@ class ItemScrollController {
 /// This is an experimental API and is subject to change.
 /// Behavior may be ill-defined in some cases.  Please file bugs.
 class ScrollOffsetController {
+  /// ScrollPosition of the current ScrollablePositionedList. Values such as
+  /// pixels, maxScrollExtent and jumpTo are not necessarily defined to start
+  /// from the beginning of the list. When itemScrollController.jumpTo is
+  /// called, the list will begin from that index. unstableScrollPosition.jumpTo
+  /// will cause the application to freeze at very large values as it must build
+  /// all the widgets between the starting offset and the ending offset.
+  ScrollPosition get unstableScrollPosition =>
+      _scrollableListState!.primary.scrollController.position;
+
   Future<void> animateScroll(
       {required double offset,
       required Duration duration,
