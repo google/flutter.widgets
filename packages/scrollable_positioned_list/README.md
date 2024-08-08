@@ -17,7 +17,7 @@ A `ScrollablePositionedList` can be created with:
 final ItemScrollController itemScrollController = ItemScrollController();
 final ScrollOffsetController scrollOffsetController = ScrollOffsetController();
 final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
-final ScrollOffsetListener scrollOffsetListener = ScrollOffsetListener.create()
+final ScrollOffsetListener scrollOffsetListener = ScrollOffsetListener.create();
 
 ScrollablePositionedList.builder(
   itemCount: 500,
