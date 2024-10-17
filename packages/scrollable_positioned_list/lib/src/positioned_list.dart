@@ -44,6 +44,7 @@ class PositionedList extends StatefulWidget {
     this.addSemanticIndexes = true,
     this.addRepaintBoundaries = true,
     this.addAutomaticKeepAlives = true,
+    this.keyboardDismissBehavior,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         assert((positionedIndex == 0) || (positionedIndex < itemCount)),
@@ -131,7 +132,9 @@ class PositionedList extends StatefulWidget {
   ///
   /// See [SliverChildBuilderDelegate.addAutomaticKeepAlives].
   final bool addAutomaticKeepAlives;
-
+  /// A representation of how a [ScrollView] should dismiss
+  /// the on-screen keyboard.
+  final ScrollViewKeyboardDismissBehavior? keyboardDismissBehavior;
   @override
   State<StatefulWidget> createState() => _PositionedListState();
 }
@@ -177,6 +180,7 @@ class _PositionedListState extends State<PositionedList> {
           physics: widget.physics,
           shrinkWrap: widget.shrinkWrap,
           semanticChildCount: widget.semanticChildCount ?? widget.itemCount,
+          keyboardDismissBehavior: widget.keyboardDismissBehavior,
           slivers: <Widget>[
             if (widget.positionedIndex > 0)
               SliverPadding(
