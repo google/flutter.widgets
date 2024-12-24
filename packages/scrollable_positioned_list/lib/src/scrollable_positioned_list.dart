@@ -260,13 +260,38 @@ class ItemScrollController {
     );
   }
 
+  final List<VoidCallback> _onAttachListeners = [];
+  final List<VoidCallback> _onDetachListeners = [];
+
+  void addOnAttachListener(VoidCallback listener) {
+    _onAttachListeners.add(listener);
+  }
+
+  void removeOnAttachListener(VoidCallback listener) {
+    _onAttachListeners.remove(listener);
+  }
+
+  void addOnDetachListener(VoidCallback listener) {
+    _onDetachListeners.add(listener);
+  }
+
+  void removeOnDetachListener(VoidCallback listener) {
+    _onDetachListeners.remove(listener);
+  }
+
   void _attach(_ScrollablePositionedListState scrollableListState) {
     assert(_scrollableListState == null);
     _scrollableListState = scrollableListState;
+    for (var listener in _onAttachListeners) {
+      listener();
+    }
   }
 
   void _detach() {
     _scrollableListState = null;
+    for (var listener in _onDetachListeners) {
+      listener();
+    }
   }
 }
 
@@ -293,15 +318,40 @@ class ScrollOffsetController {
     );
   }
 
+  final List<VoidCallback> _onAttachListeners = [];
+  final List<VoidCallback> _onDetachListeners = [];
+
+  void addOnAttachListener(VoidCallback listener) {
+    _onAttachListeners.add(listener);
+  }
+
+  void removeOnAttachListener(VoidCallback listener) {
+    _onAttachListeners.remove(listener);
+  }
+
+  void addOnDetachListener(VoidCallback listener) {
+    _onDetachListeners.add(listener);
+  }
+
+  void removeOnDetachListener(VoidCallback listener) {
+    _onDetachListeners.remove(listener);
+  }
+
   _ScrollablePositionedListState? _scrollableListState;
 
   void _attach(_ScrollablePositionedListState scrollableListState) {
     assert(_scrollableListState == null);
     _scrollableListState = scrollableListState;
+    for (var listener in _onAttachListeners) {
+      listener();
+    }
   }
 
   void _detach() {
     _scrollableListState = null;
+    for (var listener in _onDetachListeners) {
+      listener();
+    }
   }
 }
 
