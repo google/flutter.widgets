@@ -42,6 +42,7 @@ class ScrollablePositionedList extends StatefulWidget {
     required this.itemBuilder,
     Key? key,
     this.itemScrollController,
+    this.scrollController,
     this.shrinkWrap = false,
     ItemPositionsListener? itemPositionsListener,
     this.scrollOffsetController,
@@ -73,6 +74,7 @@ class ScrollablePositionedList extends StatefulWidget {
     Key? key,
     this.shrinkWrap = false,
     this.itemScrollController,
+    this.scrollController,
     ItemPositionsListener? itemPositionsListener,
     this.scrollOffsetController,
     ScrollOffsetListener? scrollOffsetListener,
@@ -93,6 +95,8 @@ class ScrollablePositionedList extends StatefulWidget {
         itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
         scrollOffsetNotifier = scrollOffsetListener as ScrollOffsetNotifier?,
         super(key: key);
+
+  final ScrollController? scrollController;
 
   /// Number of items the [itemBuilder] can produce.
   final int itemCount;
@@ -283,25 +287,36 @@ class ScrollOffsetController {
       {required double offset,
       required Duration duration,
       Curve curve = Curves.linear}) async {
-    final currentPosition =
-        _scrollableListState!.primary.scrollController.offset;
+     final currentPosition =
+        scrollableListState!.primary.scrollController.offset;
     final newPosition = currentPosition + offset;
-    await _scrollableListState!.primary.scrollController.animateTo(
+    await scrollableListState!.primary.scrollController.animateTo(
       newPosition,
       duration: duration,
       curve: curve,
     );
   }
 
-  _ScrollablePositionedListState? _scrollableListState;
+  Future<void> animateScrollAbsolute(
+      {required double offset,
+      required Duration duration,
+      Curve curve = Curves.linear}) async {
+    await scrollableListState!.primary.scrollController.animateTo(
+      offset,
+      duration: duration,
+      curve: curve,
+    );
+  }
 
-  void _attach(_ScrollablePositionedListState scrollableListState) {
-    assert(_scrollableListState == null);
-    _scrollableListState = scrollableListState;
+  _ScrollablePositionedListState? scrollableListState;
+
+  void _attach(_ScrollablePositionedListState _scrollableListState) {
+    assert(scrollableListState == null);
+    scrollableListState = _scrollableListState;
   }
 
   void _detach() {
-    _scrollableListState = null;
+    scrollableListState = null;
   }
 }
 
@@ -405,6 +420,11 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.scrollController?.positions.isEmpty == true)
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        widget.scrollController?.attach(primary.scrollController.position);
+      });
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final cacheExtent = _cacheExtent(constraints);
@@ -610,6 +630,9 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     if (mounted) {
       setState(() {
         if (opacity.value >= 0.5) {
+          if (widget.scrollController?.position != null) {
+            widget.scrollController?.detach(widget.scrollController!.position);
+          }
           // Secondary [ListView] is more visible than the primary; make it the
           // new primary.
           var temp = primary;
