@@ -9,6 +9,7 @@ import 'dart:math' show max;
 import 'package:flutter/widgets.dart';
 
 import 'render_visibility_detector.dart';
+import 'visibility_detector_element.dart';
 
 /// A [VisibilityDetector] widget fires a specified callback when the widget
 /// changes visibility.
@@ -31,12 +32,25 @@ class VisibilityDetector extends SingleChildRenderObjectWidget {
     required Key key,
     required Widget child,
     required this.onVisibilityChanged,
+    this.isChangedOnDispose = true,
   })  : assert(key != null),
         assert(child != null),
         super(key: key, child: child);
 
   /// The callback to invoke when this widget's visibility changes.
   final VisibilityChangedCallback? onVisibilityChanged;
+
+  /// Indicates whether the visibility change callback should be triggered
+  /// when the widget is disposed.
+  ///
+  /// When set to true, the `onVisibilityChanged` callback will be invoked
+  /// even after the widget has been removed from the widget tree. This can
+  /// be useful for scenarios where you need to perform cleanup or notify
+  /// other parts of the application about the visibility state before
+  /// the widget is completely disposed of.
+  ///
+  /// Default value is true.
+  final bool isChangedOnDispose;
 
   /// See [RenderObjectWidget.createRenderObject].
   @override
@@ -54,6 +68,22 @@ class VisibilityDetector extends SingleChildRenderObjectWidget {
     assert(renderObject.key == key);
     renderObject.onVisibilityChanged = onVisibilityChanged;
   }
+
+  /// See [RenderObjectWidget.createElement].
+  ///
+  /// This override creates a [VisibilityDetectorElement] configured with
+  /// the current [VisibilityDetector] widget instance. The created element
+  /// maintains the association between this widget and its corresponding
+  /// [RenderVisibilityDetector] render object.
+  ///
+  /// Framework automatically calls this method when inflating the widget tree.
+  @override
+  SingleChildRenderObjectElement createElement() {
+    if (isChangedOnDispose) {
+      return super.createElement();
+    }
+    return VisibilityDetectorElement(this);
+  }
 }
 
 class SliverVisibilityDetector extends SingleChildRenderObjectWidget {
@@ -68,12 +98,25 @@ class SliverVisibilityDetector extends SingleChildRenderObjectWidget {
     required Key key,
     required Widget sliver,
     required this.onVisibilityChanged,
+    this.isChangedOnDispose = true,
   })  : assert(key != null),
         assert(sliver != null),
         super(key: key, child: sliver);
 
   /// The callback to invoke when this widget's visibility changes.
   final VisibilityChangedCallback? onVisibilityChanged;
+
+  /// Indicates whether the visibility change callback should be triggered
+  /// when the widget is disposed.
+  ///
+  /// When set to true, the `onVisibilityChanged` callback will be invoked
+  /// even after the widget has been removed from the widget tree. This can
+  /// be useful for scenarios where you need to perform cleanup or notify
+  /// other parts of the application about the visibility state before
+  /// the widget is completely disposed of.
+  ///
+  /// Default value is true.
+  final bool isChangedOnDispose;
 
   /// See [RenderObjectWidget.createRenderObject].
   @override
@@ -90,6 +133,15 @@ class SliverVisibilityDetector extends SingleChildRenderObjectWidget {
       BuildContext context, RenderSliverVisibilityDetector renderObject) {
     assert(renderObject.key == key);
     renderObject.onVisibilityChanged = onVisibilityChanged;
+  }
+
+  /// See [RenderObjectWidget.createElement].
+  @override
+  SingleChildRenderObjectElement createElement() {
+    if (isChangedOnDispose) {
+      return super.createElement();
+    }
+    return SliverVisibilityDetectorElement(this);
   }
 }
 
