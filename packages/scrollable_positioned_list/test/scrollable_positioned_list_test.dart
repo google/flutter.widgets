@@ -36,6 +36,7 @@ void main() {
     bool addAutomaticKeepAlives = true,
     double? minCacheExtent,
     bool variableHeight = false,
+    bool thumbVisibility = false,
   }) async {
     tester.view.devicePixelRatio = 1.0;
     tester.view.physicalSize = const Size(screenWidth, screenHeight);
@@ -64,6 +65,7 @@ void main() {
           addAutomaticKeepAlives: addAutomaticKeepAlives,
           addRepaintBoundaries: addRepaintBoundaries,
           minCacheExtent: minCacheExtent,
+          thumbVisibility: thumbVisibility,
         ),
       ),
     );
@@ -2268,6 +2270,25 @@ void main() {
             .firstWhere((position) => position.index == 3)
             .itemLeadingEdge,
         0);
+  });
+
+  testWidgets('Scrollbar thumb is always visible when thumbVisibility is true',
+      (WidgetTester tester) async {
+    final itemScrollController = ItemScrollController();
+
+    await setUpWidgetTest(
+      tester,
+      key: const Key('thumb_test'),
+      itemScrollController: itemScrollController,
+      itemPositionsListener: ItemPositionsListener.create(),
+      thumbVisibility: true,
+    );
+
+    itemScrollController.jumpTo(index: 50);
+    await tester.pumpAndSettle();
+
+    final scrollbar = tester.widget<Scrollbar>(find.byType(Scrollbar));
+    expect(scrollbar.thumbVisibility, isTrue);
   });
 }
 

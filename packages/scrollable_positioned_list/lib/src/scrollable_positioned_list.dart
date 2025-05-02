@@ -6,8 +6,8 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:collection/collection.dart' show IterableExtension;
+import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/widgets.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'item_positions_notifier.dart';
@@ -57,6 +57,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
+    this.thumbVisibility = false,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
@@ -87,6 +88,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
+    this.thumbVisibility = false,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         assert(separatorBuilder != null),
@@ -185,6 +187,14 @@ class ScrollablePositionedList extends StatefulWidget {
   /// in builds of widgets that would otherwise already be built in the
   /// cache extent.
   final double? minCacheExtent;
+
+  /// Whether the scrollbar thumb should always be visible.
+  ///
+  /// When true, the scrollbar thumb will remain visible even when the list is
+  /// not actively scrolling. Defaults to false.
+  ///
+  /// This is passed to the internal [Scrollbar.thumbVisibility] parameter.
+  final bool thumbVisibility;
 
   @override
   State<StatefulWidget> createState() => _ScrollablePositionedListState();
@@ -408,58 +418,31 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     return LayoutBuilder(
       builder: (context, constraints) {
         final cacheExtent = _cacheExtent(constraints);
-        return Listener(
-          onPointerDown: (_) => _stopScroll(canceled: true),
-          child: Stack(
-            children: <Widget>[
-              PostMountCallback(
-                key: primary.key,
-                callback: startAnimationCallback,
-                child: FadeTransition(
-                  opacity: ReverseAnimation(opacity),
-                  child: NotificationListener<ScrollNotification>(
-                    onNotification: (_) => _isTransitioning,
-                    child: PositionedList(
-                      itemBuilder: widget.itemBuilder,
-                      separatorBuilder: widget.separatorBuilder,
-                      itemCount: widget.itemCount,
-                      positionedIndex: primary.target,
-                      controller: primary.scrollController,
-                      itemPositionsNotifier: primary.itemPositionsNotifier,
-                      scrollDirection: widget.scrollDirection,
-                      reverse: widget.reverse,
-                      cacheExtent: cacheExtent,
-                      alignment: primary.alignment,
-                      physics: widget.physics,
-                      shrinkWrap: widget.shrinkWrap,
-                      addSemanticIndexes: widget.addSemanticIndexes,
-                      semanticChildCount: widget.semanticChildCount,
-                      padding: widget.padding,
-                      addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-                      addRepaintBoundaries: widget.addRepaintBoundaries,
-                    ),
-                  ),
-                ),
-              ),
-              if (_isTransitioning)
+        return Scrollbar(
+          controller: primary.scrollController,
+          thumbVisibility: widget.thumbVisibility,
+          child: Listener(
+            onPointerDown: (_) => _stopScroll(canceled: true),
+            child: Stack(
+              children: <Widget>[
                 PostMountCallback(
-                  key: secondary.key,
+                  key: primary.key,
                   callback: startAnimationCallback,
                   child: FadeTransition(
-                    opacity: opacity,
+                    opacity: ReverseAnimation(opacity),
                     child: NotificationListener<ScrollNotification>(
-                      onNotification: (_) => false,
+                      onNotification: (_) => _isTransitioning,
                       child: PositionedList(
                         itemBuilder: widget.itemBuilder,
                         separatorBuilder: widget.separatorBuilder,
                         itemCount: widget.itemCount,
-                        itemPositionsNotifier: secondary.itemPositionsNotifier,
-                        positionedIndex: secondary.target,
-                        controller: secondary.scrollController,
+                        positionedIndex: primary.target,
+                        controller: primary.scrollController,
+                        itemPositionsNotifier: primary.itemPositionsNotifier,
                         scrollDirection: widget.scrollDirection,
                         reverse: widget.reverse,
                         cacheExtent: cacheExtent,
-                        alignment: secondary.alignment,
+                        alignment: primary.alignment,
                         physics: widget.physics,
                         shrinkWrap: widget.shrinkWrap,
                         addSemanticIndexes: widget.addSemanticIndexes,
@@ -471,7 +454,38 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
                     ),
                   ),
                 ),
-            ],
+                if (_isTransitioning)
+                  PostMountCallback(
+                    key: secondary.key,
+                    callback: startAnimationCallback,
+                    child: FadeTransition(
+                      opacity: opacity,
+                      child: NotificationListener<ScrollNotification>(
+                        onNotification: (_) => false,
+                        child: PositionedList(
+                          itemBuilder: widget.itemBuilder,
+                          separatorBuilder: widget.separatorBuilder,
+                          itemCount: widget.itemCount,
+                          itemPositionsNotifier: secondary.itemPositionsNotifier,
+                          positionedIndex: secondary.target,
+                          controller: secondary.scrollController,
+                          scrollDirection: widget.scrollDirection,
+                          reverse: widget.reverse,
+                          cacheExtent: cacheExtent,
+                          alignment: secondary.alignment,
+                          physics: widget.physics,
+                          shrinkWrap: widget.shrinkWrap,
+                          addSemanticIndexes: widget.addSemanticIndexes,
+                          semanticChildCount: widget.semanticChildCount,
+                          padding: widget.padding,
+                          addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+                          addRepaintBoundaries: widget.addRepaintBoundaries,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         );
       },
