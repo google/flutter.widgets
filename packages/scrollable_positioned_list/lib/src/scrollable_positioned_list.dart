@@ -293,6 +293,15 @@ class ScrollOffsetController {
     );
   }
 
+  Future<void> scrollToTop(
+      {required Duration duration, Curve curve = Curves.linear}) async {
+    await _scrollableListState!.primary.scrollController.animateTo(
+      0.0,
+      duration: duration,
+      curve: curve,
+    );
+  }
+
   _ScrollablePositionedListState? _scrollableListState;
 
   void _attach(_ScrollablePositionedListState scrollableListState) {
